@@ -32,17 +32,38 @@
     display: flex;
     align-self: end;
     justify-self: end;
-    gap: 30%;
+    gap: 10%;
 }
 
-.user-account-button, .cart-button {
+
+.cart-button, .user-account-button {
+    display: flex;
     background-color: rgb(65, 175, 231);
     border: rgb(65, 175, 231) 1px solid;
+    font-size: 12px;
+    font-weight: 400;
     padding: 2px;
     margin: 2px;
+    align-content: end;
+}
+
+.user-account-button  {
+    flex-direction: column;
+}
+
+
+.cart-button {
+    margin-top: 10px;
+    flex-direction: row;
 }
 
 .user-account-button:hover, .cart-button:hover {
     background-color: rgba(153, 204, 229, 0.59);
     border: whitesmoke 1px solid;
+}
+.my-account {
+    white-space: nowrap;
+}
+.cart-text {
+   margin-top: 15px;
 }

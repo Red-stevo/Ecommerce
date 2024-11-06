@@ -5,7 +5,7 @@ const UserAccount = () => {
     return (
         <Button className={"user-account-button"}>
             <RiAccountCircleLine className={"user-account-icon"} />
-            <h6>Account</h6>
+            <span className={"my-account"}>My Account</span>
         </Button>
     );
 };

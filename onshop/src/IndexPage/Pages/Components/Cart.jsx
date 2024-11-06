@@ -5,6 +5,7 @@ const Cart = () => {
     return (
         <Button className={"cart-button"}>
             <BsCart4 className={"cart-icon"}/>
+            <span className={"cart-text"}>Cart</span>
         </Button>
     );
 };
