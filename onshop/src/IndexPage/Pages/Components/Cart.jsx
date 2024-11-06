@@ -1,10 +1,11 @@
 import {BsCart4} from "react-icons/bs";
+import {Button} from "react-bootstrap";
 
 const Cart = () => {
     return (
-        <div>
+        <Button>
             <BsCart4 className={"cart-icon"}/>
-        </div>
+        </Button>
     );
 };
 
