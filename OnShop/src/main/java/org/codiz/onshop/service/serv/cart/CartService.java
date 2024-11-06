@@ -1,4 +1,4 @@
-package org.codiz.onshop.service.serv.products.cart;
+package org.codiz.onshop.service.serv.cart;
 
 import org.codiz.onshop.dtos.response.EntityCreationResponse;
 import org.springframework.stereotype.Service;

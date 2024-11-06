@@ -8,7 +8,7 @@ import org.codiz.onshop.entities.cart.Status;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.cart.CartRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
-import org.codiz.onshop.service.serv.products.cart.CartService;
+import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
