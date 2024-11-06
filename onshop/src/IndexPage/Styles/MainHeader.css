@@ -1,11 +1,13 @@
 .main-header {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    background-color: rgba(17, 73, 201, 0.8);
+    background-color: rgb(65, 175, 231);
     color: whitesmoke;
-    gap: 2%;
 }
+
+.main-header-content-holder{
+    display: flex;
+    justify-content: space-evenly;
+}
+
 
 .app-logo {
 
@@ -29,4 +31,11 @@
     color: whitesmoke;
     width: 25px;
     height: 20px;
+}
+
+.header-end-icons {
+    display: flex;
+    align-self: end;
+    justify-self: end;
+    gap: 10%;
 }

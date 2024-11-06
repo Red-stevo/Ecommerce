@@ -5,7 +5,7 @@ const CategoryDropDown = () => {
 
     return (
         <Dropdown data-bs-theme="dark">
-            <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary">
+            <Dropdown.Toggle className={"search-buttons-left"} id="dropdown-button-dark-example1" variant="secondary">
                 Category
             </Dropdown.Toggle>
             <Dropdown.Menu>

@@ -1,1 +1,45 @@
+.app-button {
 
+
+}
+
+.app-button:hover {
+
+}
+
+.app-button:active {
+
+}
+
+.search-buttons-left {
+    border-left: #FFC107 solid 1px;
+    border-top: #FFC107 solid 1px;
+    border-bottom: #FFC107 solid 1px;
+    background-color: #FFC107;
+}
+
+.search-buttons-left:hover, .search-buttons-left:active,
+.search-buttons-left:checked  {
+    border-left: #FFC107 solid 1px;
+    border-top: #FFC107 solid 1px;
+    border-bottom: #FFC107 solid 1px;
+    background-color: transparent;
+    color: #FFC107;
+}
+
+
+.search-buttons-right:hover,
+.search-buttons-right:active, .search-buttons-right:checked {
+    border-right: #FFC107 solid 1px;
+    border-top: #FFC107 solid 1px;
+    border-bottom: #FFC107 solid 1px;
+    background-color: transparent;
+    color: #FFC107;
+}
+
+.search-buttons-right {
+    border-right: #FFC107 solid 1px;
+    border-top: #FFC107 solid 1px;
+    border-bottom: #FFC107 solid 1px;
+    background-color: #FFC107;
+}

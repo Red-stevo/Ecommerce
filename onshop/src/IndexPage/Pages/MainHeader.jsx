@@ -10,18 +10,20 @@ const MainHeader = () => {
             <Navbar expand="lg" className="main-header">
                 <Navbar.Brand href="#" className={"app-logo"}>OnShop Logo</Navbar.Brand> {/*Application logo*/}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
+                <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>
                     <InputGroup className="mx-2 mb-2 search-and-buttons">
                         <CategoryDropDown />    {/*Categories drop-down*/}
                         <input className={"form-control search-bar"} placeholder={"Search"}
                               aria-label="Product Search" aria-describedby="basic-addon2"
                         /> {/*Search bar*/}
-                        <Button variant="outline-secondary" id="search-button">
+                        <Button variant="outline-secondary" id="search-button" className={"search-buttons-right"}>
                             <FaSearch className={"search-icon"}/>
                         </Button> {/*Search Button(icon)*/}
                     </InputGroup>
-                    <UserAccount /> {/*User Account icon.*/}
-                    <Cart /> {/*Add to cart button*/}
+                    <div className={"header-end-icons"}>
+                        <UserAccount /> {/*User Account icon.*/}
+                        <Cart /> {/*Add to cart button*/}
+                    </div>
                 </Navbar.Collapse>
             </Navbar>
     );
