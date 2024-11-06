@@ -1,4 +1,4 @@
-package org.codiz.onshop.service.impl;
+package org.codiz.onshop.service.impl.users;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -7,20 +7,19 @@ import org.codiz.onshop.dtos.response.EntityCreationResponse;
 import org.codiz.onshop.entities.users.Role;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.users.UsersRepository;
-import org.codiz.onshop.service.serv.UsersService;
+import org.codiz.onshop.service.serv.users.UsersService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Service
 @RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
 
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
 
     public EntityCreationResponse registerUser(UserRegistrationRequest request) {
