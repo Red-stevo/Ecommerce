@@ -3,8 +3,9 @@ import {Button} from "react-bootstrap";
 
 const UserAccount = () => {
     return (
-        <Button>
+        <Button className={"user-account-button"}>
             <RiAccountCircleLine className={"user-account-icon"} />
+            <h6>Account</h6>
         </Button>
     );
 };

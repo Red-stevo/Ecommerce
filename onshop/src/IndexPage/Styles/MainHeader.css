@@ -17,14 +17,9 @@
     width: 60%;
 }
 
-.cart-icon {
+.cart-icon,.user-account-icon  {
     width: 40px;
-    height: 35px;
-}
-
-.user-account-icon {
-    width: 40px;
-    height: 35px;
+    height: 25px;
 }
 
 .search-icon {
@@ -38,4 +33,16 @@
     align-self: end;
     justify-self: end;
     gap: 30%;
+}
+
+.user-account-button, .cart-button {
+    background-color: rgb(65, 175, 231);
+    border: rgb(65, 175, 231) 1px solid;
+    padding: 2px;
+    margin: 2px;
+}
+
+.user-account-button:hover, .cart-button:hover {
+    background-color: rgba(153, 204, 229, 0.59);
+    border: whitesmoke 1px solid;
 }

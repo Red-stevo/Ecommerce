@@ -3,7 +3,7 @@ import {Button} from "react-bootstrap";
 
 const Cart = () => {
     return (
-        <Button>
+        <Button className={"cart-button"}>
             <BsCart4 className={"cart-icon"}/>
         </Button>
     );
