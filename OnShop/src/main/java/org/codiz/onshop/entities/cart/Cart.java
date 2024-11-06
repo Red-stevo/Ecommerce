@@ -13,6 +13,8 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+
+
     private String cartId;
     private Instant createdAt;
     private Instant updatedAt;
