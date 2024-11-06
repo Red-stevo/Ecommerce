@@ -1,0 +1,32 @@
+.main-header {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    background-color: rgba(17, 73, 201, 0.8);
+    color: whitesmoke;
+    gap: 2%;
+}
+
+.app-logo {
+
+}
+
+.search-and-buttons {
+    width: 60%;
+}
+
+.cart-icon {
+    width: 40px;
+    height: 35px;
+}
+
+.user-account-icon {
+    width: 40px;
+    height: 35px;
+}
+
+.search-icon {
+    color: whitesmoke;
+    width: 25px;
+    height: 20px;
+}
