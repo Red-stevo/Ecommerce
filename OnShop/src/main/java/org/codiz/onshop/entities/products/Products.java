@@ -1,10 +1,9 @@
 package org.codiz.onshop.entities.products;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -15,7 +14,14 @@ public class Products {
     private String productName;
     private String productDescription;
     private float productPrice;
-    private String productImageUrl;
     private Integer quantity;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "product_image",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<ProductImages> productImages;
 
 }

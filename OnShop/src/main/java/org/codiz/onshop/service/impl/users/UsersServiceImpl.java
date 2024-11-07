@@ -26,7 +26,7 @@ public class UsersServiceImpl implements UsersService {
 
         Users user = new Users();
 
-        if (userExists(user.getUserId())){
+        if (userExists(request.getUsername())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
 
@@ -63,7 +63,7 @@ public class UsersServiceImpl implements UsersService {
     private EntityCreationResponse createAdminUser() {
         Users user = new Users();
 
-        if (userExists(user.getUserId())){
+        if (userExists(admin_username)){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
         user.setUsername(admin_username);
@@ -80,8 +80,8 @@ public class UsersServiceImpl implements UsersService {
         return response;
     }
 
-    private  boolean userExists(String userId) {
-        return usersRepository.existsById(userId);
+    private  boolean userExists(String username) {
+        return usersRepository.existsByUsername(username);
     }
 
 }

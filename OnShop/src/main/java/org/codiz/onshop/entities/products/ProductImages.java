@@ -1,4 +1,4 @@
-package org.codiz.onshop.entities.users;
+package org.codiz.onshop.entities.products;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,13 +8,9 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Users {
+public class ProductImages {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String userId;
-    private String username;
-    private String phoneNumber;
-    private String userEmail;
-    private String password;
-    private Role role;
+    private String imageId;
+    private String imageUrl;
 }
