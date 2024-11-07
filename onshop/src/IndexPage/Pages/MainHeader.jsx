@@ -7,7 +7,7 @@ import "./../Styles/MainHeader.css";
 
 const MainHeader = () => {
     return (
-            <Navbar expand="lg" className="main-header">
+            <Navbar expand="md" className="main-header">
                 <Navbar.Brand href="#" className={"app-logo"}>OnShop Logo</Navbar.Brand> {/*Application logo*/}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>

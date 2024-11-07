@@ -88,11 +88,33 @@
 }
 
 
-/*extra small phone*/
-@media screen and (max-device-width: 599px){
+
+
+
+/*landscape phones and tablets.*/
+@media screen and (max-device-width: 899px){
     .main-header {
-        height: 22vh;
+        height: 12vh;
         padding: 5px;
+    }
+
+    .user-account-button:hover, .cart-button:hover {
+        background-color: rgba(153, 204, 229, 0.59);
+        border: whitesmoke 1px solid;
+    }
+}
+
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 767px){
+    .main-header {
+        height: 8vh;
+    }
+
+    .main-header-content-holder{
+        background-color: rgb(65, 175, 231);
+        width: 100vw;
     }
 
     .main-header-content-holder{
@@ -149,20 +171,21 @@
         padding: 5px;
     }
     .main-header-content-holder{
-       background-color: rgb(65, 175, 231);
+        margin-left: 0;
+        background-color: rgb(65, 175, 231);
+        width: 100vw;
     }
 
 }
 
 
-/*landscape phones and tablets.*/
-@media screen and (min-device-width: 600px) and (max-device-width: 899px) {
+/*extra small phone*/
+@media screen and (max-device-width: 350px){
+    .main-header {
+        height: 22vh;
+        padding: 5px;
+    }
 
 }
 
-
-/*Screen larger than desktop*/
-@media screen and (min-width: 1800px) {
-
-}
 
