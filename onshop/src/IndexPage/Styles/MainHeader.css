@@ -1,9 +1,11 @@
 .main-header {
     position: fixed;
+    top: 0;
     width: 100%;
     height: 11vh;
     background-color: rgb(65, 175, 231);
     color: whitesmoke;
+    border-bottom: 1px #8f8d8d solid;
 }
 
 .main-header-content-holder{
@@ -87,6 +89,13 @@
     padding-top: -10px;
 }
 
+.pages-body {
+    width: 100%;
+    margin-top: 11vh;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #41AFE7FF, #632CE2FF);
+}
+
 
 
 
@@ -102,6 +111,10 @@
         background-color: rgba(153, 204, 229, 0.59);
         border: whitesmoke 1px solid;
     }
+
+    .pages-body {
+        margin-top: 12vh;
+    }
 }
 
 
@@ -110,6 +123,10 @@
 @media screen and (max-device-width: 767px){
     .main-header {
         height: 8vh;
+    }
+
+    .pages-body {
+        margin-top: 8vh;
     }
 
     .main-header-content-holder{
@@ -185,6 +202,10 @@
         height: 22vh;
         padding: 5px;
     }
+    .pages-body {
+        margin-top: 22vh;
+    }
+
 
 }
 

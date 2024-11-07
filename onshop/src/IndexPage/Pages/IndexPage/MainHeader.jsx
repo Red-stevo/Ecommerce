@@ -1,12 +1,14 @@
 import {Button, InputGroup, Navbar} from "react-bootstrap";
 import {FaSearch} from "react-icons/fa";
-import CategoryDropDown from "./Components/CategoryDropDown.jsx";
-import Cart from "./Components/Cart.jsx";
-import UserAccount from "./Components/UserAccount.jsx";
-import "./../Styles/MainHeader.css";
+import CategoryDropDown from "../Components/IndexHeader/CategoryDropDown.jsx";
+import Cart from "../Components/IndexHeader/Cart.jsx";
+import UserAccount from "../Components/IndexHeader/UserAccount.jsx";
+import "../../Styles/MainHeader.css";
+import {Outlet} from "react-router-dom";
 
 const MainHeader = () => {
     return (
+        <>
             <Navbar expand="md" className="main-header">
                 <Navbar.Brand href="#" className={"app-logo"}>OnShop Logo</Navbar.Brand> {/*Application logo*/}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -26,6 +28,11 @@ const MainHeader = () => {
                     </div>
                 </Navbar.Collapse>
             </Navbar>
+
+            <div className={"pages-body"}>
+                <Outlet />
+            </div>
+        </>
     );
 };
 
