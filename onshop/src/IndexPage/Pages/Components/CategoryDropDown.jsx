@@ -4,7 +4,7 @@ const CategoryDropDown = () => {
     const categoryList = ["Men","Woman","Shoes", "Clothes", "Phones","Bags"];
 
     return (
-        <Dropdown data-bs-theme="dark">
+        <Dropdown className={"category-dropdown"}>
             <Dropdown.Toggle className={"search-buttons-left"} id="dropdown-button-dark-example1" variant="secondary">
                 Category
             </Dropdown.Toggle>
