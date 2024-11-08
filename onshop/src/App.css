@@ -1,15 +1,14 @@
 .app-button {
-
-
+    background-color: #FFC107;
+    border: 1px solid #FFC107;
 }
 
-.app-button:hover {
-
+.app-button:hover, app-button:active  {
+    border: #FFC107 solid 1px;
+    background-color: transparent;
+    color: #FFC107;
 }
 
-.app-button:active {
-
-}
 
 .search-buttons-left {
     border-left: #FFC107 solid 1px;
