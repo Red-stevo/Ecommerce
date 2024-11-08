@@ -1,0 +1,212 @@
+.main-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 11vh;
+    background-color: rgb(65, 175, 231);
+    color: whitesmoke;
+    border-bottom: 1px #8f8d8d solid;
+}
+
+.main-header-content-holder{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.app-logo {
+
+}
+
+.search-and-buttons {
+    width: 60%;
+}
+
+.cart-icon,.user-account-icon  {
+    width: 40px;
+    height: 25px;
+}
+
+.search-icon {
+    color: whitesmoke;
+    width: 25px;
+    height: 20px;
+}
+
+.header-end-icons {
+    display: flex;
+    align-self: end;
+    justify-self: end;
+    gap: 10%;
+}
+
+
+.cart-button, .user-account-button {
+    display: flex;
+    background-color: rgb(65, 175, 231);
+    border: rgb(65, 175, 231) 1px solid;
+    font-size: 12px;
+    font-weight: 400;
+    margin: 2px;
+    align-content: end;
+    padding: 10px;
+}
+
+.user-account-button  {
+    flex-direction: column;
+}
+
+
+.cart-button {
+    margin-top: 10px;
+    flex-direction: row;
+}
+
+.user-account-button:hover, .cart-button:hover {
+    background-color: rgba(153, 204, 229, 0.59);
+    border: whitesmoke 1px solid;
+}
+.my-account {
+    white-space: nowrap;
+}
+.cart-text {
+    margin-top: 15px;
+}
+
+.cart-count {
+    position: absolute;
+    text-align: center;
+    text-justify: distribute-center-last;
+    width: 20px;
+    height: 20px;
+    margin-left: 37px;
+    margin-top: -14px;
+    color: #FFC107;
+    font-size: 17px;
+    font-weight: 500;
+    border-radius: 20px;
+    background-color: transparent;
+    padding-top: -10px;
+}
+
+.pages-body {
+    width: 100%;
+    margin-top: 11vh;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #41AFE7FF, #632CE2FF);
+}
+
+
+
+
+
+/*landscape phones and tablets.*/
+@media screen and (max-device-width: 899px){
+    .main-header {
+        height: 12vh;
+        padding: 5px;
+    }
+
+    .user-account-button:hover, .cart-button:hover {
+        background-color: rgba(153, 204, 229, 0.59);
+        border: whitesmoke 1px solid;
+    }
+
+    .pages-body {
+        margin-top: 12vh;
+    }
+}
+
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 767px){
+    .main-header {
+        height: 8vh;
+    }
+
+    .pages-body {
+        margin-top: 8vh;
+    }
+
+    .main-header-content-holder{
+        background-color: rgb(65, 175, 231);
+        width: 100vw;
+    }
+
+    .main-header-content-holder{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-and-buttons {
+        margin-top: 10px;
+        width: 100dvw;
+    }
+
+    .search-bar {
+
+    }
+
+    .search-buttons-left{
+        font-size: 12px;
+        width: 80px;
+    }
+
+    .cart-button {
+        margin-top: 10px;
+    }
+
+    .cart-text {
+        margin-top: 15px;
+    }
+
+    .cart-count {
+        width: 8px;
+        height: 8px;
+        margin-left: 24px;
+        margin-top: -10px;
+        font-size: 12px;
+        font-weight: 600;
+        padding-top: -10px;
+    }
+
+    .cart-icon,.user-account-icon  {
+        width: 18px;
+        height: 18px;
+    }
+
+    .header-end-icons {
+        gap: 5%;
+        margin-right: 35px;
+    }
+
+    .cart-button, .user-account-button {
+        font-size: 12px;
+        font-weight: 400;
+        margin: 2px;
+        padding: 5px;
+    }
+    .main-header-content-holder{
+        margin-left: 0;
+        background-color: rgb(65, 175, 231);
+        width: 100vw;
+    }
+
+}
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 350px){
+    .main-header {
+        height: 22vh;
+        padding: 5px;
+    }
+    .pages-body {
+        margin-top: 22vh;
+    }
+
+
+}
+
+
