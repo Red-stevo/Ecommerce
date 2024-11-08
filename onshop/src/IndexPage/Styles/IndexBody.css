@@ -2,6 +2,7 @@
 
 }
 
+
 .discount-starburst {
     width: 230px;
     height: 210px;
@@ -110,7 +111,18 @@
     scroll-margin: 20px;
 }
 
+.product-display:hover {
+    box-shadow: 0 10px 14px #0c8cdc;
+}
+
+
 .view-categories-products {
     margin-left: 20px;
     margin-top: 5px;
 }
+
+
+.section-heading {
+
+}
+

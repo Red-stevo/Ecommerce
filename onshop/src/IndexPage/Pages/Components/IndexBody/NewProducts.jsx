@@ -37,7 +37,7 @@ const products =
 
 const NewProducts = () => {
     return (
-        <div>
+        <>
             {products.map(({productsList, sectionName}, index) =>(
                 <div key={index} className={"category-section-holder"}>
                     <span className={"section-heading"}>{sectionName}</span>
@@ -56,7 +56,7 @@ const NewProducts = () => {
                         }
                     </div>
                 </div>))}
-        </div>
+        </>
     );
 };
 
