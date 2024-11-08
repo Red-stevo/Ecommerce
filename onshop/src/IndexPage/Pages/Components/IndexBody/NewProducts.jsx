@@ -1,10 +1,10 @@
-import {Button, Card} from "react-bootstrap";
+import {Button, Card, Image} from "react-bootstrap";
 
 const products =
     [
         {
         sectionName:"Selected Only For You.", productsList:[
-            {productName:"HP laptop", productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.ed-29-ckMum--DpdlJRKHgHaFW%26pid%3DApi&f=1&ipt=6e5a9225c92f4445f0691c7f7115830cf6d22c677e97c161d6e1ccd401f19ca4&ipo=images", productPrice:30000},
+            {productName:"HP laptop HP laptop HP laptop", productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.ed-29-ckMum--DpdlJRKHgHaFW%26pid%3DApi&f=1&ipt=6e5a9225c92f4445f0691c7f7115830cf6d22c677e97c161d6e1ccd401f19ca4&ipo=images", productPrice:30000},
             {productName:"Lenovo laptop", productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images", productPrice:2900},
             {productName:"HP laptop", productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.ed-29-ckMum--DpdlJRKHgHaFW%26pid%3DApi&f=1&ipt=6e5a9225c92f4445f0691c7f7115830cf6d22c677e97c161d6e1ccd401f19ca4&ipo=images", productPrice:27500},
             {productName:"HP laptop", productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.ed-29-ckMum--DpdlJRKHgHaFW%26pid%3DApi&f=1&ipt=6e5a9225c92f4445f0691c7f7115830cf6d22c677e97c161d6e1ccd401f19ca4&ipo=images", productPrice:34500},
@@ -44,14 +44,14 @@ const NewProducts = () => {
                     <div  className={"category-section"}>
                         {
                             productsList.map(({productName, productUrl, productPrice}, index) => (
-                                <Card key={index} id={"product-display"}>
-                                    <Card.Img variant="top" src={productUrl}/>
+                                <div key={index} className={"product-display"}>
+                                    <Image src={productUrl} width={250} height={250} />
                                     <Card.Body>
                                         <Card.Title>{productName}</Card.Title>
                                         <span>KSH {productPrice}</span>
-                                        <Button variant="primary">Go somewhere</Button>
+                                        <Button className={"app-button view-categories-products"}>View Product</Button>
                                     </Card.Body>
-                                </Card>
+                                </div>
                             ))
                         }
                     </div>

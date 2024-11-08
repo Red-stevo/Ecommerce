@@ -6,8 +6,8 @@
     width: 230px;
     height: 210px;
     color: red;
-    margin-left: 500px;
-    margin-bottom: 10px;
+    margin-left: 520px;
+    margin-bottom: 30px;
 }
 
 .discount-products-carousel {
@@ -34,8 +34,8 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    top :80px;
-    right: 160px;
+    top :70px;
+    right: 150px;
     transform: rotate(20deg);
 }
 
@@ -89,19 +89,28 @@
 .category-section {
     display: flex;
     overflow-x: scroll;
+    padding-bottom: 15px;
 }
 
-#product-display {
-    margin: 30px;
+.product-display {
+    margin: 30px 10px;
+    padding: 15px;
     width: 600px;
+    height: fit-content;
+    background: white;
 }
 
 .category-section-holder {
     min-width: 96%;
-    height: 400px;
+    height: fit-content;
     background-color: whitesmoke;
     margin-bottom: 20px;
     margin-left: 20px;
     margin-right: 20px;
     scroll-margin: 20px;
+}
+
+.view-categories-products {
+    margin-left: 20px;
+    margin-top: 5px;
 }
