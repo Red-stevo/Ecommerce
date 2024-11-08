@@ -24,8 +24,8 @@ const DiscountSection = () => {
             nextIcon={<MdOutlineKeyboardDoubleArrowRight className={"discount-icon-next"} />}>
                 {discountProducts.map((product, index) => (
                     <Carousel.Item interval={1500} key={index} className={"discount-product"}>
-                        <Image src={product.url} alt={product.productName} height={250}
-                               width={250} className={"carousel-image"} />
+                        <Image src={product.url} alt={product.productName} height={200}
+                               width={200} className={"carousel-image"} />
                         <Carousel.Caption className={"caption-text"}>
                             <TiStarburst className={"discount-starburst"} />
                             <div className={"discount-product-text"}>
