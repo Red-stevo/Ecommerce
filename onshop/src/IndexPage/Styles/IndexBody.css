@@ -117,12 +117,16 @@
 
 
 .view-categories-products {
-    margin-left: 20px;
+    margin-left: 50px;
     margin-top: 5px;
 }
 
 
 .section-heading {
-
+    margin-left: 15px;
+    margin-top: 15px;
+    font-size: 21px;
+    font-weight: bold;
+    font-family: "Bitstream Vera Sans", cursive;
 }
 
