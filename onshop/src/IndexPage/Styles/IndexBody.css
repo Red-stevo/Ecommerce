@@ -14,6 +14,7 @@
 .discount-products-carousel {
     display: flex;
     justify-content: center;
+
 }
 
 .carousel-image {
@@ -50,9 +51,7 @@
     text-decoration-thickness: 4px;
 }
 
-.carousel-indicators {
-    display: none;
-}
+
 
 .discount-product-text {
     display: flex;
@@ -129,4 +128,84 @@
     font-weight: bold;
     font-family: "Bitstream Vera Sans", cursive;
 }
+
+.carousel-indicators {
+    display: none;
+}
+
+
+@media screen and (max-device-width: 899px){
+
+}
+
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 767px){
+    .carousel-indicators {
+        display: inline-block;
+
+        width: 100vw;
+    }
+
+    .carousel-indicators [data-bs-target] {
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+        margin-right: 5px;
+        transform: rotate(45deg);
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
+    }
+
+    /*The red on offer start burst*/
+    .discount-starburst {
+
+    }
+
+    /*old price and new price holder.*/
+    .discount-product-text {
+
+    }
+
+    /*Product name on the slider*/
+    .discount-product-text-product-name {
+
+    }
+
+    /*product description on the slider*/
+    .discount-product-text-description {
+        display: none;
+    }
+
+    /*Button on the discounted product*/
+    .discount-product-view-product-button {
+
+    }
+    /*Carousel image */
+    .carousel-image {
+        width: 170px;
+        height: 200px;
+    }
+
+    /*The carousel slider*/
+    .discount-products-carousel {
+        height: 200px;
+    }
+}
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 350px){
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
+    }
+}
+
+
+
 

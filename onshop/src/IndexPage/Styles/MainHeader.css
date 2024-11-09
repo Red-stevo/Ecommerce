@@ -101,7 +101,6 @@
 
 
 
-/*landscape phones and tablets.*/
 @media screen and (max-device-width: 899px){
     .main-header {
         height: 12vh;
@@ -209,6 +208,7 @@
     .pages-body {
         margin-top: 22vh;
     }
+
 
 
 }
