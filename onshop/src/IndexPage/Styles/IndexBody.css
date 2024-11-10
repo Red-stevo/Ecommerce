@@ -3,13 +3,6 @@
 }
 
 
-.discount-starburst {
-    width: 230px;
-    height: 210px;
-    color: red;
-    margin-left: 520px;
-    margin-bottom: 30px;
-}
 
 .discount-products-carousel {
     display: flex;
@@ -32,24 +25,7 @@
     padding: 100px 30px;
 }
 
-.prices-discounted-products {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    top :70px;
-    right: 150px;
-    transform: rotate(20deg);
-}
 
-.new-discounted-price,.old-product-price {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.old-product-price {
-    text-decoration: line-through;
-    text-decoration-thickness: 4px;
-}
 
 
 
@@ -134,6 +110,38 @@
 }
 
 
+.prices-discounted-products {
+    display: flex;
+    align-items: center;
+    width: 230px;
+    height: 210px;
+}
+
+.discount-starburst {
+    width: 100%;
+    height: 100%;
+    color:red;
+}
+
+.text-on-offer {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    transform: rotate(20deg);
+    left: 50px;
+    font-size: clamp(1rem, 1.5vw, 2rem);
+    font-weight: 600;
+    margin-left: 69%;
+    margin-bottom: 10px;
+}
+
+
+.star-burst-positioning {
+    margin-left: 69%;
+    margin-bottom: 50px;
+}
+
+
 @media screen and (max-device-width: 899px){
 
 }
@@ -144,8 +152,9 @@
 @media screen and (max-device-width: 767px){
     .carousel-indicators {
         display: inline-block;
-
-        width: 100vw;
+        width: 80vw;
+        margin-left: 5vw;
+        margin-right: 5vw;
     }
 
     .carousel-indicators [data-bs-target] {
@@ -161,30 +170,6 @@
         display: none;
     }
 
-    /*The red on offer start burst*/
-    .discount-starburst {
-
-    }
-
-    /*old price and new price holder.*/
-    .discount-product-text {
-
-    }
-
-    /*Product name on the slider*/
-    .discount-product-text-product-name {
-
-    }
-
-    /*product description on the slider*/
-    .discount-product-text-description {
-        display: none;
-    }
-
-    /*Button on the discounted product*/
-    .discount-product-view-product-button {
-
-    }
     /*Carousel image */
     .carousel-image {
         width: 170px;
@@ -195,6 +180,28 @@
     .discount-products-carousel {
         height: 200px;
     }
+
+    .text-on-offer {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        transform: rotate(20deg);
+        left: 50px;
+        font-size: clamp(2rem, 2.5vw, 3rem);
+        font-weight: 600;
+        margin-left: 69%;
+        margin-bottom: 10px;
+    }
+
+
+    .star-burst-positioning {
+        margin-left: 69%;
+        margin-bottom: 50px;
+    }
+
+
+
+
 }
 
 
@@ -204,6 +211,8 @@
     .carousel-control-next {
         display: none;
     }
+
+
 }
 
 

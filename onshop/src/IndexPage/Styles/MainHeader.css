@@ -1,7 +1,7 @@
 .main-header {
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 100vw;
     height: 11vh;
     background-color: rgb(65, 175, 231);
     color: whitesmoke;
@@ -192,7 +192,7 @@
     .main-header-content-holder{
         margin-left: 0;
         background-color: rgb(65, 175, 231);
-        width: 100vw;
+
     }
 
 }

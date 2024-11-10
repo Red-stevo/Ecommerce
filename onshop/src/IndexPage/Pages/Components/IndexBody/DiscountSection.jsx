@@ -1,6 +1,7 @@
 import {Button, Carousel, Image} from "react-bootstrap";
 import {TiStarburst} from "react-icons/ti";
 import {MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight} from "react-icons/md";
+import DiscountDisplay from "../DiscountDisplay.jsx";
 
 const discountProducts = [
             {'productDescription':"Elevate your style with [Product Name]. Durable, stylish, and perfect for any occasion.", 'productName':"shoes",'url':"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.xiLk6II7SS7bLC-CXwSykwHaE8%26pid%3DApi&f=1&ipt=0f2c2753596018612cd1d52c05d849552a572a04e6ac2ec169ec8abe916f6879&ipo=images", 'oldPrice':200, 'newPrice':150},
@@ -27,7 +28,6 @@ const DiscountSection = () => {
                         <Image src={product.url} alt={product.productName} height={250}
                                width={250} className={"carousel-image"} />
                         <Carousel.Caption className={"caption-text"}>
-                            <TiStarburst className={"discount-starburst"} />
                             <div className={"discount-product-text"}>
                                 <span className={"discount-product-text-product-name"}>{product.productName}</span>
                                 <span className={"discount-product-text-description"}>{product.productDescription}</span>
@@ -35,10 +35,8 @@ const DiscountSection = () => {
                                 <Button className={" app-button discount-product-view-product-button"}>
                                     View Product
                                 </Button>
-                            <div className={"prices-discounted-products"}>
-                                <span className={"new-discounted-price"}>Now</span>
-                                <span className={"new-discounted-price"}>KSH {product.newPrice} Only</span>
-                                <span className={"old-product-price"}>KSH {product.oldPrice}</span>
+                            <div className={"star-burst-positioning"}>
+                                <DiscountDisplay newPrice={product.newPrice} oldPrice={product.oldPrice} />
                             </div>
                         </Carousel.Caption>
                     </Carousel.Item>
