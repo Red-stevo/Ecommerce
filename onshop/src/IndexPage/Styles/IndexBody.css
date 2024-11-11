@@ -2,8 +2,6 @@
 
 }
 
-
-
 .discount-products-carousel {
     display: flex;
     justify-content: center;
@@ -24,9 +22,6 @@
     border: whitesmoke 2px solid;
     padding: 100px 30px;
 }
-
-
-
 
 
 .discount-product-text {
@@ -56,6 +51,8 @@
     margin-left: 20px;
     margin-bottom: 12px;
 }
+
+
 .discount-product-text-description {
     text-align: start;
 }
@@ -142,6 +139,10 @@
     margin-right: 10px;
 }
 
+.small-screen-offer-display {
+    display: none;
+}
+
 
 @media screen and (max-device-width: 899px){
     .text-on-offer {
@@ -155,6 +156,7 @@
     }
 
     .discount-product-text {
+        display: flex;
         width: 230px;
         top: 100px;
     }
@@ -185,9 +187,8 @@
 @media screen and (max-device-width: 767px){
     .carousel-indicators {
         display: inline-block;
-        width: 80vw;
+        width: 88vw;
         margin-left: 5vw;
-        margin-right: 5vw;
     }
 
     .carousel-indicators [data-bs-target] {
@@ -214,22 +215,38 @@
         height: 200px;
     }
 
-    .text-on-offer {
-        display: flex;
-        flex-direction: column;
+    .prices-discounted-products {
+       display: none;
+    }
+    .discount-product-text{
+        display: none;
+    }
+
+
+    .small-screen-offer-display {
+        position: relative;
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #ff0000;
+        color: white;
+        font-weight: bold;
+        bottom: 110px;
+    }
+
+    .small-screen-offer-display::after {
+        content: '';
         position: absolute;
-        transform: rotate(20deg);
-        left: 50px;
-        font-size: clamp(1rem, 1.7vw, 2rem);
-        font-weight: 600;
-        margin-left: 80%;
+        top: 50%;
+        right: -20px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 30px;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 20px solid #ff0000;
+        border-radius: 50%;
     }
 
-
-    .star-burst-positioning {
-        margin-left: 69%;
-        margin-bottom: 0;
-    }
 }
 
 
@@ -237,6 +254,10 @@
 @media screen and (max-device-width: 350px){
     .carousel-control-prev,
     .carousel-control-next {
+        display: none;
+    }
+
+    .carousel-indicators {
         display: none;
     }
 
