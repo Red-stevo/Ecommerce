@@ -158,7 +158,6 @@
     .discount-product-text {
         display: flex;
         width: 230px;
-        top: 100px;
     }
 
     .discount-product-text-description {
@@ -192,8 +191,8 @@
     }
 
     .carousel-indicators [data-bs-target] {
-        width: 15px;
-        height: 15px;
+        width: 10px;
+        height: 10px;
         margin-left: 5px;
         margin-right: 5px;
         transform: rotate(45deg);
@@ -217,9 +216,6 @@
 
     .prices-discounted-products {
        display: none;
-    }
-    .discount-product-text{
-        display: none;
     }
 
 
@@ -247,6 +243,22 @@
         border-radius: 50%;
     }
 
+    .category-section-holder {
+        width: 100vw;
+        margin-bottom: 20px;
+        margin-left: 0;
+        margin-right: 0;
+        scroll-margin: 20px;
+    }
+
+    .discount-product-text{
+        top: -40px;
+        left: -70px;
+    }
+    .discount-product-text{
+        display: none;
+    }
+
 }
 
 
@@ -257,10 +269,25 @@
         display: none;
     }
 
-    .carousel-indicators {
-        display: none;
+
+    .categorical-product-image {
+        width: 140px;
+        height: 100px;
     }
 
+    .carousel-indicators [data-bs-target] {
+        width: 8px;
+        height: 8px;
+        margin-left: 5px;
+        margin-right: 5px;
+        transform: rotate(45deg);
+    }
+
+    .carousel-indicators {
+        display: inline-block;
+        width: 95vw;
+        margin-left: 4vw;
+    }
 
 }
 

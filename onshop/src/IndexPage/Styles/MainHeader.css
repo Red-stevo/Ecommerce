@@ -123,12 +123,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 767px){
     .main-header {
-        height: 8vh;
+        height: 10vh;
         z-index: 20;
     }
 
     .pages-body {
-        margin-top: 8vh;
+        margin-top: 10vh;
     }
 
     .main-header-content-holder{
@@ -144,10 +144,6 @@
     .search-and-buttons {
         margin-top: 10px;
         width: 100dvw;
-    }
-
-    .search-bar {
-
     }
 
     .search-buttons-left{
@@ -201,12 +197,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 350px){
     .main-header {
-        height: 22vh;
+        height: 15vh;
         padding: 5px;
         z-index: 20;
     }
     .pages-body {
-        margin-top: 22vh;
+        margin-top: 15vh;
     }
 
 
