@@ -12,4 +12,5 @@ public class ProductCreationRequest {
     private float productPrice;
     private List<ProductUrls> productUrls;
     private Integer quantity;
+
 }

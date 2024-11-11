@@ -8,7 +8,7 @@ import org.codiz.onshop.entities.cart.CartItems;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.repositories.cart.CartItemsRepository;
 import org.codiz.onshop.repositories.cart.CartRepository;
-import org.codiz.onshop.repositories.products.ProductsRepository;
+import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.service.serv.cart.CartsItemsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 public class CartItemsImpl implements CartsItemsService {
     private final CartItemsRepository cartItemsRepository;
     private final CartRepository cartRepository;
-    private final ProductsRepository productsRepository;
+    private final ProductsJpaRepository productsRepository;
 
 
     public EntityCreationResponse addItemToCart(CartItemsToAdd cartItemsToAdd) {

@@ -7,11 +7,14 @@ import java.util.List;
 
 @Entity
 @Data
+
 public class Products {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String productId;
     private String productName;
+    @Column(length = 500)
     private String productDescription;
     private float productPrice;
     private Integer quantity;

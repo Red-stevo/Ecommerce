@@ -3,12 +3,14 @@ package org.codiz.onshop.service.impl.products;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
+import org.codiz.onshop.dtos.requests.ProductDocument;
 import org.codiz.onshop.dtos.requests.ProductUrls;
 import org.codiz.onshop.dtos.response.EntityCreationResponse;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.repositories.products.ProductImagesRepository;
-import org.codiz.onshop.repositories.products.ProductsRepository;
+import org.codiz.onshop.repositories.products.ProductSearchRepository;
+import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
@@ -24,13 +26,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductsServiceImpl implements ProductsService {
-    private final ProductsRepository productsRepository;
+    private final ProductsJpaRepository productsRepository;
     private final CloudinaryService cloudinaryService;
     private final ModelMapper modelMapper;
     private final ProductImagesRepository productImagesRepository;
+    private final ProductSearchRepository searchRepository;
 
     @Transactional
-    public EntityCreationResponse postProductImage(List<ProductCreationRequest> requests) throws IOException {
+    public EntityCreationResponse postProduct(List<ProductCreationRequest> requests) {
 
         List<Products> products = requests.stream().map(request -> {
             Products product = new Products();
@@ -40,20 +43,33 @@ public class ProductsServiceImpl implements ProductsService {
             product.setQuantity(request.getQuantity());
 
             // Process and set images for each product
-            List<ProductImages> productImages = null;
+            List<ProductImages> images;
             try {
-                productImages = setImageUrls(request.getProductUrls());
+                images = setImageUrls(request.getProductUrls());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            product.setProductImages(productImages);
+            product.setProductImages(images);
 
             return product;
         }).toList();
 
         productsRepository.saveAll(products);
 
-        // Response setup
+        List<ProductDocument> productsSearchList = products.stream()
+                .map(product -> {
+                    ProductDocument searchProduct = modelMapper.map(product, ProductDocument.class);
+
+                    searchProduct.setProductImageUrl(product.getProductImages().stream()
+                            .map(ProductImages::getImageUrl)
+                            .toList());
+                    return searchProduct;
+                })
+                .toList();
+
+
+        searchRepository.saveAll(productsSearchList);
+
         EntityCreationResponse res = new EntityCreationResponse();
         res.setMessage("Created products successfully");
         res.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -63,6 +79,11 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
+    public List<ProductDocument> searchProducts(String query) {
+
+        return searchRepository.search(query);
+
+    }
 
 
     @Transactional
