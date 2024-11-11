@@ -35,8 +35,6 @@
     width: 330px;
     position: absolute;
     top: 100px;
-    left: 140px;
-
 }
 
 .discount-product-view-product-button {
@@ -92,7 +90,6 @@
 
 
 .view-categories-products {
-    margin-left: 50px;
     margin-top: 5px;
 }
 
@@ -129,9 +126,9 @@
     position: absolute;
     transform: rotate(20deg);
     left: 50px;
-    font-size: clamp(1rem, 1.5vw, 2rem);
+    font-size: clamp(1rem, 1.5vw, 15px);
     font-weight: 600;
-    margin-left: 69%;
+    margin-left: 71%;
     margin-bottom: 10px;
 }
 
@@ -141,9 +138,45 @@
     margin-bottom: 50px;
 }
 
+.product-price {
+    margin-right: 10px;
+}
+
 
 @media screen and (max-device-width: 899px){
+    .text-on-offer {
+        font-size: clamp(16px, 1.5vw, 15px);
+        margin-left: 86%;
+    }
 
+
+    .star-burst-positioning {
+        margin-left: 76%;
+    }
+
+    .discount-product-text {
+        width: 230px;
+        top: 100px;
+    }
+
+    .discount-product-text-description {
+        text-align: start;
+    }
+
+    .prices-discounted-products {
+        align-items: center;
+        width: 310px;
+        height: 210px;
+    }
+
+    .new-discounted-price {
+        white-space: nowrap;
+    }
+
+    .categorical-product-image {
+        width: 180px;
+        height: 180px;
+    }
 }
 
 
@@ -187,21 +220,16 @@
         position: absolute;
         transform: rotate(20deg);
         left: 50px;
-        font-size: clamp(2rem, 2.5vw, 3rem);
+        font-size: clamp(1rem, 1.7vw, 2rem);
         font-weight: 600;
-        margin-left: 69%;
-        margin-bottom: 10px;
+        margin-left: 80%;
     }
 
 
     .star-burst-positioning {
         margin-left: 69%;
-        margin-bottom: 50px;
+        margin-bottom: 0;
     }
-
-
-
-
 }
 
 
