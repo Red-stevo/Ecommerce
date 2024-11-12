@@ -15,25 +15,29 @@ const LoginPage = () => {
                 </span>
             </div>
             <div className={"login-page-right"}>
-                <span>Login</span>
-                <span>Welcome back, please please login to your account</span>
-                <Form className={"login-form"}>
-                    <Form.Group>
-                        < input id={"username"} className={"form-control username-input"} placeholder={"Username"} />
-                    </Form.Group>
+                <div className={"login-page-right-holder"}>
+                    <span className={"login"}>Login</span>
+                    <span className={"welcome-message"}>Welcome back, please please login to your account</span>
+                    <Form className={"login-form"}>
+                        <Form.Group>
+                            <input id={"username"} className={"form-control username-input"} placeholder={"Username"}/>
+                        </Form.Group>
 
-                    <Form.Group>
-                        < input id={"password"} className={"form-control password-input"} placeholder={"Password"} />
-                    </Form.Group>
-                    <span>
-                         <Form.Check inline label="Remember Me" name="group1" type={'checkbox'} id={`remember-me`}/>
-                        <Link to={"#"}>Forgot password?</Link>
-                    </span>
-                    <Button>Login</Button>
-                </Form>
-                <span className={"or-sign-in"}>or signin with</span>
+                        <Form.Group>
+                            < input id={"password"} className={"form-control password-input"} placeholder={"Password"}/>
+                        </Form.Group>
+                        <span className={"rem-and-forgot"}>
+                             <Form.Check inline label="Remember Me" name="group1" type={'checkbox'} id={`remember-me`}/>
+                            <Link to={"#"}>Forgot password?</Link>
+                        </span>
+                        <div className={"login-button-holder"}>
+                            <Button className={"login-button"}>Login</Button>
+                        </div>
+                    </Form>
+                    <span className={"or-sign-in"}>or signin with</span>
+                    <span>New User? Sign Up</span>
+                </div>
 
-                <span>New User? Sign Up</span>
             </div>
         </div>
     );
