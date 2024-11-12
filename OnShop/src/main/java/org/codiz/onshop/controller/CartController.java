@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
 public class CartController {
 
     private final CartService cartService;
     private final CartsItemsService cartsItemsService;
+
+    public CartController(CartService cartService, CartsItemsService cartsItemsService) {
+        this.cartService = cartService;
+        this.cartsItemsService = cartsItemsService;
+    }
 
     @PostMapping
     public ResponseEntity<EntityCreationResponse> createCart(String userId){

@@ -16,14 +16,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 public class ProductsController {
     private final ProductsService productsService;
 
-    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProductsController(ProductsService productsService) {
+        this.productsService = productsService;
+    }
+
+    @PostMapping(value = "/post")
     public ResponseEntity<?> postProduct(
-            @RequestPart("req") List<ProductCreationRequest> productCreationRequest) {
+            @RequestBody List<ProductCreationRequest> productCreationRequest) {
         productsService.postProduct(productCreationRequest);
 
         return ResponseEntity.ok("Product saved successfully");

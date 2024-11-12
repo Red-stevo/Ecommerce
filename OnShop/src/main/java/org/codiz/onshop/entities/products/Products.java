@@ -3,6 +3,7 @@ package org.codiz.onshop.entities.products;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,6 @@ public class Products {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    private List<ProductImages> productImages;
+    private List<ProductImages> productImages = new ArrayList<>();
 
 }

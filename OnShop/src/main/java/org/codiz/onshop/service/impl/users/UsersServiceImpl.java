@@ -26,24 +26,16 @@ public class UsersServiceImpl implements UsersService {
 
         Users user = new Users();
 
-        if (userExists(request.getUsername())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
-        }
-
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user.setUserEmail(request.getUserEmail());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setRole(request.getRole());
+        user.setRole(Role.valueOf(String.valueOf(request.getRole())));
 
         usersRepository.save(user);
 
 
-        EntityCreationResponse response = new EntityCreationResponse();
-        response.setMessage("Successfully registered user");
-        response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        response.setStatus(HttpStatus.OK);
-        return response;
+        return null;
 
 
     }
@@ -63,21 +55,22 @@ public class UsersServiceImpl implements UsersService {
     private EntityCreationResponse createAdminUser() {
         Users user = new Users();
 
-        if (userExists(admin_username)){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
-        }
-        user.setUsername(admin_username);
-        user.setPassword(admin_user_password);
-        user.setRole(admin_user_role);
-        user.setUserEmail(admin_user_email);
-        user.setPhoneNumber(admin_user_phone);
-        usersRepository.save(user);
+        if (!userExists(admin_username)){
+            user.setUsername(admin_username);
+            user.setPassword(admin_user_password);
+            user.setRole(admin_user_role);
+            user.setUserEmail(admin_user_email);
+            user.setPhoneNumber(admin_user_phone);
+            usersRepository.save(user);
 
-        EntityCreationResponse response = new EntityCreationResponse();
-        response.setMessage("Successfully created admin user");
-        response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        response.setStatus(HttpStatus.OK);
-        return response;
+            EntityCreationResponse response = new EntityCreationResponse();
+            response.setMessage("Successfully created admin user");
+            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            response.setStatus(HttpStatus.OK);
+
+            return response;
+        }
+         return null;
     }
 
     private  boolean userExists(String username) {

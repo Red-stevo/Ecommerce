@@ -71,10 +71,6 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-webflux</artifactId>
-    </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.vanslog/spring-data-meilisearch-->
         <dependency>
@@ -82,11 +78,7 @@
             <artifactId>spring-data-meilisearch</artifactId>
             <version>0.6.0</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.meilisearch</groupId>
-            <artifactId>meilisearch-java</artifactId>
-            <version>0.12.0</version>
-        </dependency>-->
+
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>

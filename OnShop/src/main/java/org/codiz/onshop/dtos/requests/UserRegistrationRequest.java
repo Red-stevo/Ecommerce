@@ -6,6 +6,7 @@ import org.codiz.onshop.entities.users.Role;
 
 @Data
 public class UserRegistrationRequest {
+
     private String username;
     private String phoneNumber;
     private String userEmail;

@@ -1,10 +1,9 @@
 package org.codiz.onshop.entities.products;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -13,4 +12,6 @@ public class ProductImages {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String imageId;
     private String imageUrl;
+    @ManyToMany(mappedBy = "productImages")
+    private List<Products> products;
 }
