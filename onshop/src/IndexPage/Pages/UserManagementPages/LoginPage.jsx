@@ -1,0 +1,42 @@
+import "./Styles/LoginPage.css";
+import {Button, Form, FormControl} from "react-bootstrap";
+import {Link} from "react-router-dom";
+
+const LoginPage = () => {
+    return (
+        <div className={"login-page"}>
+            <div className={"login-page-left"}>
+                <span className={"top-message"}>Welcome <br/>back!</span>
+                <span className={"gambi-slogan"}>
+                    Unataka ngapi juu we are
+                    <span className={"gambi"}>
+                        GAMBI <br/>
+                    </span> and we have everything
+                </span>
+            </div>
+            <div className={"login-page-right"}>
+                <span>Login</span>
+                <span>Welcome back, please please login to your account</span>
+                <Form className={"login-form"}>
+                    <Form.Group>
+                        < input id={"username"} className={"form-control username-input"} placeholder={"Username"} />
+                    </Form.Group>
+
+                    <Form.Group>
+                        < input id={"password"} className={"form-control password-input"} placeholder={"Password"} />
+                    </Form.Group>
+                    <span>
+                         <Form.Check inline label="Remember Me" name="group1" type={'checkbox'} id={`remember-me`}/>
+                        <Link to={"#"}>Forgot password?</Link>
+                    </span>
+                    <Button>Login</Button>
+                </Form>
+                <span className={"or-sign-in"}>or signin with</span>
+
+                <span>New User? Sign Up</span>
+            </div>
+        </div>
+    );
+};
+
+export default LoginPage;

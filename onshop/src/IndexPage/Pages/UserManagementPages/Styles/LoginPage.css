@@ -1,0 +1,53 @@
+.login-page {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login-page-left, .login-page-right  {
+    display: flex;
+    width: 50%;
+    height: 100vh;
+}
+
+.login-page-left {
+    background: linear-gradient(205deg, #e7e7e7 33%, rgba(0, 106, 255, 0.28) 48%, rgba(26, 230, 255, 0.23) 60%, rgba(243, 243, 243, 0.91) 75%,  #e7e7e7 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.login-page-right {
+    background: white;
+}
+
+
+
+.top-message {
+    font-weight: 800;
+    font-family: Montserrat sans-serif;
+    font-size: 40px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-left: 7vw;
+    margin-top: 23vh;
+}
+
+.gambi-slogan {
+    font-family: Montserr sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-left: 7vw;
+    margin-top: 5vh;
+}
+
+.gambi {
+    margin-left: 5px;
+    font-size: 28px;
+    background: linear-gradient(45deg, #d22503 45%, #6005ea 60% , #2100ec 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
