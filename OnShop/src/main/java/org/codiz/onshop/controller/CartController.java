@@ -1,5 +1,6 @@
 package org.codiz.onshop.controller;
 
+import org.codiz.onshop.dtos.requests.CartCreationRequest;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.service.serv.cart.CartService;
@@ -21,11 +22,11 @@ public class CartController {
         this.cartsItemsService = cartsItemsService;
     }
 
-    @PostMapping
-    public ResponseEntity<EntityResponse> createCart(String userId){
-        EntityResponse response = cartService.createCart(userId);
+   /* @PostMapping
+    public ResponseEntity<EntityResponse> createCart(CartCreationRequest request){
+        EntityResponse response = cartService.createCart(request);
         return ResponseEntity.ok(response);
-    }
+    }*/
 
     @PostMapping("/add/cart-item")
     public ResponseEntity<EntityResponse> addCartItem(CartItemsToAdd itemsToAdd){

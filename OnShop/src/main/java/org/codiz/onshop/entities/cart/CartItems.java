@@ -10,10 +10,14 @@ public class CartItems {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String cartItemId;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id")
     private Cart cart;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Products products;
+
     private Integer quantity;
 
     public void setQuantity(Integer quantity) {
