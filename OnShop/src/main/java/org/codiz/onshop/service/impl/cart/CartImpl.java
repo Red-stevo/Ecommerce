@@ -29,7 +29,9 @@ public class CartImpl implements CartService {
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
+
         Cart cart = new Cart();
+
         cart.setCreatedAt(Instant.now());
         cart.setStatus(Status.ACTIVE);
         cart.setUpdatedAt(Instant.now());
