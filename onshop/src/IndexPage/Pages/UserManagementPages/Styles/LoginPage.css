@@ -97,3 +97,13 @@
     font-weight: 900;
     font-size: 28px;
 }
+
+.google-icon {
+   border-radius: 20px;
+    margin-top: 2%;
+
+}
+
+.register-user-link {
+    margin-top: 5%;
+}
