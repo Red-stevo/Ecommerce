@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.repositories.products.ProductImagesRepository;
@@ -15,12 +14,9 @@ import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

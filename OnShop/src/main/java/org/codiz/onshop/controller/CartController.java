@@ -1,8 +1,7 @@
 package org.codiz.onshop.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.service.serv.cart.CartService;
 import org.codiz.onshop.service.serv.cart.CartsItemsService;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +22,14 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityCreationResponse> createCart(String userId){
-        EntityCreationResponse response = cartService.createCart(userId);
+    public ResponseEntity<EntityResponse> createCart(String userId){
+        EntityResponse response = cartService.createCart(userId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add/cart-item")
-    public ResponseEntity<EntityCreationResponse> addCartItem(CartItemsToAdd itemsToAdd){
-        EntityCreationResponse response = cartsItemsService.addItemToCart(itemsToAdd);
+    public ResponseEntity<EntityResponse> addCartItem(CartItemsToAdd itemsToAdd){
+        EntityResponse response = cartsItemsService.addItemToCart(itemsToAdd);
         return ResponseEntity.ok(response);
     }
 }

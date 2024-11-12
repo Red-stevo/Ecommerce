@@ -2,7 +2,7 @@ package org.codiz.onshop.service.impl.cart;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.entities.cart.Cart;
 import org.codiz.onshop.entities.cart.Status;
 import org.codiz.onshop.entities.users.Users;
@@ -23,7 +23,7 @@ public class CartImpl implements CartService {
     private final CartRepository cartRepository;
     private final UsersRepository usersRepository;
 
-    public EntityCreationResponse createCart(String userId) {
+    public EntityResponse createCart(String userId) {
 
         Users user = usersRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -40,7 +40,7 @@ public class CartImpl implements CartService {
 
         cartRepository.save(cart);
 
-        EntityCreationResponse response = new EntityCreationResponse();
+        EntityResponse response = new EntityResponse();
         response.setMessage("Successfully created cart.");
         response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         response.setStatus(HttpStatus.OK);

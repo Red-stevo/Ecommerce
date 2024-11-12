@@ -2,7 +2,7 @@ package org.codiz.onshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.service.serv.users.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +20,8 @@ public class UsersController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<EntityCreationResponse> registerUser(@RequestBody UserRegistrationRequest req){
-        EntityCreationResponse res = usersService.registerUser(req);
+    public ResponseEntity<EntityResponse> registerUser(@RequestBody UserRegistrationRequest req){
+        EntityResponse res = usersService.registerUser(req);
         return ResponseEntity.ok(res);
     }
 }

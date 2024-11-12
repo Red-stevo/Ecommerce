@@ -3,7 +3,7 @@ package org.codiz.onshop.service.impl.users;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.EntityDeletionResponse;
 import org.codiz.onshop.entities.users.Role;
 import org.codiz.onshop.entities.users.Users;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,7 +27,7 @@ public class UsersServiceImpl implements UsersService {
     private final ModelMapper modelMapper;
 
 
-    public EntityCreationResponse registerUser(UserRegistrationRequest request) {
+    public EntityResponse registerUser(UserRegistrationRequest request) {
 
         Users user = new Users();
 
@@ -41,7 +40,7 @@ public class UsersServiceImpl implements UsersService {
 
             usersRepository.save(user);
 
-            EntityCreationResponse response = new EntityCreationResponse();
+            EntityResponse response = new EntityResponse();
             response.setMessage("Successfully created admin user");
             response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             response.setStatus(HttpStatus.OK);
@@ -67,7 +66,7 @@ public class UsersServiceImpl implements UsersService {
     private String admin_user_phone;
 
     @PostConstruct
-    private EntityCreationResponse createAdminUser() {
+    private EntityResponse createAdminUser() {
         Users user = new Users();
 
         if (!userExists(admin_username,admin_user_email)){
@@ -78,7 +77,7 @@ public class UsersServiceImpl implements UsersService {
             user.setPhoneNumber(admin_user_phone);
             usersRepository.save(user);
 
-            EntityCreationResponse response = new EntityCreationResponse();
+            EntityResponse response = new EntityResponse();
             response.setMessage("Successfully created admin user");
             response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             response.setStatus(HttpStatus.OK);
