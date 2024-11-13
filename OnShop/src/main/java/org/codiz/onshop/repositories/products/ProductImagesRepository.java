@@ -4,6 +4,10 @@ import org.codiz.onshop.entities.products.ProductImages;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductImagesRepository extends JpaRepository<ProductImages, String> {
+    List<ProductImages> findByProducts_ProductId(String productId);
+    ;
 }

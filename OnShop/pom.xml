@@ -71,6 +71,14 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.vanslog/spring-data-meilisearch-->
+        <dependency>
+            <groupId>io.vanslog</groupId>
+            <artifactId>spring-data-meilisearch</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>

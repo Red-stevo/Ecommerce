@@ -2,18 +2,10 @@
 
 }
 
-
-.discount-starburst {
-    width: 230px;
-    height: 210px;
-    color: red;
-    margin-left: 520px;
-    margin-bottom: 30px;
-}
-
 .discount-products-carousel {
     display: flex;
     justify-content: center;
+
 }
 
 .carousel-image {
@@ -31,28 +23,6 @@
     padding: 100px 30px;
 }
 
-.prices-discounted-products {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    top :70px;
-    right: 150px;
-    transform: rotate(20deg);
-}
-
-.new-discounted-price,.old-product-price {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.old-product-price {
-    text-decoration: line-through;
-    text-decoration-thickness: 4px;
-}
-
-.carousel-indicators {
-    display: none;
-}
 
 .discount-product-text {
     display: flex;
@@ -60,8 +30,6 @@
     width: 330px;
     position: absolute;
     top: 100px;
-    left: 140px;
-
 }
 
 .discount-product-view-product-button {
@@ -83,6 +51,8 @@
     margin-left: 20px;
     margin-bottom: 12px;
 }
+
+
 .discount-product-text-description {
     text-align: start;
 }
@@ -117,12 +87,215 @@
 
 
 .view-categories-products {
-    margin-left: 20px;
     margin-top: 5px;
 }
 
 
 .section-heading {
+    margin-left: 15px;
+    margin-top: 15px;
+    font-size: 21px;
+    font-weight: bold;
+    font-family: "Bitstream Vera Sans", cursive;
+}
+
+.carousel-indicators {
+    display: none;
+}
+
+
+.prices-discounted-products {
+    display: flex;
+    align-items: center;
+    width: 230px;
+    height: 210px;
+}
+
+.discount-starburst {
+    width: 100%;
+    height: 100%;
+    color:red;
+}
+
+.text-on-offer {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    transform: rotate(20deg);
+    left: 50px;
+    font-size: clamp(1rem, 1.5vw, 15px);
+    font-weight: 600;
+    margin-left: 71%;
+    margin-bottom: 10px;
+}
+
+
+.star-burst-positioning {
+    margin-left: 69%;
+    margin-bottom: 50px;
+}
+
+.product-price {
+    margin-right: 10px;
+}
+
+.small-screen-offer-display {
+    display: none;
+}
+
+.old-product-price {
+    text-decoration-line: line-through;
+    text-decoration-thickness: 2px;
+}
+
+
+@media screen and (max-device-width: 899px){
+    .text-on-offer {
+        font-size: clamp(16px, 1.5vw, 15px);
+        margin-left: 86%;
+    }
+
+
+    .star-burst-positioning {
+        margin-left: 76%;
+    }
+
+    .discount-product-text {
+        display: flex;
+        width: 230px;
+    }
+
+    .discount-product-text-description {
+        text-align: start;
+    }
+
+    .prices-discounted-products {
+        align-items: center;
+        width: 310px;
+        height: 210px;
+    }
+
+    .new-discounted-price {
+        white-space: nowrap;
+    }
+
+    .categorical-product-image {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 767px){
+    .carousel-indicators {
+        display: inline-block;
+        width: 88vw;
+        margin-left: 5vw;
+    }
+
+    .carousel-indicators [data-bs-target] {
+        width: 10px;
+        height: 10px;
+        margin-left: 5px;
+        margin-right: 5px;
+        transform: rotate(45deg);
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
+    }
+
+    /*Carousel image */
+    .carousel-image {
+        width: 170px;
+        height: 200px;
+    }
+
+    /*The carousel slider*/
+    .discount-products-carousel {
+        height: 200px;
+    }
+
+    .prices-discounted-products {
+       display: none;
+    }
+
+
+    .small-screen-offer-display {
+        position: relative;
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #ff0000;
+        color: white;
+        font-weight: bold;
+        bottom: 110px;
+    }
+
+    .small-screen-offer-display::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: -20px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 30px;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 20px solid #ff0000;
+        border-radius: 50%;
+    }
+
+    .category-section-holder {
+        width: 100vw;
+        margin-bottom: 20px;
+        margin-left: 0;
+        margin-right: 0;
+        scroll-margin: 20px;
+    }
+
+    .discount-product-text{
+        top: -40px;
+        left: -70px;
+    }
+    .discount-product-text{
+        display: none;
+    }
 
 }
+
+
+/*extra small phone*/
+@media screen and (max-device-width: 350px){
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
+    }
+
+
+    .categorical-product-image {
+        width: 140px;
+        height: 100px;
+    }
+
+    .carousel-indicators [data-bs-target] {
+        width: 8px;
+        height: 8px;
+        margin-left: 5px;
+        margin-right: 5px;
+        transform: rotate(45deg);
+    }
+
+    .carousel-indicators {
+        display: inline-block;
+        width: 95vw;
+        margin-left: 4vw;
+    }
+
+}
+
+
+
 

@@ -1,11 +1,12 @@
 .main-header {
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 100vw;
     height: 11vh;
     background-color: rgb(65, 175, 231);
     color: whitesmoke;
     border-bottom: 1px #8f8d8d solid;
+    z-index: 20;
 }
 
 .main-header-content-holder{
@@ -100,11 +101,11 @@
 
 
 
-/*landscape phones and tablets.*/
 @media screen and (max-device-width: 899px){
     .main-header {
         height: 12vh;
         padding: 5px;
+        z-index: 20;
     }
 
     .user-account-button:hover, .cart-button:hover {
@@ -122,11 +123,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 767px){
     .main-header {
-        height: 8vh;
+        height: 10vh;
+        z-index: 20;
     }
 
     .pages-body {
-        margin-top: 8vh;
+        margin-top: 10vh;
     }
 
     .main-header-content-holder{
@@ -142,10 +144,6 @@
     .search-and-buttons {
         margin-top: 10px;
         width: 100dvw;
-    }
-
-    .search-bar {
-
     }
 
     .search-buttons-left{
@@ -190,22 +188,22 @@
     .main-header-content-holder{
         margin-left: 0;
         background-color: rgb(65, 175, 231);
-        width: 100vw;
-    }
 
+    }
 }
+
 
 
 /*extra small phone*/
 @media screen and (max-device-width: 350px){
     .main-header {
-        height: 22vh;
+        height: 15vh;
         padding: 5px;
+        z-index: 20;
     }
     .pages-body {
-        margin-top: 22vh;
+        margin-top: 15vh;
     }
-
 
 }
 

@@ -8,8 +8,14 @@ import java.util.List;
 public class ProductCreationRequest {
 
     private String productName;
+
     private String productDescription;
+
     private float productPrice;
-    private List<ProductUrls> productUrls;
+
+    private List<String> productUrls;
+    //private List<MultipartFile> productUrls;
+
     private Integer quantity;
+
 }
