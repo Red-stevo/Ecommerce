@@ -1,36 +1,15 @@
 package org.codiz.onshop.controller;
 
-import org.codiz.onshop.dtos.requests.CartCreationRequest;
-import org.codiz.onshop.dtos.requests.CartItemsToAdd;
-import org.codiz.onshop.dtos.response.EntityResponse;
+import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.service.serv.cart.CartService;
-import org.codiz.onshop.service.serv.cart.CartsItemsService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
 public class CartController {
 
     private final CartService cartService;
-    private final CartsItemsService cartsItemsService;
 
-    public CartController(CartService cartService, CartsItemsService cartsItemsService) {
-        this.cartService = cartService;
-        this.cartsItemsService = cartsItemsService;
-    }
-
-   /* @PostMapping
-    public ResponseEntity<EntityResponse> createCart(CartCreationRequest request){
-        EntityResponse response = cartService.createCart(request);
-        return ResponseEntity.ok(response);
-    }*/
-
-    @PostMapping("/add/cart-item")
-    public ResponseEntity<EntityResponse> addCartItem(CartItemsToAdd itemsToAdd){
-        EntityResponse response = cartsItemsService.addItemToCart(itemsToAdd);
-        return ResponseEntity.ok(response);
-    }
 }
