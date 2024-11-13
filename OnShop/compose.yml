@@ -1,4 +1,6 @@
 services:
+
+
   mariadb:
     image: 'mariadb:latest'
     environment:
@@ -8,3 +10,4 @@ services:
       - MARIADB_USER=${USERNAME}
     ports:
       - 3307:3306
+

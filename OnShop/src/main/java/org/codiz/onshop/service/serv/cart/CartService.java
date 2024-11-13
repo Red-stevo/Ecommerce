@@ -1,11 +1,13 @@
 package org.codiz.onshop.service.serv.cart;
 
-import org.codiz.onshop.dtos.response.EntityCreationResponse;
+import org.codiz.onshop.dtos.requests.CartCreationRequest;
+import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.entities.cart.Cart;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface CartService {
 
-    EntityCreationResponse createCart(String userId);
+    Cart createCart(Cart cart);
 
 }
