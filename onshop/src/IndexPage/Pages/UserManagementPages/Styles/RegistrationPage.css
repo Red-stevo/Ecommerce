@@ -22,7 +22,6 @@
     margin-top: 8%;
     display: flex;
     flex-direction: column;
-
 }
 
 .welcome-reg {
@@ -71,9 +70,10 @@
 
 .register, .sign-in {
     font-family: Montserr sans-serif;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 400;
-    width: 35%;
+    width: fit-content;
+    padding: 2%;
 }
 
 .google-icon {
@@ -82,4 +82,22 @@
 
 .disclaimer {
    margin-top: 5%;
+}
+
+
+@media screen and (max-device-width: 899px){
+    .registration-page-right-holder {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+}
+
+@media screen and (max-device-width: 767px){
+    .registration-page-right-holder {
+    }
+
+    .registration-page-left {
+        display: none;
+    }
 }

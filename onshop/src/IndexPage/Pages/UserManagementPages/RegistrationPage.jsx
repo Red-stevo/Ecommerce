@@ -13,7 +13,7 @@ const RegistrationPage = () => {
                     <span className={"welcome-reg"}>
                         Welcome to
                         <span className={"site-name"}>
-                            Gambi <br /> Collection!
+                            Gambi Collection!
                         </span>
                     </span>
 
