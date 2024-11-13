@@ -20,7 +20,7 @@ public class ProductsController {
 
     @PostMapping(value = "/post")
     public ResponseEntity<?> postProduct(
-            @RequestBody List<ProductCreationRequest> productCreationRequest) {
+            @ModelAttribute List<ProductCreationRequest> productCreationRequest) {
         productsService.postProduct(productCreationRequest);
 
         return ResponseEntity.ok("Product saved successfully");

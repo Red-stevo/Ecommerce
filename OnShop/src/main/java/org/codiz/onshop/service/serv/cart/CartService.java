@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public interface CartService {
 
-    Cart createCart(Cart cart);
+
     Optional<Cart> getCartById(String cartId);
     Cart removeItemFromCart(CartItemsDeletion deletion);
     Cart updateItemQuantity(CartItemsUpdate itemsUpdate);

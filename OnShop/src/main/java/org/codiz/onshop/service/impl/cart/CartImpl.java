@@ -7,9 +7,11 @@ import org.codiz.onshop.dtos.requests.CartItemsUpdate;
 import org.codiz.onshop.entities.cart.Cart;
 import org.codiz.onshop.entities.cart.CartItems;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.cart.CartItemsRepository;
 import org.codiz.onshop.repositories.cart.CartRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
+import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +24,18 @@ public class CartImpl implements CartService {
     private final CartRepository cartRepository;
     private final ProductsJpaRepository productsRepository;
     private final CartItemsRepository cartItemsRepository;
+    private final UsersRepository usersRepository;
 
-    public Cart createCart(Cart cart) {
 
-        return cartRepository.save(cart);
-    }
 
     public Cart addItemToCart(CartItemsToAdd items) {
-        Cart cart = cartRepository.findById(items.getCartId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        Users users = usersRepository.findUsersByUserId(items.getUserId());
+        Cart cart = cartRepository.findCartByUserId(items.getUserId())
+                .orElseGet(()->{
+                    Cart newCart = new Cart();
+                    newCart.setUsers(users);
+                    return cartRepository.save(newCart);
+                });
 
         Products product = productsRepository.findById(items.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
