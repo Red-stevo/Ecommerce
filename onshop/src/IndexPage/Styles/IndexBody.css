@@ -143,6 +143,11 @@
     display: none;
 }
 
+.old-product-price {
+    text-decoration-line: line-through;
+    text-decoration-thickness: 2px;
+}
+
 
 @media screen and (max-device-width: 899px){
     .text-on-offer {

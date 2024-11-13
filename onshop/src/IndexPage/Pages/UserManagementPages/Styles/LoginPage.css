@@ -115,3 +115,61 @@
     text-decoration: none;
     font-weight: 600;
 }
+
+.sign-up-link {
+    margin-left: 1%;
+}
+
+
+
+@media screen and (max-device-width: 767px){
+    .login-page-left {
+        display: none;
+    }
+
+    .login-page-right {
+        width: 70vw;
+    }
+
+    .login-page {
+        align-content: center;
+        justify-content: center;
+    }
+}
+
+
+@media screen and (max-device-width: 559px){
+    .login-page-right {
+        width: 90vw;
+    }
+}
+
+@media screen and (max-device-width: 435px){
+    .login-page-right {
+        width: 100vw;
+    }
+}
+
+@media screen and (max-device-width: 361px){
+    .login-page-right-holder {
+        margin: 5%;
+    }
+}
+
+@media screen and (max-device-width: 321px){
+    .login-page-right-holder {
+        margin: 1%;
+    }
+
+    .login {
+        font-weight: 600;
+        font-size: 34px;
+    }
+
+    .welcome-message {
+        font-weight: 300;
+        font-size: 19px;
+    }
+}
+
+

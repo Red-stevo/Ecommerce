@@ -1,7 +1,7 @@
 import "./Styles/LoginPage.css";
 import {Button, Form, Image} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import googleIcon from "./../../../assets/google-icon.png"
+import googleIcon from "./../../../assets/google-icon.png";
 
 const LoginPage = () => {
     return (
@@ -37,9 +37,13 @@ const LoginPage = () => {
                     </Form>
                     <span className={"or-sign-in"}>or signin with</span>
                     <Image src={googleIcon} width={30} height={30} className={"google-icon"}/>
-                    <span className={"register-user-link"}>New User? <Link className={"sign-up-link"} to={"#"} >Sign Up</Link></span>
+                    <span className={"register-user-link"}>
+                        New User?
+                        <Link className={"sign-up-link"} to={"/auth/registration"}>
+                            Sign Up
+                        </Link>
+                    </span>
                 </div>
-
             </div>
         </div>
     );
