@@ -18,18 +18,18 @@ const LoginPage = () => {
             <div className={"login-page-right"}>
                 <div className={"login-page-right-holder"}>
                     <span className={"login"}>Login</span>
-                    <span className={"welcome-message"}>Welcome back, please please login to your account</span>
+                    <span className={"welcome-message"}>Welcome back, please login to your account</span>
                     <Form className={"login-form"}>
                         <Form.Group>
-                            <input id={"username"} className={"form-control username-input"} placeholder={"Username"}/>
+                            <input id={"username"} type={"text"} className={"form-control username-input"} placeholder={"Username"}/>
                         </Form.Group>
 
                         <Form.Group>
-                            < input id={"password"} className={"form-control password-input"} placeholder={"Password"}/>
+                            < input id={"password"} type={"password"} className={"form-control password-input"} placeholder={"Password"}/>
                         </Form.Group>
                         <span className={"rem-and-forgot"}>
                              <Form.Check inline label="Remember Me" name="group1" type={'checkbox'} id={`remember-me`}/>
-                            <Link to={"#"}>Forgot password?</Link>
+                            <Link className={"forgot-password-link"} to={"#"}>Forgot password?</Link>
                         </span>
                         <div className={"login-button-holder"}>
                             <Button className={"login-button"}>Login</Button>
@@ -37,7 +37,7 @@ const LoginPage = () => {
                     </Form>
                     <span className={"or-sign-in"}>or signin with</span>
                     <Image src={googleIcon} width={30} height={30} className={"google-icon"}/>
-                    <span className={"register-user-link"}>New User? <Link to={"#"} >Sign Up</Link></span>
+                    <span className={"register-user-link"}>New User? <Link className={"sign-up-link"} to={"#"} >Sign Up</Link></span>
                 </div>
 
             </div>

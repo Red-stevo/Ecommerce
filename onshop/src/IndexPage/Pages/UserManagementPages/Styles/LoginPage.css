@@ -101,9 +101,17 @@
 .google-icon {
    border-radius: 20px;
     margin-top: 2%;
+}
 
+.google-icon:hover {
+    cursor: pointer;
 }
 
 .register-user-link {
     margin-top: 5%;
+}
+
+.sign-up-link, .forgot-password-link {
+    text-decoration: none;
+    font-weight: 600;
 }
