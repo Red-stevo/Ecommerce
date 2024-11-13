@@ -4,9 +4,12 @@ import CategoryDropDown from "../Components/IndexHeader/CategoryDropDown.jsx";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import UserAccount from "../Components/IndexHeader/UserAccount.jsx";
 import "../../Styles/MainHeader.css";
-import {Outlet} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 const MainHeader = () => {
+    const navigate = useNavigate();
+
+
     return (
         <>
             <Navbar expand="md" className="main-header">

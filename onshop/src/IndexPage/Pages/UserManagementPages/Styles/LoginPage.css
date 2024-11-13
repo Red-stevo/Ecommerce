@@ -1,0 +1,175 @@
+.login-page {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login-page-left, .login-page-right  {
+    display: flex;
+    width: 50%;
+    height: 100vh;
+}
+
+.login-page-left {
+    background: linear-gradient(205deg, #e7e7e7 33%, rgba(0, 106, 255, 0.28) 48%, rgba(26, 230, 255, 0.23) 60%, rgba(243, 243, 243, 0.91) 75%,  #e7e7e7 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.login-page-right {
+    background: white;
+}
+
+.login-page-right-holder {
+    margin: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.top-message {
+    font-weight: 800;
+    font-family: Montserrat sans-serif;
+    font-size: 40px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-left: 7vw;
+    margin-top: 23vh;
+}
+
+.gambi-slogan {
+    font-family: Montserr sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-left: 7vw;
+    margin-top: 5vh;
+}
+
+.gambi {
+    margin-left: 5px;
+    font-size: 28px;
+    background: linear-gradient(45deg, #d22503 45%, #6005ea 60% , #2100ec 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.login {
+    width: 100%;
+    font-weight: 800;
+    font-size: 40px;
+    font-family: Montserr Montserrat sans-serif;
+}
+
+
+.welcome-message {
+    width: 100%;
+    font-weight: 400;
+    font-size: 24px;
+    font-family: Montserr Montserrat sans-serif;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.username-input, .password-input{
+    margin-top: 5%;
+    height: 15%;
+}
+
+.rem-and-forgot {
+    margin-top: 2%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-button-holder {
+    width: 100%;
+    margin-top: 4%;
+    display: flex;
+    justify-content: center;
+}
+
+.login-button {
+    width: 50%;
+    font-weight: 900;
+    font-size: 28px;
+}
+
+.google-icon {
+   border-radius: 20px;
+    margin-top: 2%;
+}
+
+.google-icon:hover {
+    cursor: pointer;
+}
+
+.register-user-link {
+    margin-top: 5%;
+}
+
+.sign-up-link, .forgot-password-link {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.sign-up-link {
+    margin-left: 1%;
+}
+
+
+
+@media screen and (max-device-width: 767px){
+    .login-page-left {
+        display: none;
+    }
+
+    .login-page-right {
+        width: 70vw;
+    }
+
+    .login-page {
+        align-content: center;
+        justify-content: center;
+    }
+}
+
+
+@media screen and (max-device-width: 559px){
+    .login-page-right {
+        width: 90vw;
+    }
+}
+
+@media screen and (max-device-width: 435px){
+    .login-page-right {
+        width: 100vw;
+    }
+}
+
+@media screen and (max-device-width: 361px){
+    .login-page-right-holder {
+        margin: 5%;
+    }
+}
+
+@media screen and (max-device-width: 321px){
+    .login-page-right-holder {
+        margin: 1%;
+    }
+
+    .login {
+        font-weight: 600;
+        font-size: 34px;
+    }
+
+    .welcome-message {
+        font-weight: 300;
+        font-size: 19px;
+    }
+}
+
+
