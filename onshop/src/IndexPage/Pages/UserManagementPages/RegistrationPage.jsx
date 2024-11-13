@@ -1,20 +1,19 @@
 import "./Styles/RegistrationPage.css";
 import {Button, Form, Image} from "react-bootstrap";
+import googleIcon from "./../../../assets/google-icon.png";
 
 
 const RegistrationPage = () => {
     return (
         <div className={"registration-page"}>
-           <div className={"registration-page-left"}>
-
-           </div>
+           <div className={"registration-page-left"} />
 
             <div className={"registration-page-right"}>
                 <div className={"registration-page-right-holder"}>
                     <span className={"welcome-reg"}>
                         Welcome to
                         <span className={"site-name"}>
-                            Gambi Collection!
+                            Gambi <br /> Collection!
                         </span>
                     </span>
 
@@ -22,19 +21,19 @@ const RegistrationPage = () => {
                         Create an Account
                     </span>
 
-                    <Form>
+                    <Form className={"registration-form"}>
                         <Form.Group>
-                            <input className={"form-control username-input"} placeholder={"Username"}/>
+                            <input className={"form-control reg-username-input"} placeholder={"Username"}/>
                         </Form.Group>
 
                         <Form.Group>
-                            <input className={"form-control email-input"} placeholder={"Email"}/>
+                            <input className={"form-control reg-email-input"} placeholder={"Email"}/>
                         </Form.Group>
 
-                        <Form.Group>
-                            <input className={"form-control reg-password-input"} placeholder={"Password"}/>
+                        <Form.Group className={"both-passwords-input"}>
+                            <input type={"password"} className={"form-control reg-password-input"} placeholder={"Password"}/>
 
-                            <input className={"form-control reg-confirm-password-input"} placeholder={"Confirm Password"}/>
+                            <input type={"password"} className={"form-control reg-confirm-password-input"} placeholder={"Confirm Password"}/>
                         </Form.Group>
 
 
@@ -46,11 +45,13 @@ const RegistrationPage = () => {
                     </Form>
 
                     <div className={"alternative-register"}>
-                        <span className={"sign-up-google"}>Sign Up with, </span>
-                        <Image/>
+                        <span className={"sign-up-google"}>Sign Up with, <br /></span>
+                        <Image src={googleIcon} className={'google-icon'} height={30} />
                     </div>
-                    <Form.Check inline label=" By Registering your details, you agree to our
-                    Terms of Service and Privacy Policy" name="group1" type={'checkbox'} id={`remember-me`}/>
+
+                    <Form.Check inline className={"disclaimer"}
+                                label=" By Registering your details, you agree to our
+                    Terms of Service and Privacy Policy" name="group1" type={'checkbox'} id={`disclaimer`}/>
                 </div>
             </div>
 

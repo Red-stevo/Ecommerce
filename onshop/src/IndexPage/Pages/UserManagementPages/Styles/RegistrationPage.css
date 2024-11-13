@@ -8,6 +8,7 @@
 .registration-page-left, .registration-page-right {
     width: 50%;
     height: 100%;
+    background: linear-gradient(135deg,#C3BFE3, rgba(217, 210, 210, 0.23));
 }
 
 .registration-page-left {
@@ -16,7 +17,69 @@
 }
 
 .registration-page-right-holder {
-    margin: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 8%;
     display: flex;
     flex-direction: column;
+
+}
+
+.welcome-reg {
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.site-name {
+    margin-left: 2%;
+    background: linear-gradient(45deg, #d22503 15%, #6005ea 55% , #2100ec 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.create-account {
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 5%;
+}
+
+.both-passwords-input {
+    display: flex;
+    gap: 3%;
+}
+
+.reg-username-input, .reg-email-input, .reg-password-input, .reg-confirm-password-input {
+    height: 55px;
+}
+
+.reg-and-login-buttons {
+    width: 100%;
+    display: flex;
+    gap: 10%;
+    justify-content: center;
+}
+
+.register, .sign-in {
+    font-family: Montserr sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    width: 35%;
+}
+
+.google-icon {
+    margin-left: 5%;
+}
+
+.disclaimer {
+   margin-top: 5%;
 }
