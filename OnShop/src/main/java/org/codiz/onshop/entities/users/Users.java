@@ -9,6 +9,8 @@ import lombok.Data;
 @Entity
 @Data
 public class Users {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
@@ -17,4 +19,6 @@ public class Users {
     private String userEmail;
     private String password;
     private Role role;
+
+
 }
