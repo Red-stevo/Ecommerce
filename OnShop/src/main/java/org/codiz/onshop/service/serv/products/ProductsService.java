@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Service
 public interface ProductsService {
 
     void postProduct(List<ProductCreationRequest> requests);
-    List<ProductImages> setImageUrls(List<String> images) throws IOException ;
+    List<ProductImages> setImageUrls(List<InputStream> files);
     List<ProductDocument> searchProducts(String query);
 
 }
