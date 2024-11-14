@@ -6,6 +6,7 @@ const IndexBody = () => {
     return (
         <div className={"index-body"}>
             <DiscountSection />
+
             <NewProducts />
         </div>
     );
