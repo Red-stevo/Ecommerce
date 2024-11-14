@@ -45,11 +45,10 @@ const NewProducts = () => {
                         {
                             productsList.map(({productName, productUrl, productPrice}, index) => (
                                 <div key={index} className={"product-display"}>
-                                    <Image src={productUrl} width={250} height={250} />
+                                    <Image src={productUrl} width={250} height={250} className={"categorical-product-image"}/>
                                     <Card.Body>
                                         <Card.Title>{productName}</Card.Title>
-                                        <span>KSH {productPrice}</span>
-                                        <Button className={"app-button view-categories-products"}>View Product</Button>
+                                        <span className={"product-price"}>KSH {productPrice}</span>
                                     </Card.Body>
                                 </div>
                             ))
