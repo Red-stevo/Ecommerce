@@ -1,36 +1,44 @@
 package org.codiz.onshop.controller;
 
-import org.codiz.onshop.dtos.requests.CartCreationRequest;
+import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.dtos.requests.CartItemsDeletion;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
-import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.dtos.requests.CartItemsUpdate;
+import org.codiz.onshop.entities.cart.Cart;
 import org.codiz.onshop.service.serv.cart.CartService;
-import org.codiz.onshop.service.serv.cart.CartsItemsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
 public class CartController {
 
     private final CartService cartService;
-    private final CartsItemsService cartsItemsService;
 
-    public CartController(CartService cartService, CartsItemsService cartsItemsService) {
-        this.cartService = cartService;
-        this.cartsItemsService = cartsItemsService;
+    @PostMapping("/add-to-cart")
+    public ResponseEntity<Cart> addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
+            Cart cart = cartService.addItemToCart(itemsToAdd);
+            return ResponseEntity.ok(cart);
     }
 
-   /* @PostMapping
-    public ResponseEntity<EntityResponse> createCart(CartCreationRequest request){
-        EntityResponse response = cartService.createCart(request);
-        return ResponseEntity.ok(response);
-    }*/
-
-    @PostMapping("/add/cart-item")
-    public ResponseEntity<EntityResponse> addCartItem(CartItemsToAdd itemsToAdd){
-        EntityResponse response = cartsItemsService.addItemToCart(itemsToAdd);
-        return ResponseEntity.ok(response);
+    @PutMapping("update-cart")
+    public ResponseEntity<Cart> updateItemQuantity(@RequestBody CartItemsUpdate itemsUpdate){
+        Cart cart = cartService.updateItemQuantity(itemsUpdate);
+        return ResponseEntity.ok(cart);
     }
+
+    @DeleteMapping("remove-item")
+    public ResponseEntity<Cart> removeItemFromCart(@RequestBody CartItemsDeletion deletion){
+        Cart cart = cartService.removeItemFromCart(deletion);
+        return ResponseEntity.ok(cart);
+    }
+
+    @GetMapping("/get")
+    Optional<Cart> getCartById(@RequestParam String cartId){
+        return cartService.getCartById(cartId);
+    }
+
 }

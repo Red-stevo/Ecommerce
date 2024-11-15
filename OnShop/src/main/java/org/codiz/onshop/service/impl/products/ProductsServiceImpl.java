@@ -3,10 +3,13 @@ package org.codiz.onshop.service.impl.products;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.Tika;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
+import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.repositories.products.CategoriesRepository;
 import org.codiz.onshop.repositories.products.ProductImagesRepository;
 import org.codiz.onshop.repositories.products.ProductSearchRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
@@ -17,8 +20,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -29,12 +35,16 @@ public class ProductsServiceImpl implements ProductsService {
     private final ModelMapper modelMapper;
     private final ProductImagesRepository productImagesRepository;
     private final ProductSearchRepository searchRepository;
+    private final CategoriesRepository categoriesRepository;
 
     @Transactional
     public void postProduct(List<ProductCreationRequest> requests) {
         try {
             List<Products> products = requests.stream().map(request -> {
                 Products product = new Products();
+
+
+
                 product.setProductName(request.getProductName());
                 product.setProductDescription(request.getProductDescription());
                 product.setProductPrice(request.getProductPrice());
@@ -44,11 +54,29 @@ public class ProductsServiceImpl implements ProductsService {
                 List<ProductImages> images = setImageUrls(request.getProductUrls());
                 product.setProductImages(images); // Link images to the product
 
+                List<Categories> categories = request.getCategoryName().stream().map(
+                        categoryName->{
+                            Optional<Categories> existingCategory = categoriesRepository
+                                    .findCategoriesByCategoryNameIgnoreCase(categoryName);
+
+                            return existingCategory.orElseGet(() -> {
+                                Categories newCategory = new Categories();
+                                newCategory.setCategoryName(categoryName);
+                                return categoriesRepository.save(newCategory);  // Save and return the new category
+                            });
+                        }
+                ).toList();
+                product.setCategories(categories);
+                categories.forEach(categories1 -> categories1.getProducts().add(product));
+
                 return product;
             }).toList();
 
             // Save products with images
-            productsRepository.saveAll(products);
+            products.forEach(product -> {
+                productsRepository.save(product); // Cascade saves product images if configured correctly
+                product.getProductImages().forEach(image -> image.getProducts().add(product)); // Maintain bidirectional relationship
+            });
 
             // Index products in MeiliSearch
             List<ProductDocument> productsSearchList = products.stream()
@@ -63,14 +91,7 @@ public class ProductsServiceImpl implements ProductsService {
 
             searchRepository.saveAll(productsSearchList);
 
-            /*// Create response
-            EntityCreationResponse res = new EntityCreationResponse();
-            res.setMessage("Created products successfully");
-            res.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            res.setStatus(HttpStatus.OK);
 
-            log.info("Successfully created and indexed products.");
-            return res;*/
 
         } catch (Exception e) {
             log.error("Error during product creation: " + e.getMessage(), e);
@@ -78,41 +99,77 @@ public class ProductsServiceImpl implements ProductsService {
         }
     }
 
-    @Transactional
-    public List<ProductImages> setImageUrls(List<String> images) {
-        List<ProductImages> imagesList = new ArrayList<>();
-        for (String image : images) {
-            ProductImages productImage = getProductImages(image);
-            imagesList.add(productImage);
-
-            /*} catch (IOException e) {
-                log.error("Error uploading media file: " + e.getMessage(), e);
-                throw new RuntimeException("Error uploading media file", e);
-            }*/
-        }
-
-        // Save images to repository and return the list
-        return productImagesRepository.saveAll(imagesList);
-    }
 
     @NotNull
-    private static ProductImages getProductImages(String image) {
-        ProductImages productImage = new ProductImages();
-        //String url;
+    public List<ProductImages> setImageUrls(List<InputStream> files) {
+        List<ProductImages> productImages = new ArrayList<>();
 
-        /*try {
-            *//*if (isImage(image)) {*//*
-                url = cloudinaryService.uploadImage(image);
-            } else if (isVideo(image)) {
-                url = cloudinaryService.uploadVideo(image);
-            } else {
-                log.warn("Unsupported file type for image/video upload.");
-                continue;
-            }*/
-        productImage.setImageUrl(image);
-        return productImage;
+        for (InputStream file : files) {
+            try {
+                ProductImages productImage = getProductImage(file);
+                if (productImage != null) {
+                    productImages.add(productImage);
+                }
+            } catch (IOException e) {
+                // Handle the exception appropriately
+                throw new RuntimeException("Error uploading file: ");
+            }
+        }
+        return productImages;
     }
 
+    private ProductImages getProductImage(InputStream file) throws IOException {
+
+        ProductImages productImage = new ProductImages();
+        String url;
+
+        if (file != null) {
+            if (isImage(file)) {
+                url = cloudinaryService.uploadImage((MultipartFile) file);
+                productImage.setImageUrl(url);
+            } else if (isVideo(file)) {
+                url = cloudinaryService.uploadVideo((MultipartFile) file);
+                productImage.setImageUrl(url);
+            } else {
+                log.warn("Unsupported file type for image/video upload: ");
+                return null; // Return null for unsupported types
+            }
+            return productImage;
+        }else {
+            return null;
+        }
+
+
+    }
+
+    private boolean isVideo(InputStream fileStream) {
+        Tika tika = new Tika();
+        String mimeType;
+
+        try {
+            mimeType = tika.detect(fileStream);
+        } catch (IOException e) {
+            log.error("Error detecting file type", e);
+            return false;
+        }
+
+        return mimeType.equals("video/mp4");
+    }
+
+
+    private boolean isImage(InputStream fileStream) {
+        Tika tika = new Tika();
+        String mimeType;
+
+        try {
+            mimeType = tika.detect(fileStream);
+        } catch (IOException e) {
+            log.error("Error detecting file type", e);
+            return false;
+        }
+
+        return mimeType.equals("image/jpeg") || mimeType.equals("image/png");
+    }
 
     public List<ProductDocument> searchProducts(String query) {
 
@@ -125,13 +182,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    private boolean isVideo(MultipartFile file) {
-        return file.getOriginalFilename().endsWith(".mp4");
-    }
 
-    private boolean isImage(MultipartFile file) {
-        return file.getOriginalFilename().endsWith(".jpg");
-    }
 
 
 }
