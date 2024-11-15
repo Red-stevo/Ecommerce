@@ -1,0 +1,16 @@
+.product-menu-holder {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+.product-category-menu {
+    width: 100vw;
+    height: 40px;
+    position: fixed;
+    z-index: 40;
+    background-color: black;
+}
+
+.product-display-section {
+    padding-top:40px;
+}

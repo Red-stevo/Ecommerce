@@ -4,7 +4,6 @@ import MainHeader from "./IndexPage/Pages/IndexPage/MainHeader.jsx";
 import IndexBody from "./IndexPage/Pages/IndexPage/IndexBody.jsx";
 import LoginPage from "./IndexPage/Pages/UserManagementPages/LoginPage.jsx";
 import RegistrationPage from "./IndexPage/Pages/UserManagementPages/RegistrationPage.jsx";
-import CategoricalProductsDisplay from "./IndexPage/Pages/ProductsDisplayPage/CategoricalProductsDisplay.jsx";
 
 const App = () => {
   return (
@@ -12,7 +11,6 @@ const App = () => {
           <Routes>
               <Route path={"/"} element={<MainHeader />}>
                  <Route path={"/"} element={<IndexBody />}/>
-                  <Route path={"/home/products"} element={<CategoricalProductsDisplay />}/>
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />

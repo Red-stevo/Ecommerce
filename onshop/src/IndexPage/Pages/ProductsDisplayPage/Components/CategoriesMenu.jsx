@@ -17,9 +17,7 @@ const productCategory = [
 
 const CategoriesMenu = () => {
     return (
-
-
-        <div>
+        <div className={"category-menu"}>
 
         </div>
     );
