@@ -7,8 +7,8 @@ import org.codiz.onshop.entities.cart.Status;
 import java.util.List;
 
 @Data
-public class CartCreationRequest {
-    private String username;
-    private Status status;
-    private List<CartItems> cartItems;
+public class CartItemsUpdate {
+    private String cartId;
+    private String cartItemId;
+    private int quantity;
 }

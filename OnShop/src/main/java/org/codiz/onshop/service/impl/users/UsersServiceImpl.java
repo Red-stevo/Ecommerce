@@ -1,6 +1,7 @@
 package org.codiz.onshop.service.impl.users;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
@@ -33,8 +34,11 @@ public class UsersServiceImpl implements UsersService {
 
         if (!userExists(request.getUsername(),request.getUserEmail())){
             user.setUsername(request.getUsername());
-            user.setPassword(request.getPassword());
-            user.setUserEmail(request.getUserEmail());
+            final String password = request.getPassword();
+            user.setPassword(password);
+            @Email
+            final String email = request.getUserEmail();
+            user.setUserEmail(email);
             user.setPhoneNumber(request.getPhoneNumber());
             user.setRole(Role.valueOf(String.valueOf(request.getRole())));
 
