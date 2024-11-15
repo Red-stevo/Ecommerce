@@ -1,7 +1,6 @@
 import "./Styles/CategoricalProductsDisplay.css";
 
 
-
 const products = [
     {productId:1,productName:"Unscented", productPrice:600, productRating:35.5, productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.yuIhGQGVmD9pCQd22TKOWAHaHd%26pid%3DApi&f=1&ipt=3426d38adab2bfdeef0ee64ca0bd62888044ff3d5e318a419968579f1dbe6d63&ipo=images"},
     {productId:2,productName:"Cosmetics", productPrice:1700, productRating:56.5, productUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.f6brV2SJ0PX7OFpqNrcaCgHaFH%26pid%3DApi&f=1&ipt=333683c40fbe5857d4b2a053290b9764b0db8506d5682f23c26de523c8701675&ipo=images"},

@@ -2,7 +2,7 @@
     position: fixed;
     top: 0;
     width: 100vw;
-    height: 8vh;
+    height: 50px;
     background-color: rgb(65, 175, 231);
     color: whitesmoke;
     border-bottom: 1px #8f8d8d solid;
@@ -50,7 +50,7 @@
     margin: 2px;
     align-content: end;
     padding: 10px;
-    height: 8vh;
+    height: 50px;
     background-color: transparent;
 }
 
@@ -62,7 +62,7 @@
 .cart-button {
     margin-top: 4px;
     flex-direction: row;
-    height: 8vh;
+    height: 50px;
 }
 
 .user-account-button:hover, .cart-button:hover {
@@ -94,7 +94,7 @@
 
 .pages-body {
     width: 100%;
-    margin-top: 8vh;
+    margin-top: 50px;
     min-height: 100vh;
     background: linear-gradient(to bottom, rgba(65, 175, 231, 0.84), rgba(99, 44, 226, 0.72));
 }
@@ -102,7 +102,7 @@
 
 @media screen and (max-device-width: 899px){
     .main-header {
-        height: 9vh;
+        height: 50px;
         padding: 5px;
         z-index: 50;
     }
@@ -113,7 +113,7 @@
     }
 
     .pages-body {
-        margin-top: 9vh;
+        margin-top: 50px;
     }
 }
 
@@ -122,12 +122,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 767px){
     .main-header {
-        height: 9vh;
+        height: 50px;
         z-index: 50;
     }
 
     .pages-body {
-        margin-top: 9vh;
+        margin-top: 50px;
     }
 
     .main-header-content-holder{
@@ -196,12 +196,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 350px){
     .main-header {
-        height: 15vh;
+        height: 50px;
         padding: 5px;
         z-index: 50;
     }
     .pages-body {
-        margin-top: 15vh;
+        margin-top: 50px;
     }
 
 }
