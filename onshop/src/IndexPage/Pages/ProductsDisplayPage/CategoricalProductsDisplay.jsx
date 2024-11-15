@@ -1,4 +1,5 @@
 import "./Styles/CategoricalProductsDisplay.css";
+import CategoriesMenu from "./Components/CategoriesMenu.jsx";
 
 
 const products = [
@@ -28,9 +29,7 @@ const products = [
 const CategoricalProductsDisplay = () => {
     return (
         <div className={"product-menu-holder"}>
-            <div className={"product-category-menu"}>
-                Menu
-            </div>
+            <CategoriesMenu />
             <div className={"product-display-section"}>
                 Products
             </div>

@@ -1,16 +1,61 @@
 .product-menu-holder {
+    display: flex;
+    flex-direction: row;
     width: 100vw;
     min-height: 100vh;
+
 }
 
-.product-category-menu {
-    width: 100vw;
-    height: 40px;
-    position: fixed;
-    z-index: 40;
-    background-color: black;
-}
 
 .product-display-section {
     padding-top:40px;
 }
+
+.product-category-header {
+    display: flex;
+    width: 100vw;
+    position: fixed;
+    height: 40px;
+    z-index: 40;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+
+.product-category-menu {
+    display: flex;
+    width: 95vw;
+    height: 40px;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+.categories {
+    color: black;
+    border: transparent 1px solid;
+}
+
+.categories:hover {
+    border: #8f8d8d 1px solid;
+}
+
+.category-icon {
+    display: none;
+}
+
+.category-name {
+    font-size: 18px;
+    font-family: Montserr Montserrat sans-serif;
+    border: transparent 1px solid;
+    margin: 2px;
+    padding: 3px;
+}
+
+.more-categories {
+    font-size: 26px;
+    height: 100%;
+    cursor: pointer;
+}
+
+
+
