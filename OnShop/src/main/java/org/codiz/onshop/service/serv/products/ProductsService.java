@@ -15,7 +15,6 @@ import java.util.List;
 public interface ProductsService {
 
     void postProduct(List<ProductCreationRequest> requests);
-    List<ProductImages> setImageUrls(List<InputStream> files);
     List<ProductDocument> searchProducts(String query);
 
 }

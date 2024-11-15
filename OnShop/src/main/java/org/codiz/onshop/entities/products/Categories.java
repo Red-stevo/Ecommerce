@@ -13,6 +13,7 @@ public class Categories {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String categoryId;
     private String categoryName;
+    private String categoryIcon;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Products> products = new ArrayList<>();

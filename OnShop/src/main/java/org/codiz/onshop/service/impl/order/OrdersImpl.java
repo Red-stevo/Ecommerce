@@ -16,6 +16,7 @@ import org.codiz.onshop.repositories.order.OrdersItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
+import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrdersImpl {
+public class OrdersImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrdersItemsRepository ordersItemsRepository;
     private final UsersRepository usersRepository;
@@ -114,12 +115,12 @@ public class OrdersImpl {
     }
 
     public Map<LocalDate, List<OrdersResponse>> getAllOrdersGroupedByDate() {
-        List<Orders> ordersList = ordersRepository.findAll(); // Fetch all orders
+        List<Orders> ordersList = ordersRepository.findAll();
 
-        // Initialize the map to group by date
+
         Map<LocalDate, List<OrdersResponse>> ordersByDate = new TreeMap<>(Collections.reverseOrder());
 
-        // Iterate through each order
+
         for (Orders order : ordersList) {
             OrdersResponse ordersResponse = new OrdersResponse();
             ordersResponse.setOrderDate(order.getCreatedOn());
@@ -137,7 +138,6 @@ public class OrdersImpl {
             }
             ordersResponse.setItemsList(itemsList);
 
-            // Group by date
             LocalDate orderDate = order.getCreatedOn().toLocalDateTime().toLocalDate();
             ordersByDate.computeIfAbsent(orderDate, k -> new ArrayList<>()).add(ordersResponse);
         }

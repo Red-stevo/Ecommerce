@@ -1,5 +1,7 @@
 package org.codiz.onshop.service.impl.products;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,6 +33,7 @@ public class ProductsServiceImpl implements ProductsService {
     private final ProductsJpaRepository productsRepository;
     private final CloudinaryService cloudinaryService;
     private final ModelMapper modelMapper;
+    private final Cloudinary cloudinary;
     private final ProductImagesRepository productImagesRepository;
     private final ProductSearchRepository searchRepository;
     private final CategoriesRepository categoriesRepository;
@@ -54,18 +55,23 @@ public class ProductsServiceImpl implements ProductsService {
                 List<ProductImages> images = setImageUrls(request.getProductUrls());
                 product.setProductImages(images); // Link images to the product
 
-                List<Categories> categories = request.getCategoryName().stream().map(
-                        categoryName->{
-                            Optional<Categories> existingCategory = categoriesRepository
-                                    .findCategoriesByCategoryNameIgnoreCase(categoryName);
+                List<Categories> categories = request.getCategoryCreationRequestList().stream().map(request1 -> {
+                    Optional<Categories> existingCategory = categoriesRepository
+                            .findCategoriesByCategoryNameIgnoreCase(request1.getCategoryName());
 
-                            return existingCategory.orElseGet(() -> {
-                                Categories newCategory = new Categories();
-                                newCategory.setCategoryName(categoryName);
-                                return categoriesRepository.save(newCategory);  // Save and return the new category
-                            });
+                    return existingCategory.orElseGet(() -> {
+                        Categories newCategory = new Categories();
+                        newCategory.setCategoryName(request1.getCategoryName());
+
+                        // Upload category icon to Cloudinary
+                        if (request1.getCategoryIcon() != null) {
+                            String iconUrl = uploadIconToCloudinary(request1.getCategoryIcon());
+                            newCategory.setCategoryIcon(iconUrl); // Store the icon URL
                         }
-                ).toList();
+
+                        return categoriesRepository.save(newCategory); // Save and return the new category
+                    });
+                }).toList();
                 product.setCategories(categories);
                 categories.forEach(categories1 -> categories1.getProducts().add(product));
 
@@ -101,10 +107,10 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @NotNull
-    public List<ProductImages> setImageUrls(List<InputStream> files) {
+    private List<ProductImages> setImageUrls(List<MultipartFile> files) {
         List<ProductImages> productImages = new ArrayList<>();
 
-        for (InputStream file : files) {
+        for (MultipartFile file : files) {
             try {
                 ProductImages productImage = getProductImage(file);
                 if (productImage != null) {
@@ -118,7 +124,7 @@ public class ProductsServiceImpl implements ProductsService {
         return productImages;
     }
 
-    private ProductImages getProductImage(InputStream file) throws IOException {
+    private ProductImages getProductImage(MultipartFile file) throws IOException {
 
         ProductImages productImage = new ProductImages();
         String url;
@@ -142,33 +148,16 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-    private boolean isVideo(InputStream fileStream) {
-        Tika tika = new Tika();
-        String mimeType;
-
-        try {
-            mimeType = tika.detect(fileStream);
-        } catch (IOException e) {
-            log.error("Error detecting file type", e);
-            return false;
-        }
-
-        return mimeType.equals("video/mp4");
+    private boolean isVideo(MultipartFile fileStream) {
+        return Objects.requireNonNull(fileStream.getOriginalFilename()).endsWith(".mp4");
     }
 
 
-    private boolean isImage(InputStream fileStream) {
-        Tika tika = new Tika();
-        String mimeType;
-
-        try {
-            mimeType = tika.detect(fileStream);
-        } catch (IOException e) {
-            log.error("Error detecting file type", e);
-            return false;
-        }
-
-        return mimeType.equals("image/jpeg") || mimeType.equals("image/png");
+    private boolean isImage(MultipartFile fileStream) {
+        return Objects.requireNonNull(fileStream.getOriginalFilename()).toLowerCase().endsWith(".jpg")
+                || Objects.requireNonNull(fileStream.getOriginalFilename()).toLowerCase().endsWith(".png")
+                || Objects.requireNonNull(fileStream.getOriginalFilename()).toLowerCase().endsWith(".gif")
+                || Objects.requireNonNull(fileStream.getOriginalFilename()).toLowerCase().endsWith(".jpeg");
     }
 
     public List<ProductDocument> searchProducts(String query) {
@@ -180,6 +169,16 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+
+    private String uploadIconToCloudinary(MultipartFile iconImage) {
+        try {
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(iconImage, ObjectUtils.emptyMap());
+            return (String) uploadResult.get("url"); // Extract and return the URL
+        } catch (IOException e) {
+            log.error("Error uploading icon to Cloudinary: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to upload category icon", e);
+        }
+    }
 
 
 
