@@ -21,6 +21,8 @@ public class ProductCreationRequest {
 
     private String aboutProduct;
 
+    private double discount;
+
     /*private List<String> productUrls;*/
     private List<MultipartFile> productUrls;
 

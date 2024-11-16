@@ -154,7 +154,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     public List<ProductsPageResponse> productsPageResponseList(Pageable pageable) {
-        List<Products> products = productsRepository.findAll(pageable).getContent();
+        Page<Products> products = productsRepository.findAll(pageable);
 
         List<ProductsPageResponse> productsPageResponses = new ArrayList<>();
 
@@ -162,6 +162,14 @@ public class ProductsServiceImpl implements ProductsService {
             ProductsPageResponse response = new ProductsPageResponse();
             response.setProductName(product.getProductName());
             response.setProductId(product.getProductId());
+            response.setProductPrice(product.getProductPrice());
+
+            double discount = product.getDiscount();
+
+            double discountedPrice = product.getProductPrice() - discount;
+            double percentageDiscount = (discountedPrice/product.getProductPrice())*100.0;
+            response.setDiscountedPrice(discountedPrice);
+            response.setPercentageDiscountedPrice(percentageDiscount);
 
             if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
                 response.setProductImagesUrls(product.getProductImages().get(0).getImageUrl());
@@ -194,7 +202,12 @@ public class ProductsServiceImpl implements ProductsService {
         specificProductResponse.setColor(products.getColor());
         specificProductResponse.setBrand(products.getBrand());
         specificProductResponse.setAboutProduct(products.getAboutProduct());
-        ;
+
+        double discount = products.getDiscount();
+        double discountedPrice = products.getProductPrice() - discount;
+        specificProductResponse.setDiscountedPrice(discountedPrice);
+
+
         List<String> imageUrls = products.getProductImages().stream()
                 .map(ProductImages::getImageUrl)
                 .toList();
@@ -340,6 +353,7 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setProductPrice(updateRequest.getProductPrice());
         existingProduct.setQuantity(updateRequest.getQuantity());
         existingProduct.setAboutProduct(updateRequest.getAboutProduct());
+        existingProduct.setDiscount(updateRequest.getDiscount());
         existingProduct.setBrand(updateRequest.getBrand());
         existingProduct.setColor(updateRequest.getColor());
     }

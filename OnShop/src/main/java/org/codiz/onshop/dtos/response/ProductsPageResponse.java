@@ -9,5 +9,8 @@ public class ProductsPageResponse {
     private String productName;
     private int ratings;
     private String productImagesUrls;
+    private double productPrice;
+    private double discountedPrice;
+    private double percentageDiscountedPrice;
 
 }

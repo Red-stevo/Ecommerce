@@ -17,4 +17,5 @@ public class SpecificProductResponse {
     private String brand;
     private String aboutProduct;
     private Map<Integer,Double> percentageRating;
+    private double discountedPrice;
 }
