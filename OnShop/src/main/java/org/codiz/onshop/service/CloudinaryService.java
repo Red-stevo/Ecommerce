@@ -43,4 +43,13 @@ public class CloudinaryService {
                         "unique_filename", false));
         return upload.get("url").toString();
     }
+
+    public boolean deleteImage(String publicId) throws IOException {
+        Map<String, Object> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        return "ok".equals(result.get("status"));
+    }
+
+    private String extractPublicIdFromUrl(String url) {
+        return url.substring(url.lastIndexOf("/") + 1,url.lastIndexOf("."));
+    }
 }

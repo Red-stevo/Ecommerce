@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
-import org.codiz.onshop.dtos.requests.ProductDocument;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
@@ -26,6 +25,7 @@ import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -61,36 +61,13 @@ public class ProductsServiceImpl implements ProductsService {
                 Products product = new Products();
 
 
-
-                product.setProductName(request.getProductName());
-                product.setProductDescription(request.getProductDescription());
-                product.setProductPrice(request.getProductPrice());
-                product.setQuantity(request.getQuantity());
-                product.setAboutProduct(request.getAboutProduct());
-                product.setBrand(request.getBrand());
-                product.setColor(request.getColor());
+                settingProduct(request, product);
 
                 // Set product images
                 List<ProductImages> images = setImageUrls(request.getProductUrls());
                 product.setProductImages(images); // Link images to the product
 
-                List<Categories> categories = request.getCategoryCreationRequestList().stream().map(request1 -> {
-                    Optional<Categories> existingCategory = categoriesRepository
-                            .findCategoriesByCategoryNameIgnoreCase(request1.getCategoryName());
-
-                    return existingCategory.orElseGet(() -> {
-                        Categories newCategory = new Categories();
-                        newCategory.setCategoryName(request1.getCategoryName());
-
-                        // Upload category icon to Cloudinary
-                        if (request1.getCategoryIcon() != null) {
-                            String iconUrl = uploadIconToCloudinary(request1.getCategoryIcon());
-                            newCategory.setCategoryIcon(iconUrl); // Store the icon URL
-                        }
-
-                        return categoriesRepository.save(newCategory); // Save and return the new category
-                    });
-                }).toList();
+                List<Categories> categories= settingCategory(request);
                 product.setCategories(categories);
                 categories.forEach(categories1 -> categories1.getProducts().add(product));
 
@@ -245,6 +222,127 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+    /*
+    * Method to update the products
+    * */
+
+    @Transactional
+    @CacheEvict(value = "products", key = "#productId")
+    public EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest) {
+        try {
+
+            Products existingProduct = productsRepository.findProductsByProductId(productId).orElseThrow(
+                    () -> new RuntimeException("The product with ID " + productId + " does not exist")
+            );
+
+            // Update product details
+            settingProduct(updateRequest, existingProduct);
+
+            // Update product images
+            if (updateRequest.getProductUrls() != null && !updateRequest.getProductUrls().isEmpty()) {
+                // Clear existing images
+                for (ProductImages productImages:existingProduct.getProductImages()) {
+                    String url = productImages.getImageUrl();
+                    cloudinaryService.deleteImage(url);
+                }
+                existingProduct.getProductImages().forEach(image -> image.getProducts().remove(existingProduct));
+                existingProduct.getProductImages().clear();
+
+                // Add new images
+                List<ProductImages> updatedImages = setImageUrls(updateRequest.getProductUrls());
+                updatedImages.forEach(image -> image.getProducts().add(existingProduct));
+                existingProduct.setProductImages(updatedImages);
+            }
+
+            // Update categories
+            if (updateRequest.getCategoryCreationRequestList() != null) {
+                //settingCategory(updateRequest);
+                List<Categories> updatedCategories = settingCategory(updateRequest);
+
+                // Clear existing categories
+                existingProduct.getCategories().forEach(category -> category.getProducts().remove(existingProduct));
+                existingProduct.getCategories().clear();
+
+                // Add new categories
+                updatedCategories.forEach(category -> category.getProducts().add(existingProduct));
+                existingProduct.setCategories(updatedCategories);
+            }
+
+            // Save the updated product
+            productsRepository.save(existingProduct);
+
+            // Response
+            EntityResponse response = new EntityResponse();
+            response.setMessage("Successfully updated the product");
+            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            response.setStatus(HttpStatus.OK);
+
+            return response;
+
+        } catch (Exception e) {
+            log.error("Error during product update: " + e.getMessage(), e);
+            throw new RuntimeException("Error during product update", e);
+        }
+    }
+
+
+
+    /*
+    * method to delete a product
+    * */
+
+    public String deleteProduct(String productId){
+        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                ()->new RuntimeException("The product with ID " + productId + " does not exist")
+        );
+
+
+        for (ProductImages productImages:products.getProductImages()) {
+            try {
+                String url = productImages.getImageUrl();
+                cloudinaryService.deleteImage(url);
+            }catch (IOException e){
+                throw new RuntimeException("could not delete image from cloudinary");
+            }
+
+        }
+
+        productsRepository.delete(products);
+        return "product successfully deleted";
+
+    }
+
+    private List<Categories> settingCategory(ProductCreationRequest updateRequest) {
+        // Upload category icon if provided
+        return updateRequest.getCategoryCreationRequestList().stream()
+                .map(request -> {
+                    Optional<Categories> existingCategory = categoriesRepository
+                            .findCategoriesByCategoryNameIgnoreCase(request.getCategoryName());
+
+                    return existingCategory.orElseGet(() -> {
+                        Categories newCategory = new Categories();
+                        newCategory.setCategoryName(request.getCategoryName());
+
+                        // Upload category icon if provided
+                        if (request.getCategoryIcon() != null) {
+                            String iconUrl = uploadIconToCloudinary(request.getCategoryIcon());
+                            newCategory.setCategoryIcon(iconUrl);
+                        }
+
+                        return categoriesRepository.save(newCategory);
+                    });
+                }).toList();
+    }
+
+    private void settingProduct(ProductCreationRequest updateRequest, Products existingProduct) {
+        existingProduct.setProductName(updateRequest.getProductName());
+        existingProduct.setProductDescription(updateRequest.getProductDescription());
+        existingProduct.setProductPrice(updateRequest.getProductPrice());
+        existingProduct.setQuantity(updateRequest.getQuantity());
+        existingProduct.setAboutProduct(updateRequest.getAboutProduct());
+        existingProduct.setBrand(updateRequest.getBrand());
+        existingProduct.setColor(updateRequest.getColor());
+    }
 
 
     public int getAverageRating(String productId) {
