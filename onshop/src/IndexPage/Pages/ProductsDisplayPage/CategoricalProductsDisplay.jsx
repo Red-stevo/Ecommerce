@@ -1,5 +1,8 @@
 import "./Styles/CategoricalProductsDisplay.css";
 import CategoriesMenu from "./Components/CategoriesMenu.jsx";
+import {Image} from "react-bootstrap";
+import StarRating from "./Components/StarRating.jsx";
+
 
 
 const products = [
@@ -31,7 +34,19 @@ const CategoricalProductsDisplay = () => {
         <div className={"product-menu-holder"}>
             <CategoriesMenu />
             <div className={"product-display-section"}>
-                Products
+                {products.map(
+                ({productId, productName,
+                     productPrice,productRating,
+                     productUrl}, index) => (
+                    <div className={"product-gen-display"} key={index}>
+                        <Image src={productUrl} alt={productName} height={150} width={150} />
+                        <div>
+                            <span>{productName}</span> |
+                            <span>Ksh {productPrice}</span>
+                        </div>
+                        <StarRating active={true} />
+                    </div>
+                ))}
             </div>
         </div>
     );

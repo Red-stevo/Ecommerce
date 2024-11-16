@@ -13,7 +13,6 @@ const productCategory = [
 ];
 
 
-
 const CategoriesMenu = () => {
 
     return (
