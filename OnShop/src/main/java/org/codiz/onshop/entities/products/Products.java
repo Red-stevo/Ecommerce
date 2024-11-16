@@ -2,6 +2,7 @@ package org.codiz.onshop.entities.products;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.codiz.onshop.repositories.products.ProductRatingsRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class Products {
     private String productDescription;
     private float productPrice;
     private Integer quantity;
+
+
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
@@ -39,12 +42,7 @@ public class Products {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductRatings> ratings = new ArrayList<>();
 
-    public double getAverageRating() {
-        return ratings.stream()
-                .mapToInt(ProductRatings::getRating)
-                .average()
-                .orElse(0.0);
-    }
+
 
 
 }

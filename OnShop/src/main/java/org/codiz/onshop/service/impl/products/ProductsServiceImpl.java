@@ -11,6 +11,7 @@ import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.ProductRatings;
@@ -165,7 +166,46 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+/*
+* Method to get products for the products page
+* */
 
+
+    public List<ProductsPageResponse> productsPageResponseList(Pageable pageable) {
+        List<Products> products = productsRepository.findAll(pageable).getContent();
+
+        List<ProductsPageResponse> productsPageResponses = new ArrayList<>();
+
+        for (Products product : products) {
+            ProductsPageResponse response = new ProductsPageResponse();
+            response.setProductName(product.getProductName());
+            response.setProductId(product.getProductId());
+
+            if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
+                response.setProductImagesUrls(product.getProductImages().get(0).getImageUrl());
+            }
+
+            response.setRatings(getAverageRating(product.getProductId()));
+            productsPageResponses.add(response);
+        }
+        return productsPageResponses;
+    }
+
+
+
+    /*
+    * method to return details of a specific product
+    *
+    * */
+
+
+
+
+    public int getAverageRating(String productId) {
+
+        Double averageRating = ratingsRepository.findAverageRatingByProductId(productId);
+        return averageRating != null ? (int) Math.round(averageRating) : 0;
+    }
 
     @NotNull
     private List<ProductImages> setImageUrls(List<MultipartFile> files) {
@@ -184,6 +224,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
         return productImages;
     }
+
 
     private ProductImages getProductImage(MultipartFile file) throws IOException {
 
