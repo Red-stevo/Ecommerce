@@ -5,6 +5,8 @@ import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 @Data
 @Entity
 public class Orders {
@@ -19,4 +21,6 @@ public class Orders {
     private double totalAmount;
     private String officeAddress;
     private String doorStepAddress;
+    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<OrderItems> orderItems;
 }
