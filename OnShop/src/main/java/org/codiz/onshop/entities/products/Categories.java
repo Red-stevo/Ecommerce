@@ -16,5 +16,5 @@ public class Categories {
     private String categoryIcon;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Products> products = new ArrayList<>();
+    private List<Products> products;
 }

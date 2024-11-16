@@ -3,9 +3,9 @@ package org.codiz.onshop.service.impl.products;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tika.Tika;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
 import org.codiz.onshop.entities.products.Categories;
@@ -13,18 +13,21 @@ import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.repositories.products.CategoriesRepository;
 import org.codiz.onshop.repositories.products.ProductImagesRepository;
-import org.codiz.onshop.repositories.products.ProductSearchRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -35,10 +38,10 @@ public class ProductsServiceImpl implements ProductsService {
     private final ModelMapper modelMapper;
     private final Cloudinary cloudinary;
     private final ProductImagesRepository productImagesRepository;
-    private final ProductSearchRepository searchRepository;
     private final CategoriesRepository categoriesRepository;
 
     @Transactional
+    @Cacheable(value = "products")
     public void postProduct(List<ProductCreationRequest> requests) {
         try {
             List<Products> products = requests.stream().map(request -> {
@@ -84,18 +87,6 @@ public class ProductsServiceImpl implements ProductsService {
                 product.getProductImages().forEach(image -> image.getProducts().add(product)); // Maintain bidirectional relationship
             });
 
-            // Index products in MeiliSearch
-            List<ProductDocument> productsSearchList = products.stream()
-                    .map(product -> {
-                        ProductDocument searchProduct = modelMapper.map(product, ProductDocument.class);
-                        searchProduct.setProductImageUrl(product.getProductImages().stream()
-                                .map(ProductImages::getImageUrl)
-                                .toList());
-                        return searchProduct;
-                    })
-                    .toList();
-
-            searchRepository.saveAll(productsSearchList);
 
 
 
@@ -104,6 +95,28 @@ public class ProductsServiceImpl implements ProductsService {
             throw new RuntimeException("Error during product creation", e);
         }
     }
+
+
+    @Cacheable(value = "products", key = "#query + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
+    public Page<Products> searchProducts(String query, Pageable pageable) {
+        Page<Products> productPage = productsRepository
+                .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable);
+
+        Page<Categories> categoryPage = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(query, pageable);
+
+        List<Products> categoryProducts = categoryPage.getContent().stream()
+                .flatMap(category -> category.getProducts().stream())
+                .toList();
+
+        List<Products> combinedResults = Stream.concat(
+                productPage.getContent().stream(),
+                categoryProducts.stream()
+        ).distinct().collect(Collectors.toList());
+
+
+        return new PageImpl<>(combinedResults, pageable, combinedResults.size());
+    }
+
 
 
     @NotNull
@@ -117,7 +130,6 @@ public class ProductsServiceImpl implements ProductsService {
                     productImages.add(productImage);
                 }
             } catch (IOException e) {
-                // Handle the exception appropriately
                 throw new RuntimeException("Error uploading file: ");
             }
         }
@@ -138,7 +150,7 @@ public class ProductsServiceImpl implements ProductsService {
                 productImage.setImageUrl(url);
             } else {
                 log.warn("Unsupported file type for image/video upload: ");
-                return null; // Return null for unsupported types
+                return null;
             }
             return productImage;
         }else {
@@ -160,11 +172,6 @@ public class ProductsServiceImpl implements ProductsService {
                 || Objects.requireNonNull(fileStream.getOriginalFilename()).toLowerCase().endsWith(".jpeg");
     }
 
-    public List<ProductDocument> searchProducts(String query) {
-
-        return searchRepository.search(query);
-
-    }
 
 
 
