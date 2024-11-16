@@ -19,7 +19,11 @@ public class Products {
     @Column(length = 500)
     private String productDescription;
     private float productPrice;
+    private String color;
+    private String brand;
     private Integer quantity;
+    @Lob
+    private String aboutProduct;
 
 
 

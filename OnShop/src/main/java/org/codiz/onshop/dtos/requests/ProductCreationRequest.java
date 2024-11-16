@@ -15,6 +15,12 @@ public class ProductCreationRequest {
 
     private float productPrice;
 
+    private String brand;
+
+    private String color;
+
+    private String aboutProduct;
+
     /*private List<String> productUrls;*/
     private List<MultipartFile> productUrls;
 

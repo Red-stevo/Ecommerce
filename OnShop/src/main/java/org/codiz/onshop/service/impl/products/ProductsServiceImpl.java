@@ -12,6 +12,7 @@ import org.codiz.onshop.dtos.requests.ProductDocument;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
+import org.codiz.onshop.dtos.response.SpecificProductResponse;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.ProductRatings;
@@ -65,6 +66,9 @@ public class ProductsServiceImpl implements ProductsService {
                 product.setProductDescription(request.getProductDescription());
                 product.setProductPrice(request.getProductPrice());
                 product.setQuantity(request.getQuantity());
+                product.setAboutProduct(request.getAboutProduct());
+                product.setBrand(request.getBrand());
+                product.setColor(request.getColor());
 
                 // Set product images
                 List<ProductImages> images = setImageUrls(request.getProductUrls());
@@ -142,6 +146,7 @@ public class ProductsServiceImpl implements ProductsService {
     * Method to rate products
     * */
 
+
     public EntityResponse addRating(RatingsRequest rating) {
         Products product = productsRepository.findById(rating.getProductId())
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
@@ -157,7 +162,7 @@ public class ProductsServiceImpl implements ProductsService {
         ratingsRepository.save(productRating);
 
         EntityResponse response = new EntityResponse();
-        response.setMessage("Successfully rated the pruduct");
+        response.setMessage("Successfully rated the product");
         response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         response.setStatus(HttpStatus.OK);
 
@@ -197,6 +202,47 @@ public class ProductsServiceImpl implements ProductsService {
     * method to return details of a specific product
     *
     * */
+
+
+    public SpecificProductResponse specificProductResponse(String productId){
+
+        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                ()->new RuntimeException("the product does not exist")
+        );
+
+        SpecificProductResponse specificProductResponse = new SpecificProductResponse();
+        specificProductResponse.setProductName(products.getProductName());
+        specificProductResponse.setProductDescription(products.getProductDescription());
+        specificProductResponse.setProductPrice(products.getProductPrice());
+        specificProductResponse.setColor(products.getColor());
+        specificProductResponse.setBrand(products.getBrand());
+        specificProductResponse.setAboutProduct(products.getAboutProduct());
+        ;
+        List<String> imageUrls = products.getProductImages().stream()
+                .map(ProductImages::getImageUrl)
+                .toList();
+        specificProductResponse.setProductImageUrl(imageUrls);
+
+
+        double averageRating = products.getRatings().stream()
+                .mapToDouble(ProductRatings::getRating)
+                .average().orElse(0.0);
+        specificProductResponse.setProductRating(averageRating);
+
+        Map<Integer,Long> ratingCounts = products.getRatings().stream()
+                .collect(Collectors.groupingBy(ProductRatings::getRating, Collectors.counting()));
+
+        int totalRatings = ratingCounts.size();
+        Map<Integer,Double> percentageRatings = ratingCounts.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,entry->((double)entry.getValue() * 100.0) / totalRatings));
+
+        specificProductResponse.setPercentageRating(percentageRatings);
+
+
+
+        return specificProductResponse;
+    }
+
 
 
 
