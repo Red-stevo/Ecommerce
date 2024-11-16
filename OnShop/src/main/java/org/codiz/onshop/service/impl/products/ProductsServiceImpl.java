@@ -2,18 +2,25 @@ package org.codiz.onshop.service.impl.products;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
+import org.codiz.onshop.dtos.requests.RatingsRequest;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.ProductImages;
+import org.codiz.onshop.entities.products.ProductRatings;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.products.CategoriesRepository;
 import org.codiz.onshop.repositories.products.ProductImagesRepository;
+import org.codiz.onshop.repositories.products.ProductRatingsRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
+import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
@@ -21,10 +28,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,10 +48,12 @@ public class ProductsServiceImpl implements ProductsService {
     private final Cloudinary cloudinary;
     private final ProductImagesRepository productImagesRepository;
     private final CategoriesRepository categoriesRepository;
+    private final UsersRepository usersRepository;
+    private final ProductRatingsRepository ratingsRepository;
 
     @Transactional
     @Cacheable(value = "products")
-    public void postProduct(List<ProductCreationRequest> requests) {
+    public EntityResponse postProduct(List<ProductCreationRequest> requests) {
         try {
             List<Products> products = requests.stream().map(request -> {
                 Products product = new Products();
@@ -89,6 +100,12 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+            EntityResponse response = new EntityResponse();
+            response.setMessage("Successfully posted the product");
+            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            response.setStatus(HttpStatus.OK);
+
+            return response;
 
         } catch (Exception e) {
             log.error("Error during product creation: " + e.getMessage(), e);
@@ -119,6 +136,37 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+
+    /*
+    * Method to rate products
+    * */
+
+    public EntityResponse addRating(RatingsRequest rating) {
+        Products product = productsRepository.findById(rating.getProductId())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        Users users = usersRepository.findUsersByUserId(rating.getUserId());
+
+        ProductRatings productRating = new ProductRatings();
+        productRating.setProduct(product);
+        productRating.setUser(users);
+        productRating.setRating(rating.getRating());
+        productRating.setReview(rating.getComment());
+
+        ratingsRepository.save(productRating);
+
+        EntityResponse response = new EntityResponse();
+        response.setMessage("Successfully rated the pruduct");
+        response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        response.setStatus(HttpStatus.OK);
+
+        return response;
+    }
+
+
+
+
+
     @NotNull
     private List<ProductImages> setImageUrls(List<MultipartFile> files) {
         List<ProductImages> productImages = new ArrayList<>();
@@ -128,6 +176,7 @@ public class ProductsServiceImpl implements ProductsService {
                 ProductImages productImage = getProductImage(file);
                 if (productImage != null) {
                     productImages.add(productImage);
+                    productImagesRepository.save(productImage);
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error uploading file: ");

@@ -3,6 +3,8 @@ package org.codiz.onshop.controller;
 
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
+import org.codiz.onshop.dtos.requests.RatingsRequest;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.springframework.data.domain.Page;
@@ -26,13 +28,18 @@ public class ProductsController {
     }
 
     @PostMapping(value = "/post")
-    public ResponseEntity<?> postProduct(
+    public ResponseEntity<EntityResponse> postProduct(
             @ModelAttribute List<ProductCreationRequest> productCreationRequest) {
-        productsService.postProduct(productCreationRequest);
 
-        return ResponseEntity.ok("Product saved successfully");
+        return ResponseEntity.ok(productsService.postProduct(productCreationRequest));
     }
 
+
+    @PostMapping("/rate")
+    public ResponseEntity<EntityResponse> rateProduct(RatingsRequest request){
+        EntityResponse rate = productsService.addRating(request);
+        return ResponseEntity.ok(rate);
+    }
 
 
     /**

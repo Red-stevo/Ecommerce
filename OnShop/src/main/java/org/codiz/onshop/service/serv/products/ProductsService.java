@@ -3,6 +3,8 @@ package org.codiz.onshop.service.serv.products;
 
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductDocument;
+import org.codiz.onshop.dtos.requests.RatingsRequest;
+import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.entities.products.ProductImages;
 import org.codiz.onshop.entities.products.Products;
 import org.springframework.data.domain.Page;
@@ -17,8 +19,9 @@ import java.util.List;
 @Service
 public interface ProductsService {
 
-    void postProduct(List<ProductCreationRequest> requests);
+    EntityResponse postProduct(List<ProductCreationRequest> requests);
     Page<Products> searchProducts(String query, Pageable pageable);
+    EntityResponse addRating(RatingsRequest rating);
 
 
 }

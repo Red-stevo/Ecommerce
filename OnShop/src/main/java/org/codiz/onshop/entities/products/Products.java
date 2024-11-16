@@ -36,5 +36,15 @@ public class Products {
     )
     private List<Categories> categories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductRatings> ratings = new ArrayList<>();
+
+    public double getAverageRating() {
+        return ratings.stream()
+                .mapToInt(ProductRatings::getRating)
+                .average()
+                .orElse(0.0);
+    }
+
 
 }
