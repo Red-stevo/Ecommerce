@@ -21,7 +21,6 @@ public class Products {
     private float productPrice;
     private String color;
     private String brand;
-    private Integer quantity;
     private double discount;
     @Lob
     private String aboutProduct;
