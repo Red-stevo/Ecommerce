@@ -4,6 +4,7 @@ package org.codiz.onshop.service.serv.products;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.dtos.response.InventoryResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.dtos.response.SpecificProductResponse;
 import org.codiz.onshop.entities.products.Products;
@@ -23,6 +24,10 @@ public interface ProductsService {
     SpecificProductResponse specificProductResponse(String productId);
     EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest);
     String deleteProduct(String productId);
+    InventoryResponse showProductInventory(String productId);
+    List<InventoryResponse> showInventory(Pageable pageable);
+    void reduceProductQuantity(String productId, int quantity);
+    void addProductQuantity(String productId, int quantity);
 
 
 }

@@ -10,13 +10,16 @@ import org.codiz.onshop.dtos.response.OrderItemsResponse;
 import org.codiz.onshop.dtos.response.OrdersResponse;
 import org.codiz.onshop.entities.orders.OrderItems;
 import org.codiz.onshop.entities.orders.Orders;
+import org.codiz.onshop.entities.products.Inventory;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.order.OrdersItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersRepository;
+import org.codiz.onshop.repositories.products.InventoryRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.orders.OrdersService;
+import org.codiz.onshop.service.serv.products.ProductsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,8 @@ public class OrdersImpl implements OrdersService {
     private final OrdersItemsRepository ordersItemsRepository;
     private final UsersRepository usersRepository;
     private final ProductsJpaRepository productsJpaRepository;
+    private final ProductsService productsService;
+    private final InventoryRepository inventoryRepository;
 
 
 
@@ -61,6 +66,7 @@ public class OrdersImpl implements OrdersService {
             totalAmount += totalPrice;
             ordersItemsRepository.save(items);
             orderItems.add(items);
+            productsService.reduceProductQuantity(itemsRequests.getProductId(), itemsRequests.getQuantity());
 
         }
         order.setTotalAmount(totalAmount);
@@ -75,14 +81,25 @@ public class OrdersImpl implements OrdersService {
 
     public String removeOrderItems(String orderItemId){
         OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).get();
+        productsService.addProductQuantity(items.getProductId().getProductId(), items.getQuantity());
         ordersItemsRepository.delete(items);
         return "item successfully removed";
 
     }
 
     public EntityDeletionResponse cancelOrder(String orderId){
-        Orders orders = ordersRepository.findById(orderId).get();
+        Orders orders = ordersRepository.findById(orderId).orElseThrow(
+                ()-> new RuntimeException("product not found")
+        );
+
+        for (OrderItems orderItems : orders.getOrderItems()) {
+
+            Inventory inventory = inventoryRepository.findByProducts(orderItems.getProductId());
+            inventory.setQuantitySold(inventory.getQuantitySold() - orderItems.getQuantity());
+            inventoryRepository.save(inventory);
+        }
         ordersRepository.delete(orders);
+
         EntityDeletionResponse entityDeletionResponse = new EntityDeletionResponse();
         entityDeletionResponse.setMessage("Order successfully cancelled");
         entityDeletionResponse.setStatus(HttpStatus.OK);
@@ -95,23 +112,29 @@ public class OrdersImpl implements OrdersService {
         List<Orders> ordersList = ordersRepository.findAllByUserIdOrderByCreatedOnDesc(users);
         List<OrdersResponse> ordersResponses = new ArrayList<>();
         for (Orders orders : ordersList) {
-            OrdersResponse ordersResponse = new OrdersResponse();
-            ordersResponse.setOrderDate(orders.getCreatedOn());
-            ordersResponse.setAddress(orders.getOfficeAddress());
-            ordersResponse.setTotalPrice(orders.getTotalAmount());
-
-            List<OrderItemsResponse> itemsResponses = new ArrayList<>();
-            for (OrderItems orderItems : orders.getOrderItems()) {
-                    OrderItemsResponse itemsResponse = new OrderItemsResponse();
-                    itemsResponse.setProductId(orderItems.getProductId());
-                    itemsResponse.setQuantity(orderItems.getQuantity());
-                    itemsResponse.setTotalPrice(orderItems.getTotalPrice());
-                    itemsResponses.add(itemsResponse);
-            }
-            ordersResponse.setItemsList(itemsResponses);
+            OrdersResponse ordersResponse = OrderResponse(orders);
+            /*OrdersResponse ordersResponse;*/
             ordersResponses.add(ordersResponse);
         }
         return ordersResponses;
+    }
+
+    private OrdersResponse OrderResponse(Orders orders) {
+        OrdersResponse ordersResponse = new OrdersResponse();
+        ordersResponse.setOrderDate(orders.getCreatedOn());
+        ordersResponse.setAddress(orders.getOfficeAddress());
+        ordersResponse.setTotalPrice(orders.getTotalAmount());
+
+        List<OrderItemsResponse> itemsResponses = new ArrayList<>();
+        for (OrderItems orderItems : orders.getOrderItems()) {
+                OrderItemsResponse itemsResponse = new OrderItemsResponse();
+                itemsResponse.setProductId(orderItems.getProductId());
+                itemsResponse.setQuantity(orderItems.getQuantity());
+                itemsResponse.setTotalPrice(orderItems.getTotalPrice());
+                itemsResponses.add(itemsResponse);
+        }
+        ordersResponse.setItemsList(itemsResponses);
+        return ordersResponse;
     }
 
     public Map<LocalDate, List<OrdersResponse>> getAllOrdersGroupedByDate() {
@@ -122,21 +145,7 @@ public class OrdersImpl implements OrdersService {
 
 
         for (Orders order : ordersList) {
-            OrdersResponse ordersResponse = new OrdersResponse();
-            ordersResponse.setOrderDate(order.getCreatedOn());
-            ordersResponse.setAddress(order.getOfficeAddress());
-            ordersResponse.setTotalPrice(order.getTotalAmount());
-
-            // Populate the items list for each order
-            List<OrderItemsResponse> itemsList = new ArrayList<>();
-            for (OrderItems orderItem : order.getOrderItems()) {
-                OrderItemsResponse itemResponse = new OrderItemsResponse();
-                itemResponse.setProductId(orderItem.getProductId());
-                itemResponse.setQuantity(orderItem.getQuantity());
-                itemResponse.setTotalPrice(orderItem.getTotalPrice());
-                itemsList.add(itemResponse);
-            }
-            ordersResponse.setItemsList(itemsList);
+            OrdersResponse ordersResponse = OrderResponse(order);
 
             LocalDate orderDate = order.getCreatedOn().toLocalDateTime().toLocalDate();
             ordersByDate.computeIfAbsent(orderDate, k -> new ArrayList<>()).add(ordersResponse);

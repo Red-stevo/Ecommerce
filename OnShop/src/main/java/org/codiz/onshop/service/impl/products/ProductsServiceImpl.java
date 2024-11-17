@@ -451,7 +451,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    private void addProductQuantity(String productId, int quantity) {
+    public void addProductQuantity(String productId, int quantity) {
 
         Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
                 ()->new RuntimeException("The product with ID " + productId + " does not exist")
@@ -469,30 +469,28 @@ public class ProductsServiceImpl implements ProductsService {
                 ()->new RuntimeException("The product with ID " + productId + " does not exist")
         );
         Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setQuantitySold(inventory.getQuantityBought() - quantity);
+        inventory.setQuantitySold(inventory.getQuantitySold() + quantity);
     }
 
+
+    /*
+    * method to get all the inventory
+    * */
 
     public List<InventoryResponse> showInventory(Pageable pageable) {
         Page<Inventory> inventory = inventoryRepository.findAll(pageable);
 
-        // Ensure valid date range
-        // Basic details
-        // Calculations
-        // Avoid division by zero in percentage profit
-        // Set calculated fields
 
         return inventory.stream()
                 .filter(res -> {
                     Instant now = Instant.now();
                     return res.getLastUpdate() != null &&
-                            !res.getLastUpdate().isAfter(now); // Ensure valid date range
+                            !res.getLastUpdate().isAfter(now);
                 })
                 .map(res -> {
                     InventoryResponse inventoryResponse = new InventoryResponse();
                     Products products = res.getProducts();
 
-                    // Basic details
                     inventoryResponse.setProductName(products.getProductName());
                     inventoryResponse.setSellingPrice(products.getProductPrice() - products.getDiscount());
                     inventoryResponse.setQuantitySold(res.getQuantitySold());
@@ -500,15 +498,14 @@ public class ProductsServiceImpl implements ProductsService {
                     inventoryResponse.setQuantityRemaining(res.getQuantityBought() - res.getQuantitySold());
                     inventoryResponse.setLastUpdate(res.getLastUpdate());
 
-                    // Calculations
+
                     double totalCost = res.getQuantityBought() * res.getBuyPrice();
                     double totalSold = res.getQuantitySold() * (products.getProductPrice() - products.getDiscount());
                     double profit = totalSold - totalCost;
 
-                    // Avoid division by zero in percentage profit
+
                     double percentageProfit = totalCost > 0 ? (profit / totalCost) * 100 : 0.0;
 
-                    // Set calculated fields
                     inventoryResponse.setProfit(profit);
                     inventoryResponse.setPercentageProfit(percentageProfit);
 
@@ -516,8 +513,17 @@ public class ProductsServiceImpl implements ProductsService {
                 })
                 .toList();
     }
-    public InventoryResponse showProductInventory(String productId) {
 
-        return null;
+    /*
+    * method to get the inventory of a specific product
+    * */
+    public InventoryResponse showProductInventory(String productId) {
+        Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
+        if (inventory == null) {
+            log.info("the product with ID " + productId + " does not exist");
+            return null;
+        }
+        return modelMapper.map(inventory, InventoryResponse.class);
+
     }
 }
