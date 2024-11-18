@@ -134,6 +134,8 @@
     .product-display-section {
         padding-top:0;
         padding-left:60px;
+        box-shadow: none;
+        transform: none;
     }
 
     .product-category-menu {
