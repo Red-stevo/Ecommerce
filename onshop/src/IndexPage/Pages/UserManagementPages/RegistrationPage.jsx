@@ -1,12 +1,9 @@
 import "./Styles/RegistrationPage.css";
 import {Button, Form, Image} from "react-bootstrap";
 import googleIcon from "./../../../assets/google-icon.png";
-import {useNavigate} from "react-router-dom";
 
 
 const RegistrationPage = () => {
-    const navigate = useNavigate();
-
 
     return (
         <div className={"registration-page"}>
