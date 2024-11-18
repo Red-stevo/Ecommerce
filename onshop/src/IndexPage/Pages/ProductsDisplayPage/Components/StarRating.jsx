@@ -12,7 +12,7 @@ const StarRating = ({active, value}) => {
                     <label key={index} style={{ margin: "0 5px" }}>
                         <input type="radio" name="rate" id={`star-${currentRating}`} value={currentRating}
                             disabled={active}   style={{ display: "none" }} onClick={() => setRating(currentRating)} />
-                        <FaStar color={currentRating <= rating ? "#FFD700" : "grey"} size={15} />
+                        <FaStar color={currentRating <= rating ? "#FFD700" : "grey"} className={"star-rating"} />
                     </label>
                 );
             })}
