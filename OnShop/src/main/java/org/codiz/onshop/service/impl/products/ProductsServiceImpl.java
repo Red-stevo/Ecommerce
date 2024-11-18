@@ -458,7 +458,8 @@ public class ProductsServiceImpl implements ProductsService {
         );
 
         Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setQuantityBought(inventory.getQuantityBought() + quantity);
+        inventory.setQuantityBought((inventory.getQuantityBought() - inventory.getQuantitySold()) + quantity);
+        inventory.setQuantitySold(0);
         inventory.setLastUpdate(Instant.now());
         inventoryRepository.save(inventory);
 
