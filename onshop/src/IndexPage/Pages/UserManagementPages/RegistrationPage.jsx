@@ -1,9 +1,13 @@
 import "./Styles/RegistrationPage.css";
 import {Button, Form, Image} from "react-bootstrap";
 import googleIcon from "./../../../assets/google-icon.png";
+import {useNavigate} from "react-router-dom";
 
 
 const RegistrationPage = () => {
+    const navigate = useNavigate();
+
+
     return (
         <div className={"registration-page"}>
            <div className={"registration-page-left"} />
@@ -39,7 +43,7 @@ const RegistrationPage = () => {
 
                         <div className={"reg-and-login-buttons"}>
                             <Button className={"register"}>REGISTER</Button>
-                            <Button className={"sign-in"}>SIGN IN</Button>
+                            <Button href={"/auth/login"} className={"sign-in"}>SIGN IN</Button>
                         </div>
 
                     </Form>
