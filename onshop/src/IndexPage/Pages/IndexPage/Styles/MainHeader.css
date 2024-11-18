@@ -2,11 +2,11 @@
     position: fixed;
     top: 0;
     width: 100vw;
-    height: 11vh;
+    height: 50px;
     background-color: rgb(65, 175, 231);
     color: whitesmoke;
     border-bottom: 1px #8f8d8d solid;
-    z-index: 20;
+    z-index: 50;
 }
 
 .main-header-content-holder{
@@ -44,13 +44,14 @@
 
 .cart-button, .user-account-button {
     display: flex;
-    background-color: rgb(65, 175, 231);
-    border: rgb(65, 175, 231) 1px solid;
+    border: transparent 1px solid;
     font-size: 12px;
     font-weight: 400;
     margin: 2px;
     align-content: end;
     padding: 10px;
+    height: 50px;
+    background-color: transparent;
 }
 
 .user-account-button  {
@@ -59,8 +60,9 @@
 
 
 .cart-button {
-    margin-top: 10px;
+    margin-top: 4px;
     flex-direction: row;
+    height: 50px;
 }
 
 .user-account-button:hover, .cart-button:hover {
@@ -92,20 +94,17 @@
 
 .pages-body {
     width: 100%;
-    margin-top: 11vh;
+    margin-top: 50px;
     min-height: 100vh;
-    background: linear-gradient(to bottom, #41AFE7FF, #632CE2FF);
+    background: linear-gradient(to bottom, rgba(65, 175, 231, 0.84), rgba(99, 44, 226, 0.72));
 }
-
-
-
 
 
 @media screen and (max-device-width: 899px){
     .main-header {
-        height: 12vh;
+        height: 50px;
         padding: 5px;
-        z-index: 20;
+        z-index: 50;
     }
 
     .user-account-button:hover, .cart-button:hover {
@@ -114,7 +113,7 @@
     }
 
     .pages-body {
-        margin-top: 12vh;
+        margin-top: 50px;
     }
 }
 
@@ -123,12 +122,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 767px){
     .main-header {
-        height: 10vh;
-        z-index: 20;
+        height: 50px;
+        z-index: 50;
     }
 
     .pages-body {
-        margin-top: 10vh;
+        margin-top: 50px;
     }
 
     .main-header-content-holder{
@@ -197,12 +196,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 350px){
     .main-header {
-        height: 15vh;
+        height: 50px;
         padding: 5px;
-        z-index: 20;
+        z-index: 50;
     }
     .pages-body {
-        margin-top: 15vh;
+        margin-top: 50px;
     }
 
 }

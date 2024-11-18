@@ -21,6 +21,6 @@ public class Orders {
     private double totalAmount;
     private String officeAddress;
     private String doorStepAddress;
-    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "orderId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItems> orderItems;
 }

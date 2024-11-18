@@ -30,7 +30,7 @@ public class CartImpl implements CartService {
 
     public Cart addItemToCart(CartItemsToAdd items) {
         Users users = usersRepository.findUsersByUserId(items.getUserId());
-        Cart cart = cartRepository.findCartByUserId(items.getUserId())
+        Cart cart = cartRepository.findCartByUsers(users)
                 .orElseGet(()->{
                     Cart newCart = new Cart();
                     newCart.setUsers(users);

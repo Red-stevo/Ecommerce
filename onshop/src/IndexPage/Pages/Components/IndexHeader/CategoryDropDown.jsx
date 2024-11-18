@@ -1,7 +1,7 @@
 import {Dropdown} from "react-bootstrap";
 
 const CategoryDropDown = () => {
-    const categoryList = ["Men","Woman","Shoes", "Clothes", "Phones","Bags"];
+    const categoryList = ["Men","Women","Shoes", "Clothes", "Phones","Bags"];
 
     return (
         <Dropdown className={"category-dropdown"}>
@@ -9,6 +9,7 @@ const CategoryDropDown = () => {
                 Category
             </Dropdown.Toggle>
             <Dropdown.Menu>
+                <Dropdown.Item href="#/action-1" >All Categories</Dropdown.Item>
                 {categoryList.map(((item, index) => (
                     <Dropdown.Item key={index} href="#/action-1" >{item}</Dropdown.Item>
                 )))}
