@@ -5,6 +5,7 @@ import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -17,7 +18,7 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private Users userId;
-    private Timestamp createdOn;
+    private Instant createdOn;
     private double totalAmount;
     private String officeAddress;
     private String doorStepAddress;
