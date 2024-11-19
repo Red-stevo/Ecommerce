@@ -13,22 +13,41 @@ const ProductDisplay = () => {
     const [availableProducts, setAvailableProducts] = useState([]);
     const [availableColors, setAvailableColors] = useState([]);
     const [activeColor, setActiveColor] = useState(null);
+    const [productOnDisplay, setProductOnDisplay] = useState(null);
 
 
+    /*Fetch product from the backend.*/
     useEffect(() => {
         dispatch(getProductDetails(null));
+
+        /*Structure the product details.*/
         const structureData = () => {
             let sizes = [];
-
+            setSizes(new Set());
             products.forEach(({ productSize }) => {
                 sizes.push(productSize);
             });
             setSizes(new Set(sizes.sort()));
         }
-
         if(products && products.length > 0 ) structureData();
 
-    }, [products]);
+    }, [products, ]);
+
+    useEffect(() => {
+
+        /*Initializing the product display*/
+        const setInitialProduct = () => {
+
+            const {productColor, productSize} = products[0];
+            updateAvailableProducts(productSize);
+            updateProductOnDisplay(productColor);
+        }
+
+
+        if (size && Array.from(size).length > 0) {
+            setInitialProduct();
+        }
+    }, [size]);
 
 
 
@@ -37,36 +56,59 @@ const ProductDisplay = () => {
         setActiveSize(activeSize); /*Set the active product to update the hover event listener*/
         setAvailableProducts([]); /*Reset the list of available products for the proportion*/
 
+
         /*Get a list of products for a given proportion*/
         if (size && Array.from(size).length > 0) {
             products.forEach((product) => {
-                if (product.productSize === activeSize) setAvailableProducts(prevState => ([...prevState, product]));
+                if (product.productSize === activeSize) setAvailableProducts(prevState => [...prevState, product]);
             });
         }
+    }
+
+
+    useEffect(() => {
+        setAvailableColors([]);  /*Reset available colors*/
 
         /*Get the list available varieties.*/
         if (availableProducts && availableProducts.length > 0) {
-            /*Reset available colors*/
-            setAvailableColors([]);
-
             availableProducts.forEach((product) => {
                 setAvailableColors(prevState => [...prevState, product.productColor]);
             });
         }
+    }, [availableProducts]);
 
+
+    const updateProductOnDisplay = (color) => {
+
+        /*Update the color toggle*/
+        setActiveColor(color);
+
+        /*Set Product to be display to the user.*/
+        availableProducts.forEach((product) => {
+            if (product.productColor === color) setProductOnDisplay(product);
+        });
     }
 
 
 
-
+        /*Testing*/
+    useEffect(() => {
+        if(productOnDisplay) {
+            console.log(productOnDisplay);
+            console.log(productOnDisplay.productImages);
+        }
+    }, [productOnDisplay]);
 
 
     return (
         <div className={"product-page"}>
             <div className={"product-details-display"}>
                 <div>
-                    <Image height={100} width={80} />
+                    <Image height={160} width={140} />
                     <div>
+                        {productOnDisplay && productOnDisplay.productImages && productOnDisplay.productImages.map((imageUrl, index) => (
+                            <Image src={imageUrl} height={30} width={20} key={index} alt={`product image ${index}`}  />
+                        ))}
                     </div>
                 </div>
                 <div>
@@ -88,7 +130,7 @@ const ProductDisplay = () => {
                                     {
                                         Array.from(size).map((size, index) => (
                                             <Pagination.Item key={index} active={activeSize === size}
-                                                             onMouseEnter={() => updateAvailableProducts(size)}>
+                                                             onClick={() => updateAvailableProducts(size)}>
                                                 {size}
                                             </Pagination.Item>
                                         ))
@@ -101,7 +143,7 @@ const ProductDisplay = () => {
                                     {
                                         availableColors.map((color, index) => (
                                             <Pagination.Item key={index} active={activeColor === color}
-                                                             onMouseEnter={1}>
+                                                             onClick={() => updateProductOnDisplay(color)}>
                                                 {color}
                                             </Pagination.Item>
                                         ))

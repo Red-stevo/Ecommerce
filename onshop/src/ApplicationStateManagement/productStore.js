@@ -10,10 +10,10 @@ const product = {
         productOldPrice:130,
         productColor:"grey",
         productSize:"40",
-        productImage:[
+        productImages:[
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.7EcpxSawDjrNMtY53rDrAgHaFM%26pid%3DApi&f=1&ipt=9f959aef6492e368dc6b49385e7c74124b91770fd9b48834b926f267f1e04132&ipo=images",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.-AQdZKkdXgCCbMqJ-vSGYAHaIN%26pid%3DApi&f=1&ipt=23a4f9f5763ecce0456e62e6664b54a9824efa05a4366dc83e99df5c6224e8d4&ipo=images",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.0UPNkBno4Uby2FP56Hb9rAHaIV%26pid%3DApi&f=1&ipt=501e5371d19c5c439afa88ff690122cb224bd45103634926a29eba75220be374&ipo=images"
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.0UPNkBno4Uby2FP56Hb9rAHaIV%26pid%3DApi&f=1&ipt=501e5371d19c5c439afa88ff690122cb224bd45103634926a29eba75220be374&ipo=images",
         ],
         productCount:6,
     },
@@ -26,10 +26,10 @@ const product = {
        productImages:
            [
                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.rGgqnuAANMoJmnI1rB0nCAHaFM%26pid%3DApi&f=1&ipt=499a5baa5cb904ac23f0741e93dfcff3b7b853b43f3447a8cc54a92c90072ee8&ipo=images",
-               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images,",
+               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images",
                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.3u89GR6ixms3rLugoYU8EQHaFS%26pid%3DApi&f=1&ipt=9db5989876d669511a1a32a9dd5f387ac05da13e20264ae51fc1d6442dddf8b0&ipo=images",
-               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images,",
-               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images"],
+               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images",
+               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images",],
        productCount:5
    },
    {
@@ -39,10 +39,10 @@ const product = {
        productColor:"blue",
        productSize:"40",
        productImages:[
-           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images,",
+           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images",
            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.3u89GR6ixms3rLugoYU8EQHaFS%26pid%3DApi&f=1&ipt=9db5989876d669511a1a32a9dd5f387ac05da13e20264ae51fc1d6442dddf8b0&ipo=images",
-           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images,",
-           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images"
+           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images",
+           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images",
        ],
        productCount:15
    },
@@ -80,10 +80,10 @@ const product = {
         productColor:"blue",
         productSize:"41",
         productImages:[
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images,",
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.N6ni7ZrAAE3pfCMJx_6VDgHaFS%26pid%3DApi&f=1&ipt=8a16784e1cb9c4936276a9441c5eac634b8fc53287a0408480a9e40ef23c19c4&ipo=images",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.3u89GR6ixms3rLugoYU8EQHaFS%26pid%3DApi&f=1&ipt=9db5989876d669511a1a32a9dd5f387ac05da13e20264ae51fc1d6442dddf8b0&ipo=images",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images,",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images"
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Wv4ZqaYugCpjSVCfKCglmQHaJQ%26pid%3DApi&f=1&ipt=fb7a0ea83a51bd9f0b7a45292f04cc0bbf8876e0c6ac1c5247c756d5b4412e94&ipo=images",
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.NRzuufyYKGbUgrdABMmzbwHaE8%26pid%3DApi&f=1&ipt=b7259b746eae27adeb57ab09c332203e11d4664830cff19710130a33606f635e&ipo=images",
         ],
         productCount:15
     },
