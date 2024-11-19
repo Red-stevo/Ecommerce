@@ -10,17 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.dtos.response.InventoryResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.dtos.response.SpecificProductResponse;
-import org.codiz.onshop.entities.products.Categories;
-import org.codiz.onshop.entities.products.ProductImages;
-import org.codiz.onshop.entities.products.ProductRatings;
-import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.*;
 import org.codiz.onshop.entities.users.Users;
-import org.codiz.onshop.repositories.products.CategoriesRepository;
-import org.codiz.onshop.repositories.products.ProductImagesRepository;
-import org.codiz.onshop.repositories.products.ProductRatingsRepository;
-import org.codiz.onshop.repositories.products.ProductsJpaRepository;
+import org.codiz.onshop.repositories.products.*;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -36,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,6 +48,7 @@ public class ProductsServiceImpl implements ProductsService {
     private final CategoriesRepository categoriesRepository;
     private final UsersRepository usersRepository;
     private final ProductRatingsRepository ratingsRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Transactional
     @Cacheable(value = "products")
@@ -60,8 +57,13 @@ public class ProductsServiceImpl implements ProductsService {
             List<Products> products = requests.stream().map(request -> {
                 Products product = new Products();
 
-
                 settingProduct(request, product);
+                Inventory inventory = new Inventory();
+                inventory.setProducts(product);
+                inventory.setQuantityBought(request.getQuantity());
+                inventory.setBuyPrice(request.getBuyingPrice());
+                inventory.setLastUpdate(Instant.now());
+
 
                 // Set product images
                 List<ProductImages> images = setImageUrls(request.getProductUrls());
@@ -71,14 +73,21 @@ public class ProductsServiceImpl implements ProductsService {
                 product.setCategories(categories);
                 categories.forEach(categories1 -> categories1.getProducts().add(product));
 
+                productsRepository.save(product);
+                product.getProductImages().forEach(image -> image.getProducts().add(product));
+
+                inventoryRepository.save(inventory);
+
                 return product;
             }).toList();
 
             // Save products with images
-            products.forEach(product -> {
+            /*products.forEach(product -> {
                 productsRepository.save(product); // Cascade saves product images if configured correctly
-                product.getProductImages().forEach(image -> image.getProducts().add(product)); // Maintain bidirectional relationship
-            });
+                product.getProductImages().forEach(image -> image.getProducts().add(product));// Maintain bidirectional relationship
+            });*/
+
+
 
 
 
@@ -251,6 +260,10 @@ public class ProductsServiceImpl implements ProductsService {
             // Update product details
             settingProduct(updateRequest, existingProduct);
 
+            if (updateRequest.getQuantity() != null){
+                addProductQuantity(productId, updateRequest.getQuantity());
+            }
+
             // Update product images
             if (updateRequest.getProductUrls() != null && !updateRequest.getProductUrls().isEmpty()) {
                 // Clear existing images
@@ -351,7 +364,6 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setProductName(updateRequest.getProductName());
         existingProduct.setProductDescription(updateRequest.getProductDescription());
         existingProduct.setProductPrice(updateRequest.getProductPrice());
-        existingProduct.setQuantity(updateRequest.getQuantity());
         existingProduct.setAboutProduct(updateRequest.getAboutProduct());
         existingProduct.setDiscount(updateRequest.getDiscount());
         existingProduct.setBrand(updateRequest.getBrand());
@@ -439,4 +451,80 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+    public void addProductQuantity(String productId, int quantity) {
+
+        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                ()->new RuntimeException("The product with ID " + productId + " does not exist")
+        );
+
+        Inventory inventory = inventoryRepository.findByProducts(products);
+        inventory.setQuantityBought((inventory.getQuantityBought() - inventory.getQuantitySold()) + quantity);
+        inventory.setQuantitySold(0);
+        inventory.setLastUpdate(Instant.now());
+        inventoryRepository.save(inventory);
+
+    }
+
+    public void reduceProductQuantity(String productId, int quantity) {
+        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                ()->new RuntimeException("The product with ID " + productId + " does not exist")
+        );
+        Inventory inventory = inventoryRepository.findByProducts(products);
+        inventory.setQuantitySold(inventory.getQuantitySold() + quantity);
+    }
+
+
+    /*
+    * method to get all the inventory
+    * */
+
+    public List<InventoryResponse> showInventory(Pageable pageable) {
+        Page<Inventory> inventory = inventoryRepository.findAll(pageable);
+
+
+        return inventory.stream()
+                .filter(res -> {
+                    Instant now = Instant.now();
+                    return res.getLastUpdate() != null &&
+                            !res.getLastUpdate().isAfter(now);
+                })
+                .map(res -> {
+                    InventoryResponse inventoryResponse = new InventoryResponse();
+                    Products products = res.getProducts();
+
+                    inventoryResponse.setProductName(products.getProductName());
+                    inventoryResponse.setSellingPrice(products.getProductPrice() - products.getDiscount());
+                    inventoryResponse.setQuantitySold(res.getQuantitySold());
+                    inventoryResponse.setBuyingPrice(res.getBuyPrice());
+                    inventoryResponse.setQuantityRemaining(res.getQuantityBought() - res.getQuantitySold());
+                    inventoryResponse.setLastUpdate(res.getLastUpdate());
+
+
+                    double totalCost = res.getQuantityBought() * res.getBuyPrice();
+                    double totalSold = res.getQuantitySold() * (products.getProductPrice() - products.getDiscount());
+                    double profit = totalSold - totalCost;
+
+
+                    double percentageProfit = totalCost > 0 ? (profit / totalCost) * 100 : 0.0;
+
+                    inventoryResponse.setProfit(profit);
+                    inventoryResponse.setPercentageProfit(percentageProfit);
+
+                    return inventoryResponse;
+                })
+                .toList();
+    }
+
+    /*
+    * method to get the inventory of a specific product
+    * */
+    public InventoryResponse showProductInventory(String productId) {
+        Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
+        if (inventory == null) {
+            log.info("the product with ID " + productId + " does not exist");
+            return null;
+        }
+        return modelMapper.map(inventory, InventoryResponse.class);
+
+    }
 }
