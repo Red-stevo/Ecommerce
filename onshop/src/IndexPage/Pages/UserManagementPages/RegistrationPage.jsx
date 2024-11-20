@@ -12,6 +12,8 @@ const RegistrationPage = () => {
 
             <div className={"registration-page-right"}>
                 <div className={"registration-page-right-holder"}>
+
+                    {/*Registration page header*/}
                     <span className={"welcome-reg"}>
                         Welcome to
                         <span className={"site-name"}>
@@ -23,6 +25,7 @@ const RegistrationPage = () => {
                         Create an Account
                     </span>
 
+                    {/*Registration form*/}
                     <Form className={"registration-form"}>
                         <Form.Group>
                             <input className={"form-control reg-username-input"} placeholder={"Username"}/>
