@@ -5,8 +5,10 @@ import googleIcon from "./../../../assets/google-icon.png";
 
 const RegistrationPage = () => {
     return (
+
+
         <div className={"registration-page"}>
-           <div className={"registration-page-left"} />
+           <div className={"registration-page-left"} /> {/*Left image holder for desktop view reg page.*/}
 
             <div className={"registration-page-right"}>
                 <div className={"registration-page-right-holder"}>
@@ -54,7 +56,6 @@ const RegistrationPage = () => {
                     Terms of Service and Privacy Policy" name="group1" type={'checkbox'} id={`disclaimer`}/>
                 </div>
             </div>
-
         </div>
     );
 };
