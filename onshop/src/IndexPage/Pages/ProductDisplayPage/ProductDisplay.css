@@ -35,7 +35,7 @@
 }
 
 .toggle-images-holder {
-    width: 100%;
+    width: 90%;
     display: flex;
     overflow-x: scroll;
     gap: 4%;
@@ -82,9 +82,84 @@
 }
 
 .conversion-buttons {
-    width: 50%;
+    width: 60%;
+    display: flex;
+    gap: 2%;
+    flex-direction: row;
+    align-content: center;
+}
+
+.share-icon, .add-cart-icon {
+    font-size: 20px;
+    text-align: center;
+
+}
+
+.share-icon {
+    margin-left: 20px;
+}
+
+.share-icon:hover{
+    cursor: pointer;
+
+}
+
+.add-cart-button, .order-button {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    align-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    height: fit-content;
+    padding: 3px;
+}
+
+.available-colors {
+    width: 90%;
+    overflow: scroll;
+}
+
+.product-sizes-holder {
+    overflow: scroll;
+}
+
+.portion {
+    white-space: nowrap;
+}
+
+.wish-list-button {
+    display: flex;
+    flex-direction: row;
+    font-size: 12px;
+    font-weight: 600;
+    gap: 5px;
+    height: fit-content;
+}
+
+@media screen and (max-device-width: 899px){
+    .image-display-holder {
+        width: 35vw;
+    }
+
+    .product-details-display-holder {
+        width: 65vw;
+    }
+
+    .large-image-view {
+        width: 32vw;
+        height: 32vw;
+    }
+
+    .toggle-image {
+        width: 7vw;
+        height:7vw;
+    }
+
+    .conversion-buttons {
+        width: 100%;
+        gap: 2%;
+    }
+
+    .product-display-description {
+        width: 100%;
+    }
 }

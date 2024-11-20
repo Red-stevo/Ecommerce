@@ -87,72 +87,65 @@ const ProductDisplay = () => {
 
     return (
         <div className={"product-page"}>
-            <div>
-                <div className={"product-details-display"}>
-                    <div className={"image-display-holder"}>
-                        <Image src={activeImage} className={"large-image-view"}/>
-                        <div className={"toggle-images-holder"}>
-                            {productOnDisplay &&
-                                productOnDisplay.productImages.map((imageUrl, index) => (
-                                    <Image
-                                        className={"toggle-image"}
-                                        src={imageUrl}
-                                        height={30}
-                                        width={20}
-                                        key={index}
-                                        alt={`product image ${index}`}
-                                        onMouseOver={() => setActiveImage(imageUrl)}
-                                    />
-                                ))}
-                        </div>
-                        <span>
-                            <Pagination>
-                                {availableColors.map((color, index) => (
-                                <Pagination.Item key={index} active={activeColor === color}
-                                                 onClick={() => setActiveColor(color)}>
-                                    {color}
+            <div className={"product-details-display"}>
+                <div className={"image-display-holder"}>
+                    <Image src={activeImage} className={"large-image-view"}/>
+                    <div className={"toggle-images-holder"}>
+                        {productOnDisplay &&
+                            productOnDisplay.productImages.map((imageUrl, index) => (
+                                <Image
+                                    className={"toggle-image"}
+                                    src={imageUrl}
+                                    height={30}
+                                    width={20}
+                                    key={index}
+                                    alt={`product image ${index}`}
+                                    onMouseOver={() => setActiveImage(imageUrl)}
+                                />
+                            ))}
+                    </div>
+                    <Pagination className={"available-colors"}>
+                        {availableColors.map((color, index) => (
+                        <Pagination.Item key={index} active={activeColor === color}
+                                         onClick={() => setActiveColor(color)}>
+                            {color}
+                        </Pagination.Item>
+                        ))}
+                    </Pagination>
+                </div>
+                <div className={"product-details-display-holder"}>
+                    <div className={"conversion-buttons"}>
+                        <Button className={"add-cart-button"}>
+                            <TiShoppingCart className={"add-cart-icon"}/>
+                            ADD TO CART
+                        </Button>
+                        <Button className={"order-button"}>ORDER NOW</Button>
+                        <LuShare2 className={"share-icon"} title={"Share"} />
+                    </div>
+                    <span className={"product-display-name"}>{productName}</span>
+                    <div className={"product-prices-display"}>
+                            <span className={"new-product-price-display"}>
+                                ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                            </span>
+                        {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                            &&
+                            <span className={"old-product-price-display"}>
+                                save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                            </span>
+                    }
+                </div>
+                    <div className={"price-and-proportions"}>
+                        <Pagination className={"product-sizes-holder"}>
+                            {sizes.map((size, index) => (
+                                <Pagination.Item key={index} active={activeSize === size}
+                                        className={"portion"} onClick={() => setActiveSize(size)}>
+                                    {size}
                                 </Pagination.Item>
-                                ))}
-                            </Pagination>
-                        </span>
+                            ))}
+                        </Pagination>
+                        <Button className={"wish-list-button"}><FaRegHeart/>WISHLIST</Button>
                     </div>
-                    <div className={"product-details-display-holder"}>
-                        <div className={"conversion-buttons"}>
-                            <Button><TiShoppingCart/>ADD TO CART</Button>
-                            <Button>ORDER NOW</Button>
-                            <LuShare2 />
-                        </div>
-                        <span className={"product-display-name"}>{productName}</span>
-                        <div className={"product-prices-display"}>
-                                <span className={"new-product-price-display"}>
-                                    ksh {productOnDisplay && productOnDisplay.productNewPrice}
-                                </span>
-                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
-                                &&
-                                <span className={"old-product-price-display"}>
-                                    save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
-                                </span>
-                        }
-                    </div>
-                        <div className={"price-and-proportions"}>
-                            <div>
-                                <span>
-                                    <Pagination>
-                                        {sizes.map((size, index) => (
-                                            <Pagination.Item key={index} active={activeSize === size}
-                                                             onClick={() => setActiveSize(size)}>
-                                                {size}
-                                            </Pagination.Item>
-                                        ))}
-                                    </Pagination>
-                                </span>
-                            </div>
-                            <div>
-                                <Button><FaRegHeart/>ADD TO WISHLIST</Button>
-                            </div>
-                        </div>
-                        <section className={"product-display-description"}>{productDescription}</section>
-                    </div>
+                    <section className={"product-display-description"}>{productDescription}</section>
                 </div>
             </div>
             <div>
