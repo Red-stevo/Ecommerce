@@ -59,3 +59,32 @@
     font-family: "Roboto Light", Montserrat, sans-serif;
     line-height: 1.7;
 }
+
+.price-and-proportions {
+    display: flex;
+    flex-direction: row;
+    gap: 20%;
+}
+
+.new-product-price-display {
+    font-family: Montserrat, sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.old-product-price-display {
+
+}
+.product-prices-display {
+    display: flex;
+    gap: 2%;
+    width: 80%;
+}
+
+.conversion-buttons {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+}

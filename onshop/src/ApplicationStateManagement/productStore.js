@@ -35,7 +35,7 @@ const product = {
    {
        productId:2,
        productNewPrice:400,
-       productOldPrice:300,
+       productOldPrice:400,
        productColor:"blue",
        productSize:"40",
        productImages:[
@@ -65,7 +65,7 @@ const product = {
        productNewPrice:400,
        productOldPrice:300,
        productColor:"yellow",
-       productSize:"38",
+       productSize:"1 Litre",
        productImages:[
            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.s4ngUC0bNlUblbz3LxHkAgHaE_%26pid%3DApi&f=1&ipt=e7f21b8371e44f6c989fad4a3432291016c19ece97992da6ee1000dd20062e45&ipo=images",
            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Aut9jh1P5PrLQnoN_HXUigHaHV%26pid%3DApi&f=1&ipt=fa9d9592b0eddc3afb50d88aa7cc7f3fe615dc3b30aa11aba87d96665963ae6b&ipo=images",

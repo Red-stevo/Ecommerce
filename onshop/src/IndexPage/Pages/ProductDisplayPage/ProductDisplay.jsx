@@ -5,6 +5,7 @@ import { Button, Image, Pagination } from "react-bootstrap";
 import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
+import {LuShare2} from "react-icons/lu";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription } = useSelector(
@@ -100,63 +101,62 @@ const ProductDisplay = () => {
                                         width={20}
                                         key={index}
                                         alt={`product image ${index}`}
-                                        onClick={() => setActiveImage(imageUrl)}
+                                        onMouseOver={() => setActiveImage(imageUrl)}
                                     />
                                 ))}
                         </div>
+                        <span>
+                            <Pagination>
+                                {availableColors.map((color, index) => (
+                                <Pagination.Item key={index} active={activeColor === color}
+                                                 onClick={() => setActiveColor(color)}>
+                                    {color}
+                                </Pagination.Item>
+                                ))}
+                            </Pagination>
+                        </span>
                     </div>
                     <div className={"product-details-display-holder"}>
-                        <div>
-                            <Button>Details</Button>
-                            <Button>Reviews</Button>
+                        <div className={"conversion-buttons"}>
+                            <Button><TiShoppingCart/>ADD TO CART</Button>
+                            <Button>ORDER NOW</Button>
+                            <LuShare2 />
                         </div>
                         <span className={"product-display-name"}>{productName}</span>
-                        <section className={"product-display-description"}>{productDescription}</section>
-                        <div>
+                        <div className={"product-prices-display"}>
+                                <span className={"new-product-price-display"}>
+                                    ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                                </span>
+                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                                &&
+                                <span className={"old-product-price-display"}>
+                                    save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                                </span>
+                        }
+                    </div>
+                        <div className={"price-and-proportions"}>
                             <div>
                                 <span>
-                                    Proportion:
                                     <Pagination>
                                         {sizes.map((size, index) => (
-                                            <Pagination.Item
-                                                key={index}
-                                                active={activeSize === size}
-                                                onClick={() => setActiveSize(size)}
-                                            >
+                                            <Pagination.Item key={index} active={activeSize === size}
+                                                             onClick={() => setActiveSize(size)}>
                                                 {size}
                                             </Pagination.Item>
                                         ))}
                                     </Pagination>
                                 </span>
-                                <span>
-                                    Variety:
-                                    <Pagination>
-                                        {availableColors.map((color, index) => (
-                                            <Pagination.Item
-                                                key={index}
-                                                active={activeColor === color}
-                                                onClick={() => setActiveColor(color)}
-                                            >
-                                                {color}
-                                            </Pagination.Item>
-                                        ))}
-                                    </Pagination>
-                                </span>
                             </div>
-                            <span>Price:{productOnDisplay && productOnDisplay.productNewPrice}</span>
+                            <div>
+                                <Button><FaRegHeart/>ADD TO WISHLIST</Button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div>
-                    <Button><FaRegHeart />ADD TO WISHLIST</Button>
-                    <div>
-                        <Button><TiShoppingCart />ADD TO CART</Button>
-                        <Button>ORDER NOW</Button>
+                        <section className={"product-display-description"}>{productDescription}</section>
                     </div>
                 </div>
             </div>
             <div>
-                <span>Related Products</span>
+            <span>Related Products</span>
             </div>
             <div>
                 <span>Product Reviews</span>
