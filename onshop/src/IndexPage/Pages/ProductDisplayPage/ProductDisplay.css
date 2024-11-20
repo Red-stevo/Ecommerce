@@ -5,3 +5,57 @@
     display: flex;
     flex-direction: column;
 }
+
+.product-details-display {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    gap: 15px;
+}
+
+.image-display-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 30vw;
+}
+
+.product-details-display-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 70vw;
+}
+
+.large-image-view {
+    width: 28vw;
+    height: 28vw;
+}
+
+.toggle-images-holder {
+    width: 100%;
+    display: flex;
+    overflow-x: scroll;
+    gap: 4%;
+}
+
+.toggle-image {
+    width: 4vw;
+    height:4vw;
+}
+
+.product-display-name {
+    font-weight: 700;
+    font-size: 23px;
+    font-family: "Noto Looped Lao Bold", sans-serif;
+}
+
+.product-display-description {
+    width: 80%;
+    font-weight: 500;
+    font-size: 16px;
+    font-family: "Roboto Light", Montserrat, sans-serif;
+    line-height: 1.7;
+}
