@@ -92,7 +92,7 @@ const ProductDisplay = () => {
 
                 <div className={"image-display-holder"}>
 
-                    <div>
+                    <div className={"image-view"}>
                         <Image src={activeImage} className={"large-image-view"}/>
                         <div className={"toggle-images-holder"}>
                             {productOnDisplay &&
@@ -103,10 +103,12 @@ const ProductDisplay = () => {
                                     />
                                 ))}
                         </div>
+
                     </div>
 
 
-                    <div>
+                    <div className={"conversion-section"}>
+
                         <div className={"product-prices-display2"}>
                                 <span className={"new-product-price-display"}>
                                     ksh {productOnDisplay && productOnDisplay.productNewPrice}
@@ -133,7 +135,7 @@ const ProductDisplay = () => {
                         {/*Conversion buttons.*/}
                         <div className={"conversion-buttons2"}>
 
-                            <div>
+                            <div className={"cart-order-buttons"}>
                                 <Button className={"add-cart-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
@@ -141,8 +143,10 @@ const ProductDisplay = () => {
                                 <Button className={"order-button"}>ORDER NOW</Button>
                             </div>
 
-                            <div>
+                            <div className={"share-count-buttons"}>
+
                                 <LuShare2 className={"share-icon"} title={"Share"}/>
+
                                 {productOnDisplay &&
                                     <span className={"available-count2"}>
                                         Available Products
