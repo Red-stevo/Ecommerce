@@ -100,7 +100,7 @@
     display: none;
 }
 
-.conversion-buttons, .conversion-buttons2 {
+.conversion-buttons, .conversion-buttons2, .conversion-buttons3 {
     width: 60%;
     display: flex;
     gap: 2%;
@@ -108,7 +108,7 @@
     align-content: center;
 }
 
-.conversion-buttons2 {
+.conversion-buttons2, .conversion-buttons3 {
     display: none;
 }
 
@@ -209,7 +209,11 @@
     }
 }
 
-@media screen and (max-device-width: 767px) and (min-device-width: 600px) {
+@media screen and (max-device-width: 767px) and (min-device-width: 587px) {
+    .product-page {
+        padding: 0;
+    }
+
     .product-details-display {
         flex-direction: column;
     }
@@ -297,11 +301,79 @@
         margin-bottom: 20px;
         width: 100%;
     }
+
     .image-view {
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
+}
 
+
+@media screen and (max-device-width: 586px){
+    .product-details-display {
+        flex-direction: column;
+    }
+
+    .image-view {
+        margin-left: 0;
+    }
+
+    .large-image-view {
+        width: 100vw;
+        height: 60vw;
+        margin-bottom: 5px;
+        object-fit: cover;
+    }
+
+    .toggle-image {
+        width: 10vw;
+        height:10vw;
+    }
+
+    .toggle-images-holder {
+        width: 70vw;
+        overflow: scroll;
+        margin-left: 10px;
+    }
+    .product-page {
+        padding: 0;
+    }
+
+    .available-colors {
+        width: 94vw;
+        overflow: scroll;
+        margin-left: 5px;
+    }
+
+
+    .product-display-name2, .conversion-buttons3 {
+        display: flex;
+    }
+
+    .product-display-name, .conversion-buttons {
+        display: none;
+    }
+
+    .conversion-buttons3 {
+        width: 96vw;
+        margin-left: 10px;
+    }
+
+    .product-display-description {
+        width: 100vw;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .product-prices-display, .available-count {
+        margin-left: 10px;
+    }
+
+    .price-and-proportions, .price-and-proportions2 {
+        margin-left: 10px;
+        width: 96vw;
+    }
 
 }
+

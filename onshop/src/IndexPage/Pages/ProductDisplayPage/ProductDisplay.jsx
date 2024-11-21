@@ -90,6 +90,15 @@ const ProductDisplay = () => {
             <div className={"product-details-display"}>
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
+                <div className={"conversion-buttons3"}>
+                    <Button className={"add-cart-button"}>
+                        <TiShoppingCart className={"add-cart-icon"}/>
+                        ADD TO CART
+                    </Button>
+                    <Button className={"order-button"}>ORDER NOW</Button>
+                    <LuShare2 className={"share-icon"} title={"Share"}/>
+                </div> {/*Not in medium screens*/}
+
                 <div className={"image-display-holder"}>
 
                     <div className={"image-view"}>
@@ -99,11 +108,9 @@ const ProductDisplay = () => {
                                 productOnDisplay.productImages.map((imageUrl, index) => (
                                     <Image className={"toggle-image"} src={imageUrl} height={30}
                                            width={20} key={index} alt={`product image ${index}`}
-                                           onMouseOver={() => setActiveImage(imageUrl)}
-                                    />
+                                           onMouseOver={() => setActiveImage(imageUrl)} />
                                 ))}
                         </div>
-
                     </div>
 
 
@@ -188,6 +195,8 @@ const ProductDisplay = () => {
 
                     </div>
                 </div>
+
+
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
                         <Button className={"add-cart-button"}>
