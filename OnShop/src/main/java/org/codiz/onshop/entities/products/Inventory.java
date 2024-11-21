@@ -16,7 +16,7 @@ public class Inventory {
     private int quantityBought;
     private Instant lastUpdate;
     private int quantitySold;
-    private double buyPrice;
+
 
     @OneToOne
     @JoinColumn(name = ("product_id"))

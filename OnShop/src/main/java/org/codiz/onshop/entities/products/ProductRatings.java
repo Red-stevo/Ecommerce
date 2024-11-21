@@ -3,6 +3,8 @@ package org.codiz.onshop.entities.products;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Entity
@@ -14,10 +16,12 @@ public class ProductRatings {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Products product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Users user;
 
     private int rating;

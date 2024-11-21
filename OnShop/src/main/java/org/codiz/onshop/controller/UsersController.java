@@ -3,12 +3,13 @@ package org.codiz.onshop.controller;
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
+import org.codiz.onshop.dtos.response.UserResponse;
 import org.codiz.onshop.service.serv.users.UsersService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -23,5 +24,10 @@ public class UsersController {
     public ResponseEntity<EntityResponse> registerUser(@RequestBody UserRegistrationRequest req){
         EntityResponse res = usersService.registerUser(req);
         return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/all-users")
+    public ResponseEntity<List<UserResponse>> getAllUsers(){
+        return ResponseEntity.ok(usersService.retrieveAllUsers());
     }
 }

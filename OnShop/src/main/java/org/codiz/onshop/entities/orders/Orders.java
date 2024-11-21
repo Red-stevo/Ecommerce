@@ -3,6 +3,8 @@ package org.codiz.onshop.entities.orders;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -16,6 +18,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String orderId;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private Users userId;
     private Instant createdOn;

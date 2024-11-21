@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.EntityDeletionResponse;
+import org.codiz.onshop.dtos.response.UserResponse;
 import org.codiz.onshop.entities.users.Role;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.users.UsersRepository;
@@ -116,12 +117,12 @@ public class UsersServiceImpl implements UsersService {
 
 
 
-    public List<UserRegistrationRequest> retrieveAllUsers() {
+    public List<UserResponse> retrieveAllUsers() {
         List<Users> users = usersRepository.findAll();
         modelMapper.getConfiguration().setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setFieldMatchingEnabled(true);
         return users.stream()
-                .map(users1 -> modelMapper.map(users1,UserRegistrationRequest.class)).toList();
+                .map(users1 -> modelMapper.map(users1,UserResponse.class)).toList();
     }
 
 

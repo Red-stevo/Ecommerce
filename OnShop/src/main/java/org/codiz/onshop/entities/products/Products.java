@@ -1,50 +1,47 @@
 package org.codiz.onshop.entities.products;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.repositories.products.ProductRatingsRepository;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
 
-public class Products {
+public class Products implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String productId;
     private String productName;
-    @Column(length = 500)
     private String productDescription;
     private float productPrice;
+    private float discount;
+    private String size;
     private String color;
-    private String brand;
-    private double discount;
-    @Lob
-    private String aboutProduct;
+    private int count;
 
-
+    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<ProductImages> productImagesList;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     @JoinTable(
-            name = "product_image",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
+            name = "ProductCategories", // Name of the join table
+            joinColumns = @JoinColumn(name = "product_id"), // Column for Products
+            inverseJoinColumns = @JoinColumn(name = "category_id") // Column for Categories
     )
-    private List<ProductImages> productImages = new ArrayList<>();
+    private List<Categories> categoriesList;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Categories> categories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductRatings> ratings = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProductRatings> productRatingsList;
 
 
 
