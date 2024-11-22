@@ -91,11 +91,11 @@ const ProductDisplay = () => {
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
                 <div className={"conversion-buttons3"}>
-                    <Button className={"add-cart-button"}>
+                    <Button className={"add-cart-button app-button"}>
                         <TiShoppingCart className={"add-cart-icon"}/>
                         ADD TO CART
                     </Button>
-                    <Button className={"order-button"}>ORDER NOW</Button>
+                    <Button className={"order-button app-button"}>ORDER NOW</Button>
                     <LuShare2 className={"share-icon"} title={"Share"}/>
                 </div> {/*Not in medium screens*/}
 
@@ -143,11 +143,11 @@ const ProductDisplay = () => {
                         <div className={"conversion-buttons2"}>
 
                             <div className={"cart-order-buttons"}>
-                                <Button className={"add-cart-button"}>
+                                <Button className={"add-cart-button app-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
                                 </Button>
-                                <Button className={"order-button"}>ORDER NOW</Button>
+                                <Button className={"order-button app-button"}>ORDER NOW</Button>
                             </div>
 
                             <div className={"share-count-buttons"}>
@@ -188,7 +188,7 @@ const ProductDisplay = () => {
                                 ))}
                             </Pagination>
 
-                            <Button className={"wish-list-button"}><FaRegHeart/>WISHLIST</Button>
+                            <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
                         </div> {/*Medium screen display*/}
 
 
@@ -199,11 +199,11 @@ const ProductDisplay = () => {
 
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
-                        <Button className={"add-cart-button"}>
+                        <Button className={"add-cart-button app-button"}>
                             <TiShoppingCart className={"add-cart-icon"}/>
                             ADD TO CART
                         </Button>
-                        <Button className={"order-button"}>ORDER NOW</Button>
+                        <Button className={"order-button app-button"}>ORDER NOW</Button>
                         <LuShare2 className={"share-icon"} title={"Share"}/>
                     </div> {/*Not in medium screens*/}
 
@@ -233,7 +233,7 @@ const ProductDisplay = () => {
                                 </Pagination.Item>
                             ))}
                         </Pagination>
-                        <Button className={"wish-list-button"}><FaRegHeart/>WISHLIST</Button>
+                        <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
                     </div> {/*Not in medium screens.*/}
 
                     {productOnDisplay &&

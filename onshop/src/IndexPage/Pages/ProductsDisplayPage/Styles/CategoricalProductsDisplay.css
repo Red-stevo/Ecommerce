@@ -10,11 +10,11 @@
     overflow: scroll;
     scroll-behavior: auto;
     scrollbar-3dlight-color: #C3BFE3;
-    background-color: rgba(75, 30, 75, 0.72);
+    background-color: rgb(0, 0, 0);
 }
 
 .categories {
-    color: black;
+    color: white;
     border: transparent 1px solid;
 }
 
