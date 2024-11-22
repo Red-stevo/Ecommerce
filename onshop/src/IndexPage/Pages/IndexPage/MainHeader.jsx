@@ -1,20 +1,20 @@
-import {Button, InputGroup, Navbar} from "react-bootstrap";
+import {Button, Image, InputGroup, Navbar} from "react-bootstrap";
 import {FaSearch} from "react-icons/fa";
 import CategoryDropDown from "../Components/IndexHeader/CategoryDropDown.jsx";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import UserAccount from "../Components/IndexHeader/UserAccount.jsx";
 import "./Styles/MainHeader.css";
-import {Outlet, useNavigate} from "react-router-dom";
-
+import {Outlet} from "react-router-dom";
+import logo from "./../../../assets/applicationLogo.png";
 const MainHeader = () => {
-    const navigate = useNavigate();
-
 
     return (
         <>
             <Navbar expand="md" className="main-header">
-                <Navbar.Brand href="#" className={"app-logo"}>OnShop Logo</Navbar.Brand> {/*Application logo*/}
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Brand href="#" className={"app-logo"}>
+                    <Image src={logo} className={"app-logo-icon"} />
+                </Navbar.Brand> {/*Application logo*/}
+                <Navbar.Toggle aria-controls="basic-navbar-nav" className={"toggle-icon"}/>
                 <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>
                     <InputGroup className="mx-2 mb-2 search-and-buttons">
                         <CategoryDropDown />    {/*Categories drop-down*/}
