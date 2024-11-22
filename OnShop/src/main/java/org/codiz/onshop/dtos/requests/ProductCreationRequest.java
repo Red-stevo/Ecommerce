@@ -30,4 +30,6 @@ public class ProductCreationRequest {
 
     private List<CategoryCreationRequest> categoryCreationRequestList;
 
+    private double buyingPrice;
+
 }

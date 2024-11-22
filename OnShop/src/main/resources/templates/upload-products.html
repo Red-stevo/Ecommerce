@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Product</title>
+</head>
+<body>
+<h1>Upload Product</h1>
+<form th:action="http://localhost:8080/api/v1/products/post" method="post" enctype="multipart/form-data">
+    <!-- Text Inputs -->
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" name="productName" required><br><br>
+
+    <label for="productDescription">Product Description:</label>
+    <textarea id="productDescription" name="productDescription" required></textarea><br><br>
+
+    <label for="productPrice">Product Price:</label>
+    <input type="number" step="0.01" id="productPrice" name="productPrice" required><br><br>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" required><br><br>
+
+    <label for="color">Color:</label>
+    <input type="text" id="color" name="color" required><br><br>
+
+    <label for="brand">Brand:</label>
+    <input type="text" id="brand" name="brand" required><br><br>
+
+    <label for="aboutProduct">About Product:</label>
+    <textarea id="aboutProduct" name="aboutProduct" required></textarea><br><br>
+
+    <label for="discount">Discount (%):</label>
+    <input type="number" step="0.01" id="discount" name="discount" required><br><br>
+
+    <label for="buyingPrice">Buying Price:</label>
+    <input type="number" step="0.01" id="buyingPrice" name="buyingPrice" required><br><br>
+
+    <!-- File Uploads -->
+    <label for="productUrls">Product Images/Videos:</label>
+    <input type="file" id="productUrls" name="productUrls" multiple><br><br>
+
+    <!-- Category Section -->
+    <h3>Categories</h3>
+    <div id="category-section">
+        <div class="category" th:each="category, iterStat : ${categoryCreationRequestList}">
+            <label htmlFor="categoryName">Category Name:</label>
+            <label>
+                <input type="text" name="categoryCreationRequestList[${iterStat.index}].categoryName" required>
+            </label><br><br>
+
+            <label htmlFor="categoryIcon">Category Icon:</label>
+            <input type="file" name="categoryCreationRequestList[${iterStat.index}].categoryIcon"><br><br>
+        </div>
+    </div>
+
+    <!-- Add More Categories -->
+    <button type="button" onclick="addCategory()">Add Another Category</button><br><br>
+
+    <!-- Submit -->
+    <button type="submit" onclick="">Submit Product</button>
+</form>
+
+<script>
+    // Dynamically add more categories
+    let categoryIndex = 1;
+    function addCategory() {
+        const categorySection = document.getElementById('category-section');
+        const newCategory = document.createElement('div');
+        newCategory.classList.add('category');
+        newCategory.innerHTML = `
+                <label>Category Name:</label>
+                <input type="text" name="categoryCreationRequestList[${categoryIndex}].categoryName" required><br><br>
+
+                <label>Category Icon:</label>
+                <input type="file" name="categoryCreationRequestList[${categoryIndex}].categoryIcon"><br><br>
+            `;
+        categorySection.appendChild(newCategory);
+        categoryIndex++;
+    }
+</script>
+</body>
+</html>
