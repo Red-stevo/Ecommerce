@@ -1,13 +1,15 @@
-.app-button {
+.app-button,button.app-button:active,
+ button.app-button:focus  {
     background-color: #FFC107;
     border: 1px solid #FFC107;
 }
 
-.app-button:hover, .app-button:active  {
-    border: rgba(255, 193, 7, 0.65) solid 1px;
-    background-color:rgba(255, 193, 7, 0.32);
+button.app-button:hover {
+    border: rgba(255, 193, 7, 0.65) solid 1px !important;
+    background-color: rgba(255, 193, 7, 0.32) !important;
     color: white;
 }
+
 
 
 .search-buttons-left {
