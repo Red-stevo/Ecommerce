@@ -182,13 +182,6 @@
     display: none;
 }
 
-.list-toggle {
-
-}
-
-.portion {
-
-}
 
 /* Default pagination item */
 .pagination .page-link {
@@ -223,13 +216,51 @@
     font-size: 18px;
 }
 
-.available-count {
+.available-count, .available-count2 {
     margin-top: 10px;
     font-family: Montserrat sans-serif;
 }
 
 
 
+/*Related product section.*/
+
+.header-related-products {
+    font-size: 27px;
+    font-family: Montserrat Montserr sans-serif;
+}
+
+.related-products-holder {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    width: 100vw;
+}
+
+.related-product {
+    display: flex;
+    flex-direction: column;
+    height:260px;
+    width: 190px;
+    border: solid 1px grey;
+    margin: 10px;
+}
+
+.related-product:hover {
+    transform: scale(1.053);
+    box-shadow: 1px 4px 8px rgba(128, 0, 128, 0.81);
+}
+
+.related-product-image {
+    height: 240px;
+    width: 190px;
+}
+
+.related-product-name, .related-product-price {
+    font-family: Montserr Montserrat sans-serif;
+    font-size: 20px;
+}
 
 @media screen and (max-device-width: 899px){
     .image-display-holder {
@@ -366,6 +397,22 @@
         padding-right: 20px;
         padding-left: 20px;
     }
+
+
+
+    /*Related products section.*/
+
+    .related-product {
+        height:200px;
+        width: 160px;
+        margin: 5px;
+    }
+
+    .related-product-image {
+        height: 170px;
+        width: 160px;
+    }
+
 }
 
 
@@ -432,6 +479,20 @@
     .price-and-proportions, .price-and-proportions2 {
         margin-left: 10px;
         width: 96vw;
+    }
+
+    /*Related products section.*/
+
+    .related-product {
+        height:200px;
+        width: 110px;
+        margin: 5px;
+        border: none;
+    }
+
+    .related-product-image {
+        height: 170px;
+        width: 110px;
     }
 
 }

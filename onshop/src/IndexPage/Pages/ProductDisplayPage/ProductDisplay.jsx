@@ -6,12 +6,13 @@ import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
+import {useNavigate} from "react-router-dom";
 
 const ProductDisplay = () => {
-    const { products, productName, productDescription } = useSelector(
-        (state) => state.productReducer.product
-    );
+    const { products, productName, productDescription, relatedProducts } = useSelector(
+        (state) => state.productReducer.product);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // State
     const [activeSize, setActiveSize] = useState(null);
@@ -157,7 +158,7 @@ const ProductDisplay = () => {
                                 {productOnDisplay &&
                                     <span className={"available-count2"}>
                                         Available Products
-                                        <span>
+                                        <span className={"product-count"}>
                                             {productOnDisplay.productCount}
                                         </span>
                                     </span>
@@ -253,7 +254,17 @@ const ProductDisplay = () => {
                 </div>
             </div>
             <div>
-                <span>Related Products</span>
+                <span className={"header-related-products"}>Related Products</span>
+                <div className={"related-products-holder"}>
+                    {relatedProducts.length > 0 && relatedProducts.map((product) => (
+                        <div key={product.productId} className={"related-product"}
+                             onClick={() => navigate(`/home/product/${product.productId}`)}>
+                            <Image src={product.productImage} className={"related-product-image"}/>
+                            <span className={"related-product-name"}>{product.productName}</span>
+                            <span className={"related-product-price"}>ksh {product.productPrice}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
             <div>
                 <span>Product Reviews</span>
