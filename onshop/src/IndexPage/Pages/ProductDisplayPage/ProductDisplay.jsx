@@ -179,7 +179,7 @@ const ProductDisplay = () => {
 
                         <div className={"price-and-proportions2"}>
 
-  {/*Chck*/}                          <Pagination className={"product-sizes-holder list-toggle"}>
+  {/*Check*/}                          <Pagination className={"product-sizes-holder list-toggle"}>
                                 {sizes.map((size, index) => (
                                     <Pagination.Item key={index} active={activeSize === size}
                                                      className={"portion"} onClick={() => setActiveSize(size)}>
@@ -240,7 +240,7 @@ const ProductDisplay = () => {
                     {productOnDisplay &&
                         <span className={"available-count"}>
                             Available Products
-                            <span>
+                            <span className={"product-count"}>
                                 {productOnDisplay.productCount}
                             </span>
                         </span>/*Not in medium screens*/
