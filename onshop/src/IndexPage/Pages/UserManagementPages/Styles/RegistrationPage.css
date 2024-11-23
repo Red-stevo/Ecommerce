@@ -1,13 +1,13 @@
 .registration-page {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 
 .registration-page-left, .registration-page-right {
     width: 50%;
-    height: 100%;
+    min-height: 100%;
     background: linear-gradient(135deg,#C3BFE3, rgba(217, 210, 210, 0.23));
 }
 
@@ -17,6 +17,7 @@
 }
 
 .registration-page-right-holder {
+    min-height: 100%;
     margin-left: 10%;
     margin-right: 10%;
     margin-top: 8%;
@@ -70,7 +71,7 @@
 
 .register, .sign-in {
     font-family: Montserr sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 400;
     width: fit-content;
     padding: 2%;
@@ -95,10 +96,58 @@
 }
 
 @media screen and (max-device-width: 767px){
-    .registration-page-right-holder {
+
+    .registration-page {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        background: linear-gradient(135deg,#C3BFE3, rgba(217, 210, 210, 0.23));
     }
+
 
     .registration-page-left {
         display: none;
+    }
+
+    .registration-page-right {
+        background:none;
+        width: 70%;
+    }
+
+    .registration-page-right-holder {
+        align-content: center;
+    }
+
+}
+
+@media screen and (max-device-width: 560px){
+
+    .registration-page-right {
+        background:none;
+        width: 90%;
+    }
+
+}
+
+
+@media screen and (max-device-width: 450px){
+
+    .registration-page-right {
+        background:none;
+        width: 100%;
+    }
+
+    .welcome-reg {
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    .create-account {
+        font-size: 20px;
+    }
+
+    .register, .sign-in {
+        font-size: 17px;
+        font-weight: 400;
     }
 }

@@ -4,6 +4,7 @@ import googleIcon from "./../../../assets/google-icon.png";
 
 
 const RegistrationPage = () => {
+
     return (
 
 
@@ -44,7 +45,7 @@ const RegistrationPage = () => {
 
                         <div className={"reg-and-login-buttons"}>
                             <Button className={"register"}>REGISTER</Button>
-                            <Button className={"sign-in"}>SIGN IN</Button>
+                            <Button href={"/auth/login"} className={"sign-in"}>SIGN IN</Button>
                         </div>
 
                     </Form>
