@@ -33,19 +33,12 @@ const AdministrationSideBar = () => {
                     ]}
                 />
 
-                <MenuToggleComponent
-                    productIcon={<FaProductHunt className={"product-icon"}/>}
-                    menuTitle={"Products"}
-                    childrenLink={[
-                        {title:"Add Product", link:"newProduct"},
-                        {title:"Product List", link:"productList"},
-                        {title:"Categories", link:"productCategories"},
-                    ]}
-                />
+
             </div>
 
 
             <div className={"admin-page-base"}>
+                <h1>Hello</h1>
                 <Outlet />
             </div>
         </>
