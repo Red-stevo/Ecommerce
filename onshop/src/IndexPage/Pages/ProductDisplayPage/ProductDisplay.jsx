@@ -267,7 +267,10 @@ const ProductDisplay = () => {
                 </div>
             </div>
             <div>
-                <span>Product Reviews</span>
+                <span className={"product-reviews-section"}>Product Reviews</span>
+                <div>
+
+                </div>
             </div>
         </div>
     );

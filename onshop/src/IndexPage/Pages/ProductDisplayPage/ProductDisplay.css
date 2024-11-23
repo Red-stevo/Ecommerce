@@ -97,7 +97,7 @@
     display: flex;
     gap: 2%;
     border-bottom: solid grey 1px;
-    width: 100vw;
+    width: 90%;
 }
 
 .product-prices-display2 {
@@ -225,7 +225,7 @@
 
 /*Related product section.*/
 
-.header-related-products {
+.header-related-products, .product-reviews-section {
     font-size: 27px;
     font-family: Montserrat Montserr sans-serif;
 }
