@@ -22,7 +22,7 @@
     width: 70%;
     height: fit-content;
     padding: 20px;
-    background-color: whitesmoke;
+    background: linear-gradient(to bottom, white, whitesmoke, rgba(228, 238, 188, 0.22), transparent);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -32,6 +32,7 @@
 .size-color, .price-count {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .description-input {
@@ -58,9 +59,27 @@
     text-align: center;
     width: 60px;
     height: 60px;
+    margin: 5px;
+    padding: 5px;
     justify-content: center;
     align-content: center;
     background-color: rgba(143, 141, 141, 0.7);
 }
 
+.preview-item {
+    margin:5px;
+    width: 60px;
+    height: 60px;
+}
+
+.preview-holder {
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+}
+
+.images-review {
+    display: flex;
+    flex-direction: row;
+}
 
