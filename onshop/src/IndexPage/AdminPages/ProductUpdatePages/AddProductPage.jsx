@@ -3,9 +3,26 @@ import {FloatingLabel, Form, InputGroup} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
 import {useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
+import {IoIosClose} from "react-icons/io";
+
+
+const categories = [
+    {categoryName:"men", categoryId:1},
+    {categoryName:"Utensils", categoryId:2},
+    {categoryName:"Electronics", categoryId:3},
+    {categoryName:"Women", categoryId:4},
+    {categoryName:"Clothes", categoryId:5},
+    {categoryName:"Shoes", categoryId:6},
+]
+
+
+
+
+
 const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);
     const [previewFile, setPreviewFile] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
 
 
     const handleFileChange = (event) => {
@@ -60,10 +77,24 @@ const AddProductPage = () => {
 
                     </FloatingLabel>
 
+                    {/*Preview the selected categories.*/}
+                    <div className={"categories-preview-holder"}>
+                        {/*Pre view selected categories*/}
+                        {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
+                            <div key={index} className={"categories-preview"}>
+                                {category} <IoIosClose className={"cancel-categories"}/>
+                            </div>))
+                        }
+                    </div>
 
-                    <Form.Group>
-                        <input className={"form-control"} placeholder={"Product Category"}/>
-                    </Form.Group>
+                    <select className={"form-select"}
+                        onChange={(e) =>
+                            setSelectedCategories((prevState) => [...prevState, e.target.value])}>
+
+                        {categories.length > 0 && categories.map(({categoryId, categoryName}) => (
+                            <option key={categoryId} value={categoryName}>{categoryName}</option>))
+                        }
+                    </select>
 
                     <div className={"size-color"}>
                         <Form.Group>
@@ -76,7 +107,7 @@ const AddProductPage = () => {
                     </div>
 
                     <div className={"price-count"}>
-                        <InputGroup className="mb-3">
+                        <InputGroup className="">
                             <Form.Control className={"productPrice"}
                                           aria-label="Product Price" placeholder={'Product Price'} />
                             <Form.Control className={"productDiscount"}
