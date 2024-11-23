@@ -76,3 +76,23 @@
     padding-left: 250px;
     background-color: #0c8cdc;
 }
+
+.dash-board-toggle {
+    position: fixed;
+    width: fit-content;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+
+
+
+@media screen and (max-width: 767px){
+    .close-button {
+        display: flex;
+    }
+
+    .hide-element {
+        display: none;
+    }
+}
