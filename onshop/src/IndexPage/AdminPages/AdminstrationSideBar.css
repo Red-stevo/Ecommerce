@@ -74,13 +74,13 @@
     width: 100vw;
     min-height: 100vh;
     padding-left: 250px;
-    background-color: #0c8cdc;
+    background: linear-gradient(to bottom, rgba(143, 184, 213, 0.87), rgba(164, 211, 201, 0.61), whitesmoke, #e4eebc);
 }
 
 .dash-board-toggle {
     position: fixed;
     width: fit-content;
-    font-size: 26px;
+    font-size: 32px;
     cursor: pointer;
 }
 
