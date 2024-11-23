@@ -225,10 +225,10 @@ const ProductDisplay = () => {
 
 
                     <div className={"price-and-proportions"}>
-                        <Pagination className={"product-sizes-holder"}>
+                        <Pagination className={"product-sizes-holder app-button"}>
                             {sizes.map((size, index) => (
                                 <Pagination.Item key={index} active={activeSize === size}
-                                                 className={"portion"} onClick={() => setActiveSize(size)}>
+                                                 className={"portion app-button"} onClick={() => setActiveSize(size)}>
                                     {size}
                                 </Pagination.Item>
                             ))}
