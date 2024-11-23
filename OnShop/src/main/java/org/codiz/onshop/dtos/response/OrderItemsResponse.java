@@ -5,7 +5,9 @@ import org.codiz.onshop.entities.products.Products;
 
 @Data
 public class OrderItemsResponse {
-    private Products productId;
+    private String productName;
+    private String productImageUrl;
+    private float productPrice;
     private int quantity;
     private double totalPrice;
 }

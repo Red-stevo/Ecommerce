@@ -10,8 +10,17 @@ import java.util.List;
 @Data
 public class OrdersResponse {
 
-    private Instant orderDate;
-    private double totalPrice;
-    private String address;
+    private String orderNumber;
+    private String orderStatus;
+
+    private OrderSummary orderSummary;
+
     private List<OrderItemsResponse> itemsList;
+
+    private CustomerDetails customerDetails;
+
+    private double totalCharges;
+
+    private String address;
+
 }

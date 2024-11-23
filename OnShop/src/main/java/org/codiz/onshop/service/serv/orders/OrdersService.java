@@ -3,10 +3,9 @@ package org.codiz.onshop.service.serv.orders;
 
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.requests.ShipmentRequest;
-import org.codiz.onshop.dtos.response.EntityDeletionResponse;
-import org.codiz.onshop.dtos.response.EntityResponse;
-import org.codiz.onshop.dtos.response.OrdersResponse;
-import org.codiz.onshop.dtos.response.ShipmentResponse;
+import org.codiz.onshop.dtos.response.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,9 +16,9 @@ import java.util.Map;
 public interface OrdersService {
     EntityResponse placeOrder(OrderPlacementRequest request);
     String removeOrderItems(String orderItemId);
-    EntityDeletionResponse cancelOrder(String orderId);
-    List<OrdersResponse> getOrders(String userId);
-    Map<LocalDate, List<OrdersResponse>> getAllOrdersGroupedByDate();
+    EntityDeletionResponse cancelOrder(String orderId,String username);
+    OrdersResponse getOrders(String orderId);
+    Map<LocalDate, List<AllOrdersResponse>> getAllOrdersGroupedByDate();
     EntityResponse createShipment(ShipmentRequest request);
     EntityResponse updateShipment(String trackingId, ShipmentRequest request);
     ShipmentResponse getShipment(String trackingId);
@@ -29,6 +28,10 @@ public interface OrdersService {
     List<ShipmentResponse> findDeliveredShipment();
     List<ShipmentResponse> findReturnedShipment();
     List<ShipmentResponse> findTransitShipment();
-    List<OrdersResponse> getAllOrdersForOneWeek();
+    List<AllOrdersResponse> getAllOrdersForOneWeek();
+    Page<AllOrdersResponse> getDeliveredOrders(Pageable pageable);
+    Page<AllOrdersResponse> getUndeliveredOrders(Pageable pageable);
+    Page<AllOrdersResponse> getShippingOrders(Pageable pageable);
+    Page<AllOrdersResponse> getCancelledOrders(Pageable pageable);
 
 }

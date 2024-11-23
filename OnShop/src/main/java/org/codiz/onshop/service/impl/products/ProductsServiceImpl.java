@@ -240,7 +240,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @Transactional
-    @Cacheable(value = "products")
+    //@Cacheable(value = "products")
     public Page<ProductsPageResponse> productsPageResponseList(Pageable pageable) {
         Page<Products> products = productsRepository.findAll(pageable);
 

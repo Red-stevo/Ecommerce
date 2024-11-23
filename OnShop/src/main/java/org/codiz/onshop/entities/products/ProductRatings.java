@@ -2,6 +2,7 @@ package org.codiz.onshop.entities.products;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.codiz.onshop.entities.users.Users;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -17,6 +18,7 @@ public class ProductRatings {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private Products product;
 
     @ManyToOne(fetch = FetchType.LAZY)

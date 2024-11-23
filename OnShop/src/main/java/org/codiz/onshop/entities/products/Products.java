@@ -3,6 +3,7 @@ package org.codiz.onshop.entities.products;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.codiz.onshop.repositories.products.ProductRatingsRepository;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -41,6 +42,7 @@ public class Products implements Serializable {
 
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<ProductRatings> productRatingsList;
 
 
