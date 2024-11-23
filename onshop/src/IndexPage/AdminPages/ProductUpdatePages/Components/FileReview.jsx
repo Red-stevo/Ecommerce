@@ -1,5 +1,8 @@
 
 // eslint-disable-next-line react/prop-types
+import {IoIosClose} from "react-icons/io";
+
+// eslint-disable-next-line react/prop-types
 const FileReview = ({previewImages}) => {
 
     return (
@@ -8,11 +11,17 @@ const FileReview = ({previewImages}) => {
             {previewImages.length > 0 && previewImages.map(({file, type}, index) => (
                 <div key={index}>
                     {type === "image" && (
-                        <img src={file} alt="Preview" className={"preview-item"} />
+                        <div className={"preview-image-video"} >
+                            <img src={file} alt="Preview" className={"preview-item"} />
+                            <IoIosClose className={"cancel-categories"} />
+                        </div>
                     )}
 
                     {type === "video" && (
-                        <video src={file} controls className={"preview-item"} />
+                        <div className={"preview-image-video"}>
+                            <video src={file} controls className={"preview-item"} />
+                            <IoIosClose className={"cancel-categories"} />
+                        </div>
                     )}
                 </div>
             ))

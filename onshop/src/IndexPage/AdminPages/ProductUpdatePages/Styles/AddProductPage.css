@@ -109,3 +109,7 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
+
+.preview-image-video {
+    display: flex;
+}

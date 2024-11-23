@@ -1,5 +1,5 @@
 import "./Styles/AddProductPage.css";
-import {FloatingLabel, Form, InputGroup} from "react-bootstrap";
+import {Button, FloatingLabel, Form, InputGroup} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
 import {useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
@@ -131,6 +131,12 @@ const AddProductPage = () => {
                         </>
                         <FileReview previewImages={previewFile} />
                     </div>
+
+
+                 {/*   <div>
+                        <Button>Save</Button>
+                        <Button>Publish</Button>
+                    </div>*/}
                 </Form>
             </div>
         </div>
