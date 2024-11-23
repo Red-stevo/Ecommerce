@@ -129,10 +129,10 @@ const ProductDisplay = () => {
                         </div>{/*Medium screen display.*/}
 
                         {/*Available colours medium screen*/}
-                        <Pagination className={"available-colors"}>
+  {/*Check*/}                      <Pagination className={"available-colors  list-toggle"}>
                             {availableColors.map((color, index) => (
                                 <Pagination.Item key={index} active={activeColor === color}
-                                                 onClick={() => setActiveColor(color)}>
+                                                 className="portion" onClick={() => setActiveColor(color)}>
                                     {color}
                                 </Pagination.Item>
                             ))}
@@ -167,10 +167,10 @@ const ProductDisplay = () => {
                         </div> {/*Medium screen display*/}
 
 
-                        <Pagination className={"available-colors2"}>
+{/*Check*/}                        <Pagination className={"available-colors2 list-toggle"}>
                             {availableColors.map((color, index) => (
                                 <Pagination.Item key={index} active={activeColor === color}
-                                                 onClick={() => setActiveColor(color)}>
+                                                 className="portion" onClick={() => setActiveColor(color)}>
                                     {color}
                                 </Pagination.Item>
                             ))}
@@ -179,7 +179,7 @@ const ProductDisplay = () => {
 
                         <div className={"price-and-proportions2"}>
 
-                            <Pagination className={"product-sizes-holder"}>
+  {/*Chck*/}                          <Pagination className={"product-sizes-holder list-toggle"}>
                                 {sizes.map((size, index) => (
                                     <Pagination.Item key={index} active={activeSize === size}
                                                      className={"portion"} onClick={() => setActiveSize(size)}>
@@ -225,14 +225,15 @@ const ProductDisplay = () => {
 
 
                     <div className={"price-and-proportions"}>
-                        <Pagination className={"product-sizes-holder app-button"}>
+ {/*check*/}                       <Pagination className="product-sizes-holder list-toggle">
                             {sizes.map((size, index) => (
                                 <Pagination.Item key={index} active={activeSize === size}
-                                                 className={"portion app-button"} onClick={() => setActiveSize(size)}>
+                                    className="portion" onClick={() => setActiveSize(size)}>
                                     {size}
                                 </Pagination.Item>
                             ))}
                         </Pagination>
+
                         <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
                     </div> {/*Not in medium screens.*/}
 
