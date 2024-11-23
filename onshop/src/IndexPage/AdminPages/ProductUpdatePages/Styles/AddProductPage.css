@@ -1,0 +1,66 @@
+.add-product-page {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+}
+
+.page-title {
+    font-size: 26px;
+    font-family: Montserr Montserrat sans-serif;
+    font-weight: 700;
+}
+
+.title-form-buttons-holder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding-left: 250px;
+}
+
+.product-input-form {
+    width: 70%;
+    height: fit-content;
+    padding: 20px;
+    background-color: whitesmoke;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.size-color, .price-count {
+    display: flex;
+    justify-content: space-between;
+}
+
+.description-input {
+    width: 100%;
+}
+
+/*Image input*/
+
+/* Hide the default file input */
+.file-input-filled {
+    display: none;
+}
+
+.upload-icon {
+    align-self: center;
+    justify-content: center;
+}
+
+/* Style the label as the browse button */
+.custom-label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    text-align: center;
+    width: 60px;
+    height: 60px;
+    justify-content: center;
+    align-content: center;
+    background-color: rgba(143, 141, 141, 0.7);
+}
+
+
