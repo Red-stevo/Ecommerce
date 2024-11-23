@@ -1,11 +1,11 @@
 package org.codiz.onshop.entities.cart;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,9 +23,10 @@ public class Cart {
     private Status status;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private Users users;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItems> cartItems;
 
     @PrePersist
@@ -39,7 +40,6 @@ public class Cart {
         this.updatedAt = Instant.now();
     }
 
-    // Add a method to manage the bidirectional relationship
     public void addCartItem(CartItems cartItem) {
         cartItems.add(cartItem);
         cartItem.setCart(this);
@@ -49,5 +49,7 @@ public class Cart {
         cartItems.remove(cartItem);
         cartItem.setCart(null);
     }
+
+
 
 }

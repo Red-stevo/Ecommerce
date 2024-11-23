@@ -18,13 +18,10 @@ import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -276,15 +273,6 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
-
-    private PagedModel.PageMetadata createPageMetadata(Page<Products> products) {
-        return new PagedModel.PageMetadata(
-                products.getSize(),    // size per page
-                products.getNumber(),  // current page number
-                products.getTotalElements(), // total number of elements
-                products.getTotalPages() // total number of pages
-        );
-    }
 
 
 
