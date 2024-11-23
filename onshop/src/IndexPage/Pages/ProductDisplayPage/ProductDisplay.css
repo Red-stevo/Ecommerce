@@ -262,6 +262,38 @@
     font-size: 20px;
 }
 
+
+
+/*Product Reviews Section.*/
+
+.product-reviews-holder {
+    display: flex;
+    flex-direction: column;
+    margin-left: 6%;
+}
+
+
+.review-section {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.review-username {
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+
 @media screen and (max-device-width: 899px){
     .image-display-holder {
         width: 35vw;
@@ -413,6 +445,11 @@
         width: 160px;
     }
 
+    /*Product review Section.*/
+    .review {
+        width: 80%;
+    }
+
 }
 
 
@@ -493,6 +530,35 @@
     .related-product-image {
         height: 170px;
         width: 110px;
+    }
+
+    /*Product Reviews Section.*/
+
+    .product-reviews-holder {
+        display: flex;
+        flex-direction: column;
+        margin-left: 6%;
+    }
+
+
+    .review-section {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .review {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        margin-bottom: 30px;
+        margin-top: 20px;
+    }
+
+    .review-username {
+        font-family: Montserrat Montserr sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
     }
 
 }

@@ -199,32 +199,33 @@ relatedProducts:[
 ],
 productReviews:[
     {
-        reviewId:1,
-        reviewerName:"Brenda MuKami",
+        rating:5,
+        username:"Brenda MuKami",
         reviewContent:"This product exceeded my expectations! The build quality is top-notch, and it's incredibly easy to use. Worth every penny. Would recommend it to anyone looking for a reliable option."
     },
     {
-        reviewId:2,
-        reviewerName:"Mirowe Bob",
+        rating:2,
+        username:"Mirowe Bob",
         reviewContent:"The design is sleek and modern, but functionality could be better. Battery life is shorter than advertised. Overall, decent for the price, but I wouldn't buy it again."
     },
     {
-        reviewerName:"Bree M",
+        rating:4,
+        username:"Bree M",
         reviewContent:"Excellent performance! It handles heavy tasks like a pro, and the customer support was responsive when I had a question. Packaging was secure, and delivery was faster than expected."
     },
     {
-        reviewId:3,
-        reviewerName:"Stephen Muiru",
+        rating:0,
+        username:"Stephen Muiru",
         reviewContent:"Not impressed. The material feels cheap, and it stopped working within a week. Tried contacting support, but they were unhelpful. Wouldn't recommend unless they improve their quality"
     },
     {
-        reviewId:4,
-        reviewerName:"Stephen Muiru",
+        rating:2,
+        username:"Stephen Muiru",
         reviewContent:""
     },
     {
-        reviewId:5,
-        reviewerName:"Chebet Faith",
+        rating:3,
+        username:"Chebet Faith",
         reviewContent:"Very happy with this purchase! The instructions were clear, and setup was a breeze. It's been running smoothly for weeks without any issues. Definitely a five-star product for me!"
     },
 ]

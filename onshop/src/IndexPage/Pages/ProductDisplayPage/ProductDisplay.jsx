@@ -7,9 +7,10 @@ import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
 import {useNavigate} from "react-router-dom";
+import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 
 const ProductDisplay = () => {
-    const { products, productName, productDescription, relatedProducts } = useSelector(
+    const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
         (state) => state.productReducer.product);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -266,10 +267,16 @@ const ProductDisplay = () => {
                     ))}
                 </div>
             </div>
-            <div>
+            <div className={"review-section"}>
                 <span className={"product-reviews-section"}>Product Reviews</span>
-                <div>
-
+                <div className={"product-reviews-holder"}>
+                    {productReviews.length > 0 &&  productReviews.map((review, index) => (
+                        <div key={index} className={"review"}>
+                            <span className={"review-username"}>{review.username}</span>
+                            <span className={"review-content"}>{review.reviewContent}</span>
+                            <StarRating active={true} value={review.rating}/>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
