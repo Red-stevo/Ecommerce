@@ -1,0 +1,379 @@
+.product-page {
+    width: 100vw;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-details-display {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: fit-content;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    gap: 15px;
+}
+
+.image-display-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 30vw;
+}
+
+.product-details-display-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 70vw;
+}
+
+
+.large-image-view {
+    width: 28vw;
+    height: 28vw;
+}
+
+.toggle-images-holder {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+    gap: 5px;
+}
+
+.toggle-image {
+    width: 4vw;
+    height:4vw;
+}
+
+.product-display-name, .product-display-name2 {
+    font-weight: 700;
+    font-size: 23px;
+    font-family: "Noto Looped Lao Bold", sans-serif;
+}
+
+.product-display-name2 {
+    display: none;
+}
+
+.product-display-description {
+    width: 80%;
+    font-weight: 500;
+    font-size: 16px;
+    font-family: "Roboto Light", Montserrat, sans-serif;
+    line-height: 1.7;
+}
+
+.price-and-proportions, .price-and-proportions2 {
+    display: flex;
+    flex-direction: row;
+    gap: 20%;
+    flex-wrap: wrap;
+}
+
+
+
+.price-and-proportions2 {
+    display: none;
+}
+
+.new-product-price-display {
+    font-family: Montserrat, sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.old-product-price-display {
+
+}
+
+.product-prices-display, .product-prices-display2 {
+    display: flex;
+    gap: 2%;
+    width: 80%;
+}
+
+.product-prices-display2 {
+    display: none;
+}
+
+.conversion-buttons, .conversion-buttons2, .conversion-buttons3 {
+    width: 60%;
+    display: flex;
+    gap: 2%;
+    flex-direction: row;
+    align-content: center;
+}
+
+.conversion-buttons2, .conversion-buttons3 {
+    display: none;
+}
+
+.share-icon, .add-cart-icon {
+    font-size: 20px;
+    text-align: center;
+
+}
+
+.share-icon {
+    margin-left: 20px;
+}
+
+.share-icon:hover{
+    cursor: pointer;
+
+}
+
+.add-cart-button, .order-button {
+    display: flex;
+    flex-direction: row;
+    font-size: 13px;
+    font-weight: 600;
+    height: fit-content;
+    padding: 3px;
+}
+
+.available-colors, .available-colors2 {
+    width: 90%;
+    overflow: scroll;
+}
+
+/*Remove from large screens*/
+.available-colors2 {
+    display: none;
+}
+
+.product-sizes-holder {
+    overflow: scroll;
+}
+
+.portion {
+    white-space: nowrap;
+}
+
+.wish-list-button {
+    display: flex;
+    flex-direction: row;
+    font-size: 12px;
+    font-weight: 600;
+    gap: 5px;
+    height: fit-content;
+    width: fit-content;
+}
+
+.image-toggle-display {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 15px;
+}
+
+.available-count {
+    display: flex;
+}
+
+.available-count2 {
+    display: none;
+}
+
+
+
+@media screen and (max-device-width: 899px){
+    .image-display-holder {
+        width: 35vw;
+    }
+
+    .product-details-display-holder {
+        width: 65vw;
+    }
+
+    .large-image-view {
+        width: 32vw;
+        height: 32vw;
+    }
+
+    .toggle-image {
+        width: 7vw;
+        height:7vw;
+    }
+
+    .conversion-buttons {
+        width: 100%;
+        gap: 2%;
+    }
+
+    .product-display-description {
+        width: 100%;
+    }
+}
+
+@media screen and (max-device-width: 767px) and (min-device-width: 587px) {
+    .product-page {
+        padding: 0;
+    }
+
+    .product-details-display {
+        flex-direction: column;
+    }
+
+    .image-display-holder {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .product-details-display-holder {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 80vw;
+    }
+
+    .image-toggle-display {
+        width: fit-content;
+        flex-direction: row;
+        gap: 2px;
+    }
+
+    .large-image-view {
+        width: 44vw;
+        height: 44vw;
+    }
+
+    .toggle-images-holder {
+        width: 40vw;
+        overflow: scroll;
+    }
+
+    .price-display-md {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .new-product-price-display, .old-product-price-display {
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+
+    .available-colors2, .conversion-buttons2, .product-display-name2,
+    .price-and-proportions2,.product-prices-display2,   .available-count2  {
+        display: flex;
+    }
+
+    .available-colors,  .conversion-buttons, .product-display-name,
+    .price-and-proportions,.product-prices-display,  .available-count  {
+        display: none;
+    }
+
+    .product-display-name2 {
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .price-and-proportions2 {
+        flex-direction: column;
+    }
+
+    .conversion-section {
+        width: 70vw;
+    }
+
+
+    .price-and-proportions2, .product-sizes-holder, .available-colors2 {
+        max-width: 48vw;
+        overflow: scroll;
+    }
+
+    .conversion-buttons2 {
+        flex-direction: column;
+    }
+
+    .cart-order-buttons, .share-count-buttons {
+        display: flex;
+        width: 45vw;
+        justify-content: space-between;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .product-prices-display2 {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .image-view {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+@media screen and (max-device-width: 586px){
+    .product-details-display {
+        flex-direction: column;
+    }
+
+    .image-view {
+        margin-left: 0;
+    }
+
+    .large-image-view {
+        width: 100vw;
+        height: 60vw;
+        margin-bottom: 5px;
+        object-fit: cover;
+    }
+
+    .toggle-image {
+        width: 10vw;
+        height:10vw;
+    }
+
+    .toggle-images-holder {
+        width: 70vw;
+        overflow: scroll;
+        margin-left: 10px;
+    }
+    .product-page {
+        padding: 0;
+    }
+
+    .available-colors {
+        width: 94vw;
+        overflow: scroll;
+        margin-left: 5px;
+    }
+
+
+    .product-display-name2, .conversion-buttons3 {
+        display: flex;
+    }
+
+    .product-display-name, .conversion-buttons {
+        display: none;
+    }
+
+    .conversion-buttons3 {
+        width: 96vw;
+        margin-left: 10px;
+    }
+
+    .product-display-description {
+        width: 100vw;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .product-prices-display, .available-count {
+        margin-left: 10px;
+    }
+
+    .price-and-proportions, .price-and-proportions2 {
+        margin-left: 10px;
+        width: 96vw;
+    }
+
+}
+

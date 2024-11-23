@@ -4,12 +4,17 @@ import googleIcon from "./../../../assets/google-icon.png";
 
 
 const RegistrationPage = () => {
+
     return (
+
+
         <div className={"registration-page"}>
-           <div className={"registration-page-left"} />
+           <div className={"registration-page-left"} /> {/*Left image holder for desktop view reg page.*/}
 
             <div className={"registration-page-right"}>
                 <div className={"registration-page-right-holder"}>
+
+                    {/*Registration page header*/}
                     <span className={"welcome-reg"}>
                         Welcome to
                         <span className={"site-name"}>
@@ -21,6 +26,7 @@ const RegistrationPage = () => {
                         Create an Account
                     </span>
 
+                    {/*Registration form*/}
                     <Form className={"registration-form"}>
                         <Form.Group>
                             <input className={"form-control reg-username-input"} placeholder={"Username"}/>
@@ -39,7 +45,7 @@ const RegistrationPage = () => {
 
                         <div className={"reg-and-login-buttons"}>
                             <Button className={"register"}>REGISTER</Button>
-                            <Button className={"sign-in"}>SIGN IN</Button>
+                            <Button href={"/auth/login"} className={"sign-in"}>SIGN IN</Button>
                         </div>
 
                     </Form>
@@ -54,7 +60,6 @@ const RegistrationPage = () => {
                     Terms of Service and Privacy Policy" name="group1" type={'checkbox'} id={`disclaimer`}/>
                 </div>
             </div>
-
         </div>
     );
 };

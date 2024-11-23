@@ -3,9 +3,9 @@
     top: 0;
     width: 100vw;
     height: 50px;
-    background-color: rgb(65, 175, 231);
-    color: whitesmoke;
-    border-bottom: 1px #8f8d8d solid;
+    background-color: black;
+    color: rgba(255, 215, 0, 0.95);
+    border-bottom: 1px rgba(255, 215, 0, 0.76) solid;
     z-index: 50;
 }
 
@@ -14,18 +14,19 @@
     justify-content: space-evenly;
 }
 
-
-.app-logo {
-
+.app-logo-icon {
+    height: 50px;
 }
 
 .search-and-buttons {
     width: 60%;
 }
 
+
 .cart-icon,.user-account-icon  {
     width: 40px;
     height: 25px;
+    color: #FFC107;
 }
 
 .search-icon {
@@ -71,9 +72,12 @@
 }
 .my-account {
     white-space: nowrap;
+    color: #FFC107;
+    font-weight: 600;
 }
 .cart-text {
     margin-top: 15px;
+    color: #FFC107;
 }
 
 .cart-count {
@@ -100,9 +104,34 @@
 }
 
 
+/* Styles for the toggle button*/
+.toggle-icon {
+    background-color: rgba(255, 215, 0, 0.62);
+    border: none;
+}
+
+
+
+/* Styles for the hamburger icon inside the toggle */
+.toggle-icon .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.59)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Hover effect for toggle button */
+.toggle-icon:hover {
+    background-color: #ffcc00; /* Darker shade on hover */
+}
+
+/* Focus effect for toggle button */
+.toggle-icon:focus {
+    outline: none; /* Remove focus outline */
+    background-color: #fdcb00; /* Different color when focused */
+}
+
+
 @media screen and (max-device-width: 899px){
     .main-header {
-        height: 50px;
+        height: 70px;
         padding: 5px;
         z-index: 50;
     }
@@ -113,7 +142,7 @@
     }
 
     .pages-body {
-        margin-top: 50px;
+        margin-top: 70px;
     }
 }
 
@@ -122,12 +151,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 767px){
     .main-header {
-        height: 50px;
+        height: 70px;
         z-index: 50;
     }
 
     .pages-body {
-        margin-top: 50px;
+        margin-top: 70px;
     }
 
     .main-header-content-holder{
@@ -186,7 +215,7 @@
     }
     .main-header-content-holder{
         margin-left: 0;
-        background-color: rgb(65, 175, 231);
+        background-color: black;
 
     }
 }
@@ -196,12 +225,12 @@
 /*extra small phone*/
 @media screen and (max-device-width: 350px){
     .main-header {
-        height: 50px;
+        height: 70px;
         padding: 5px;
         z-index: 50;
     }
     .pages-body {
-        margin-top: 50px;
+        margin-top: 70px;
     }
 
 }
