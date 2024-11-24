@@ -2,6 +2,7 @@ import "./Styles/AllOrdersPage.css";
 import {useEffect, useState} from "react";
 import {CiFilter} from "react-icons/ci";
 import {Button} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 
 const orders = [
     {orderId:"FDR567NBHY", orderDate:"Sep Fri 13 2024", orderStatus:"CANCELED", orderTotal:2500.00},
@@ -30,6 +31,7 @@ const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED","CANCELED", "ALL"];
 const AllOrdersPage = () => {
     const [orderDisplay, setOrderDisplay] = useState([]);
     const [statusPointer, setStatusPointer] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -61,7 +63,7 @@ const AllOrdersPage = () => {
                 </div>
 
                 {orderDisplay.length > 0 && orderDisplay.map(({orderId, orderDate, orderStatus, orderTotal}) => (
-                    <div className={"order-contents"} key={orderId}>
+                    <div className={"order-contents"} key={orderId} onClick={() => navigate(`/admin/orders/${orderId}`)}>
                         <span className={"text"}>{orderId}</span>
                         <span className={"text"}>{orderDate}</span>
                         <span className={"text"}>{orderStatus}</span>
