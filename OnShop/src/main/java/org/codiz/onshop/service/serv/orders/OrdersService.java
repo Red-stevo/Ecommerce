@@ -18,7 +18,7 @@ public interface OrdersService {
     String removeOrderItems(String orderItemId);
     EntityDeletionResponse cancelOrder(String orderId,String username);
     OrdersResponse getOrders(String orderId);
-    Map<LocalDate, List<AllOrdersResponse>> getAllOrdersGroupedByDate();
+    Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable);
     EntityResponse createShipment(ShipmentRequest request);
     EntityResponse updateShipment(String trackingId, ShipmentRequest request);
     ShipmentResponse getShipment(String trackingId);

@@ -40,8 +40,13 @@ public class OrdersController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<LocalDate, List<AllOrdersResponse>>> getAllOrders(){
-        return ResponseEntity.ok(ordersService.getAllOrdersGroupedByDate());
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> getAllOrdersGroupedByDate(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                                   @RequestParam(value = "size", defaultValue = "10") int size,
+                                                                                   PagedResourcesAssembler<AllOrdersResponse> assembler) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AllOrdersResponse>  responses = ordersService.getAllOrdersGroupedByDate(pageable);
+        PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
+        return ResponseEntity.ok(pagedModel);
     }
 
 
