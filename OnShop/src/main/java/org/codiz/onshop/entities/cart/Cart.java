@@ -1,8 +1,10 @@
 package org.codiz.onshop.entities.cart;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.codiz.onshop.entities.users.Users;
 
 import java.time.Instant;
@@ -24,9 +26,12 @@ public class Cart {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
+    @ToString.Exclude
     private Users users;
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
     private List<CartItems> cartItems;
 
     @PrePersist
