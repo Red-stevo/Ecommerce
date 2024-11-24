@@ -2,6 +2,7 @@ import "./Styles/CategoricalProductsDisplay.css";
 import CategoriesMenu from "./Components/CategoriesMenu.jsx";
 import {Button, Image} from "react-bootstrap";
 import StarRating from "./Components/StarRating.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -87,6 +88,9 @@ const products = [
 
 
 const CategoricalProductsDisplay = () => {
+    const navigate = useNavigate();
+
+
     return (
         <div className={"product-menu-holder"}>
             <CategoriesMenu />
@@ -95,7 +99,7 @@ const CategoricalProductsDisplay = () => {
                 ({productId, productName,
                      productPrice,productRating,
                      productUrl}, index) => (
-                    <div className={"product-gen-display"} key={index}>
+                    <div className={"product-gen-display"} key={index} onClick={() => {navigate(`/home/product/${productId}`)}}>
                         <Image src={productUrl} alt={productName} className={"product-display-image"} />
                         <div>
                             <span className={"product-display-name"}>{productName}</span>
@@ -107,7 +111,7 @@ const CategoricalProductsDisplay = () => {
                 ))}
 
                 <div className={"load-more-button-holder"}>
-                    <Button className={"load-more-button"}>Load More</Button>
+                    <Button className={"load-more-button app-button"}>Load More</Button>
                 </div>
             </div>
 

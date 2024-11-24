@@ -44,8 +44,8 @@ const RegistrationPage = () => {
 
 
                         <div className={"reg-and-login-buttons"}>
-                            <Button className={"register"}>REGISTER</Button>
-                            <Button href={"/auth/login"} className={"sign-in"}>SIGN IN</Button>
+                            <Button className={"register app-button"}>REGISTER</Button>
+                            <Button href={"/auth/login"} className={"sign-in app-button"}>SIGN IN</Button>
                         </div>
 
                     </Form>

@@ -6,7 +6,9 @@ import UserAccount from "../Components/IndexHeader/UserAccount.jsx";
 import "./Styles/MainHeader.css";
 import {Outlet} from "react-router-dom";
 import logo from "./../../../assets/applicationLogo.png";
+import {useState} from "react";
 const MainHeader = () => {
+    const [searchContents, setSearchContents] = useState("");
 
     return (
         <>
@@ -18,10 +20,13 @@ const MainHeader = () => {
                 <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>
                     <InputGroup className="mx-2 mb-2 search-and-buttons">
                         <CategoryDropDown />    {/*Categories drop-down*/}
-                        <input className={"form-control search-bar"} placeholder={"Search"}
-                              aria-label="Product Search" aria-describedby="basic-addon2"
+                        <input className={"form-control search-bar"} placeholder={"Search"} required={true}
+                               value={searchContents} aria-label="Product Search" aria-describedby="basic-addon2"
+                               onChange={(event) => setSearchContents(event.target.value)}
+
                         /> {/*Search bar*/}
-                        <Button variant="outline-secondary" id="search-button" className={"search-buttons-right"}>
+                        <Button variant="outline-secondary" href={searchContents && `/home/products/${searchContents}`}
+                                id="search-button" className={"search-buttons-right"}>
                             <FaSearch className={"search-icon"}/>
                         </Button> {/*Search Button(icon)*/}
                     </InputGroup>

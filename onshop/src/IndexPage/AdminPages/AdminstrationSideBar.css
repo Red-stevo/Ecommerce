@@ -1,0 +1,103 @@
+
+.admin-main-page {
+    width: 100vw;
+    height: 100vh;
+}
+
+.dash-board {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    height: 100vh;
+    background-color: rgba(30, 28, 28, 1);
+    position: fixed;
+    left: 0;
+    color: rgba(255, 183, 26, 0.75);
+    font-weight: 800;
+    padding-left: 20px;
+    overflow: scroll;
+    z-index: 80;
+}
+
+.admin-title {
+    display: flex;
+    font-size: 32px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding-right: 20px;
+    justify-content: space-between;
+}
+
+.squares {
+    font-size: 36px;
+}
+
+.dashboard-title {
+    width: 90%;
+    font-size: 30px;
+    border-bottom: rgb(255, 183, 26) solid 1px;
+    padding-bottom: 10px;
+}
+
+.close-button {
+    cursor: pointer;
+    display: none;
+}
+
+.link-holder {
+    margin-top: 20px;
+}
+
+.main-links {
+    font-size: 20px;
+}
+
+.product-icon {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.page-links-section {
+    margin-left: 40px;
+}
+
+.product-arrow {
+    margin-left: 10px;
+}
+
+.page-link-text {
+    text-decoration: none;
+    color: rgba(255, 183, 26, 0.75);
+    font-size: 16px;
+}
+
+.admin-page-base {
+    width: 100vw;
+    min-height: 100vh;
+    padding-left: 250px;
+    background: linear-gradient(to bottom, rgba(143, 184, 213, 0.87), rgba(164, 211, 201, 0.61), whitesmoke, #e4eebc);
+}
+
+.dash-board-toggle {
+    position: fixed;
+    width: fit-content;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+
+
+
+@media screen and (max-width: 767px){
+    .close-button {
+        display: flex;
+    }
+
+    .hide-element {
+        display: none;
+    }
+
+    .admin-page-base {
+        padding: 20px;
+    }
+}

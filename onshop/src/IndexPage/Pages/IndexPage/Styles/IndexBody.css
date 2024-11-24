@@ -25,6 +25,7 @@
 
 
 .discount-product-text {
+    color: black;
     display: flex;
     flex-direction: column;
     width: 330px;
@@ -50,11 +51,13 @@
     text-align: start;
     margin-left: 20px;
     margin-bottom: 12px;
+    font-family: Montserrat sans-serif;
 }
 
 
 .discount-product-text-description {
     text-align: start;
+    font-family: Montserrat sans-serif;
 }
 
 .category-section {

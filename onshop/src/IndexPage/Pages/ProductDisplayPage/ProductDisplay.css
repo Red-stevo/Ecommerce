@@ -83,17 +83,21 @@
 .new-product-price-display {
     font-family: Montserrat, sans-serif;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 23px;
+    color: #cb501d;
 }
 
 .old-product-price-display {
-
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .product-prices-display, .product-prices-display2 {
     display: flex;
     gap: 2%;
-    width: 80%;
+    border-bottom: solid grey 1px;
+    width: 90%;
 }
 
 .product-prices-display2 {
@@ -178,6 +182,116 @@
     display: none;
 }
 
+
+/* Default pagination item */
+.pagination .page-link {
+    color: #1e1c1c;
+    border: 1px solid #ddd;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+/* Active pagination item */
+.pagination .page-item.active .page-link {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: white !important;
+}
+
+/* Hover state for active item */
+.pagination .page-item.active .page-link:hover {
+    background-color: #e0a800 !important;
+    border-color: #e0a800 !important;
+}
+
+/* Hover state for non-active items */
+.pagination .page-link:hover {
+    background-color: #f8f9fa;
+    color: #020202;
+}
+
+.product-count {
+    margin-left: 10px;
+    color: #f64a0b;
+    font-size: 18px;
+}
+
+.available-count, .available-count2 {
+    margin-top: 10px;
+    font-family: Montserrat sans-serif;
+}
+
+
+
+/*Related product section.*/
+
+.header-related-products, .product-reviews-section {
+    font-size: 27px;
+    font-family: Montserrat Montserr sans-serif;
+}
+
+.related-products-holder {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    width: 100vw;
+}
+
+.related-product {
+    display: flex;
+    flex-direction: column;
+    height:260px;
+    width: 190px;
+    border: solid 1px grey;
+    margin: 10px;
+}
+
+.related-product:hover {
+    transform: scale(1.053);
+    box-shadow: 1px 4px 8px rgba(128, 0, 128, 0.81);
+}
+
+.related-product-image {
+    height: 240px;
+    width: 190px;
+}
+
+.related-product-name, .related-product-price {
+    font-family: Montserr Montserrat sans-serif;
+    font-size: 20px;
+}
+
+
+
+/*Product Reviews Section.*/
+
+.product-reviews-holder {
+    display: flex;
+    flex-direction: column;
+    margin-left: 6%;
+}
+
+
+.review-section {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.review-username {
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
 
 
 @media screen and (max-device-width: 899px){
@@ -307,10 +421,39 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    .product-display-description {
+        width: 100vw;
+        text-justify: distribute-center-last;
+        text-align: start;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+
+
+    /*Related products section.*/
+
+    .related-product {
+        height:200px;
+        width: 160px;
+        margin: 5px;
+    }
+
+    .related-product-image {
+        height: 170px;
+        width: 160px;
+    }
+
+    /*Product review Section.*/
+    .review {
+        width: 80%;
+    }
+
 }
 
 
-@media screen and (max-device-width: 586px){
+@media screen and (max-device-width: 586px) {
     .product-details-display {
         flex-direction: column;
     }
@@ -375,5 +518,47 @@
         width: 96vw;
     }
 
-}
+    /*Related products section.*/
 
+    .related-product {
+        height:200px;
+        width: 110px;
+        margin: 5px;
+        border: none;
+    }
+
+    .related-product-image {
+        height: 170px;
+        width: 110px;
+    }
+
+    /*Product Reviews Section.*/
+
+    .product-reviews-holder {
+        display: flex;
+        flex-direction: column;
+        margin-left: 6%;
+    }
+
+
+    .review-section {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .review {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        margin-bottom: 30px;
+        margin-top: 20px;
+    }
+
+    .review-username {
+        font-family: Montserrat Montserr sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+}
