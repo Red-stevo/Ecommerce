@@ -21,6 +21,7 @@ import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class CartImpl implements CartService {
     }
 
 
+    @Transactional
     public Cart updateItemQuantity(CartItemsUpdate itemsUpdate) {
         Cart cart = cartRepository.findById(itemsUpdate.getCartId())
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
@@ -91,6 +93,7 @@ public class CartImpl implements CartService {
 
         return cartRepository.save(cart);
     }
+
 
 
     @Transactional
@@ -110,6 +113,7 @@ public class CartImpl implements CartService {
         List<CartItemsResponse> itemsResponses = new ArrayList<>();
         for (CartItems items : cart.get().getCartItems()) {
             CartItemsResponse itemsResponse = new CartItemsResponse();
+            System.out.println("categories : "+items.getProducts().getCategoriesList());
             itemsResponse.setCartItemId(items.getCartItemId());
             itemsResponse.setProductId(items.getProducts().getProductId());
             itemsResponse.setProductName(items.getProducts().getProductName());
@@ -136,7 +140,6 @@ public class CartImpl implements CartService {
             return like;
         }).toList();
 
-        //cartResponse.setYouMayLikes(youMayLikes);
 
 
         int start = (int) pageable.getOffset();
@@ -147,16 +150,26 @@ public class CartImpl implements CartService {
 
         // Add Pagination Metadata
         cartResponse.setYouMayLikes(youMayLikePage.getContent());
-        /*cartResponse.setCurrentPage(youMayLikePage.getNumber());
+        cartResponse.setCurrentPage(youMayLikePage.getNumber());
         cartResponse.setTotalPages(youMayLikePage.getTotalPages());
-        cartResponse.setHasNext(youMayLikePage.hasNext());*/
+        cartResponse.setHasMore(youMayLikePage.hasNext());
 
         return cartResponse;
     }
 
-    @Override
-    public Cart removeItemFromCart(CartItemsDeletion deletion) {
-        return null;
+    @Transactional
+    public HttpStatus removeItemFromCart(String cartItemId) {
+        CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
+        cartItemsRepository.delete(cartItems);
+
+        return HttpStatus.OK ;
+    }
+
+    @Transactional
+    public HttpStatus deleteCart(String cartId){
+        Cart cart = cartRepository.findCartByCartId(cartId);
+        cartRepository.delete(cart);
+        return HttpStatus.OK ;
     }
 
 

@@ -424,6 +424,13 @@ public class OrdersImpl implements OrdersService {
         return "order deleted successfully";
     }
 
+    public String updateStatus(String orderId, OrderStatus status){
+        Orders orders = ordersRepository.findByOrderId(orderId);
+        orders.setOrderStatus(status);
+        ordersRepository.save(orders);
+        return "order status updated successfully";
+    }
+
 
 
 }

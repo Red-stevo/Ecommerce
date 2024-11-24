@@ -10,6 +10,7 @@ import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +35,10 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("remove-item")
-    public ResponseEntity<Cart> removeItemFromCart(@RequestBody CartItemsDeletion deletion){
-        Cart cart = cartService.removeItemFromCart(deletion);
-        return ResponseEntity.ok(cart);
+    @DeleteMapping("/remove-item/{cartItemId}")
+    public ResponseEntity<HttpStatus> removeItemFromCart(@PathVariable String cartItemId){
+        HttpStatus st= cartService.removeItemFromCart(cartItemId);
+        return ResponseEntity.ok(st);
     }
 
     @GetMapping("/{userId}")
@@ -50,6 +51,11 @@ public class CartController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("productName").ascending());
         CartResponse cartResponse = cartService.getCartById(userId, pageable);
         return ResponseEntity.ok(cartResponse);
+    }
+
+    @DeleteMapping("/delete/cart")
+    public ResponseEntity<HttpStatus> deleteCart(String cartId){
+        return ResponseEntity.ok(cartService.deleteCart(cartId));
     }
 
 

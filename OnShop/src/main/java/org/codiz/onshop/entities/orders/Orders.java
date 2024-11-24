@@ -19,7 +19,7 @@ public class Orders {
     @Id
    private String orderId;
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private Users userId;
     private Instant createdOn;

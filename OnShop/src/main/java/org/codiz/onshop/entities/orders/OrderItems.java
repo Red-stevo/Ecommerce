@@ -15,11 +15,11 @@ public class OrderItems {
     private String orderItemId;
     @ManyToOne
     @JoinColumn(name = "order_id",referencedColumnName = "orderId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Orders orderId;
     @ManyToOne
     @JoinColumn(name = "product_id",referencedColumnName = "productId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Products productId;
     private int quantity;
     private double totalPrice;

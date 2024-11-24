@@ -7,7 +7,7 @@ import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.AllOrdersResponse;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.OrdersResponse;
-import org.codiz.onshop.dtos.response.ProductsPageResponse;
+import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +17,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -87,5 +83,11 @@ public class OrdersController {
         Page<AllOrdersResponse>  responses = ordersService.getCancelledOrders(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
         return ResponseEntity.ok(pagedModel);
+    }
+
+    @PutMapping("/update/status")
+    public ResponseEntity<String> updateStatus(@RequestParam String orderId, @RequestParam OrderStatus status){
+        String result = ordersService.updateStatus(orderId, status);
+        return ResponseEntity.ok(result);
     }
 }

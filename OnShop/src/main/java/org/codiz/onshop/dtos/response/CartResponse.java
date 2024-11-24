@@ -11,4 +11,7 @@ public class CartResponse {
     private String cartId;
     private List<CartItemsResponse> cartItemsResponses;
     private List<YouMayLike> youMayLikes;
+    private int currentPage;
+    private int totalPages;
+    private boolean hasMore;
 }
