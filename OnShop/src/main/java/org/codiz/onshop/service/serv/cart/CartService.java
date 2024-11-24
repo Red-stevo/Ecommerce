@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface CartService {
 
 
-    Optional<Cart> getCartById(String cartId);
+    Cart getCartById(String cartId);
     Cart removeItemFromCart(CartItemsDeletion deletion);
     Cart updateItemQuantity(CartItemsUpdate itemsUpdate);
     Cart addItemToCart(CartItemsToAdd items);

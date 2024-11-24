@@ -36,9 +36,9 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @GetMapping("/get")
-    Optional<Cart> getCartById(@RequestParam String cartId){
-        return cartService.getCartById(cartId);
+    @GetMapping("/get/{cartId}")
+    public ResponseEntity<Cart> getCartById(@PathVariable String cartId){
+        return ResponseEntity.ok(cartService.getCartById(cartId));
     }
 
 

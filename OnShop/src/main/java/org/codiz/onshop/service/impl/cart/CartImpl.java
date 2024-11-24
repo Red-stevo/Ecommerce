@@ -48,7 +48,8 @@ public class CartImpl implements CartService {
         Products product = productsRepository.findById(items.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        CartItems existingCartItem = cartItemsRepository.findByCartAndProducts(cart, product);
+        CartItems existingCartItem = cartItemsRepository.findByCart(cart);
+        System.out.println(existingCartItem);
 
         if (existingCartItem != null) {
             existingCartItem.setQuantity(existingCartItem.getQuantity() + items.getQuantity());
@@ -96,8 +97,10 @@ public class CartImpl implements CartService {
         return cartRepository.save(cart);
     }
 
-    public Optional<Cart> getCartById(String cartId) {
-        return cartRepository.findById(cartId);
+    public Cart getCartById(String cartId) {
+
+        Cart cart = cartRepository.findCartByCartId(cartId);
+        return cart;
     }
 
 
