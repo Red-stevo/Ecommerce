@@ -13,7 +13,7 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String cartItemId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Cart cart;
