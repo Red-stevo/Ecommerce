@@ -39,5 +39,52 @@
 }
 
 .order-num, .order-date, .order-status, .total-amount {
+    font-size: 21px;
+    font-weight: 400;
+    font-family: Montserrat Montserr sans-serif;
+}
+
+@media screen and (max-device-width: 899px) {
+
+    .all-orders-page {
+        padding-left: 0;
+    }
+
+    .all-orders-holder {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .headings, .order-contents {
+        width: 98%;
+    }
+}
+
+@media screen and (max-device-width:767px) {
+
+    .all-orders-holder {
+        padding: 0;
+    }
+
+    .headings, .order-contents {
+        width: 100%;
+    }
+
+    .text {
+        font-size: 13px;
+        margin-left: 5px;
+        margin-right: 5px;
+        font-weight: 600;
+    }
+
+    .cost-text, .total-amount {
+        display: none;
+    }
+
+    .all-orders-page {
+        margin-top: 10px;
+    }
+
+
 
 }

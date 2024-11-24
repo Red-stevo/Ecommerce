@@ -12,10 +12,10 @@ const AllOrdersPage = () => {
                     <span className={"total-amount"}>Total</span>
                 </div>
                 <div className={"order-contents"}>
-                    <span>FDR567NBHY</span>
-                    <span>Nov Fri 20 2024</span>
-                    <span>Delivered</span>
-                    <span>ksh 2300.00</span>
+                    <span className={"text"}>FDR567NBHY</span>
+                    <span className={"text"}>Nov Fri 20 2024</span>
+                    <span className={"text"}>Delivered</span>
+                    <span className={"cost-text text"}>ksh 2300.00</span>
                 </div>
             </div>
         </div>
