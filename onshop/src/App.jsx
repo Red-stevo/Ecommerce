@@ -8,6 +8,7 @@ import CategoricalProductsDisplay from "./IndexPage/Pages/ProductsDisplayPage/Ca
 import ProductDisplay from "./IndexPage/Pages/ProductDisplayPage/ProductDisplay.jsx";
 import AdminstrationSideBar from "./IndexPage/AdminPages/AdminstrationSideBar.jsx";
 import AddProductPage from "./IndexPage/AdminPages/ProductUpdatePages/AddProductPage.jsx";
+import AllOrdersPage from "./IndexPage/AdminPages/OrdersPages/AllOrdersPage.jsx";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
               <Route path={"/auth/registration"} element={<RegistrationPage />} />
               <Route path={"/admin"} element={<AdminstrationSideBar />}>
                     <Route path={"/admin/newProduct"} element={<AddProductPage />} />
+                    <Route path={"/admin/orders"} element={<AllOrdersPage />} />
               </Route>
           </Routes>
       </Router>

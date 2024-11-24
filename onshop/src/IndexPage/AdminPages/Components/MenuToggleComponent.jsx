@@ -9,7 +9,7 @@ const MenuToggleComponent = ({productIcon=null, menuTitle="", childrenLink= []})
 
     return (
         <div className={"products-pages main-links"} >
-            <div onClick={() => setProductMenuToggle(!productMenuToggle)}>
+            <div onClick={() => setProductMenuToggle(!productMenuToggle)} >
                 {productIcon} {menuTitle}
                 {productMenuToggle ?
                     <IoMdArrowDropdown className={"product-arrow"} /> : <IoMdArrowDropright  className={"product-arrow"}/>

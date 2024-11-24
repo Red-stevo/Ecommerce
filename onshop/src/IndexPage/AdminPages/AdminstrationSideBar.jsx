@@ -6,6 +6,7 @@ import MenuToggleComponent from "./Components/MenuToggleComponent.jsx";
 import {FaProductHunt} from "react-icons/fa";
 import {useState} from "react";
 import {PiListDashesFill} from "react-icons/pi";
+import {HiShoppingCart} from "react-icons/hi";
 
 
 const AdministrationSideBar = () => {
@@ -27,16 +28,22 @@ const AdministrationSideBar = () => {
 
                 </div>
 
+                {/*First menu bunch*/}
                 <MenuToggleComponent
                     productIcon={<FaProductHunt className={"product-icon"}/>}
                     menuTitle={"Products"}
                     childrenLink={[
-                        {title:"Add Product", link:"newProduct"},
-                        {title:"Product List", link:"productList"},
-                        {title:"Categories", link:"productCategories"},
+                        {title:"add product", link:"newProduct"},
+                        {title:"product list", link:"productList"},
+                        {title:"categories", link:"productCategories"},
                     ]}
                 />
 
+                {/*Second menu bunch*/}
+                <MenuToggleComponent
+                    productIcon={<HiShoppingCart className={"product-icon"}/>}
+                    menuTitle={"Order"}
+                    childrenLink={[{title:"all orders", link:"orders"},]}/>
 
             </div>
 
