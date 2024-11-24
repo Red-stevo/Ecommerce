@@ -1,0 +1,43 @@
+.all-orders-page {
+    width: 100%;
+    min-height: 100vh;
+    padding-left: 60px;
+}
+
+.all-orders-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 95%;
+    min-height: fit-content;
+    padding: 20px;
+}
+
+.headings {
+    margin-bottom: 30px;
+}
+
+.headings, .order-contents {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    width: 90%;
+}
+
+.order-contents {
+    padding-top: 10px;
+    border-top: 1px grey solid;
+    padding-bottom: 10px;
+    border-bottom: 1px solid grey;
+}
+
+.order-contents:hover {
+    box-shadow: 2px 3px 5px rgba(239, 211, 239, 0.9);
+    transform: scale(1.05);
+}
+
+.order-num, .order-date, .order-status, .total-amount {
+
+}
