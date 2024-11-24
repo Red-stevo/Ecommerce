@@ -15,7 +15,7 @@
 }
 
 .headings {
-    margin-bottom: 30px;
+    margin-bottom: 5px;
 }
 
 .headings, .order-contents {
@@ -28,20 +28,38 @@
 
 .order-contents {
     padding-top: 10px;
-    border-top: 1px grey solid;
     padding-bottom: 10px;
     border-bottom: 1px solid grey;
 }
 
 .order-contents:hover {
-    box-shadow: 2px 3px 5px rgba(239, 211, 239, 0.9);
-    transform: scale(1.05);
+    box-shadow: 2px 3px 5px rgba(68, 193, 234, 0.9);
+    transform: scale(1.035);
 }
 
 .order-num, .order-date, .order-status, .total-amount {
     font-size: 21px;
     font-weight: 400;
     font-family: Montserrat Montserr sans-serif;
+}
+
+.filter-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.filter-component {
+    display: flex;
+    width: 91%;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.load-more-orders {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
 }
 
 @media screen and (max-device-width: 899px) {
@@ -56,6 +74,10 @@
     }
 
     .headings, .order-contents {
+        width: 98%;
+    }
+
+    .filter-component {
         width: 98%;
     }
 }
@@ -85,6 +107,8 @@
         margin-top: 10px;
     }
 
-
+    .filter-component {
+        width: 100%;
+    }
 
 }
