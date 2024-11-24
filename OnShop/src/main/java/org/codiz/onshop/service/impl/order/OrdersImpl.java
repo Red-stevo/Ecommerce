@@ -1,15 +1,13 @@
 package org.codiz.onshop.service.impl.order;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.requests.ShipmentRequest;
 import org.codiz.onshop.dtos.response.*;
-import org.codiz.onshop.entities.orders.OrderItems;
-import org.codiz.onshop.entities.orders.OrderShipping;
-import org.codiz.onshop.entities.orders.Orders;
-import org.codiz.onshop.entities.orders.ShippingStatus;
+import org.codiz.onshop.entities.orders.*;
 import org.codiz.onshop.entities.products.Inventory;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.entities.users.Users;
@@ -22,6 +20,9 @@ import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,9 @@ import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -62,12 +65,17 @@ public class OrdersImpl implements OrdersService {
 
     public EntityResponse placeOrder(OrderPlacementRequest request) {
 
+        String longitude = request.getDoorStepAddress().getLongitude();
+        String latitude = request.getDoorStepAddress().getLatitude();
         Orders orders = new Orders();
         Users usr = usersRepository.findUsersByUserId(request.getUserId());
         orders.setUserId(usr);
         orders.setCreatedOn(Instant.now());
         orders.setOfficeAddress(request.getOfficeAddress());
-        orders.setDoorStepAddress(orders.getOfficeAddress());
+        if (longitude != null && latitude != null) {
+            orders.setLongitude(longitude);
+            orders.setLatitude(latitude);
+        }
         Orders order = ordersRepository.save(orders);
 
         List<OrderItems> orderItems = new ArrayList<>();
@@ -86,12 +94,13 @@ public class OrdersImpl implements OrdersService {
             totalAmount += totalPrice;
             ordersItemsRepository.save(items);
             orderItems.add(items);
-            productsService.reduceProductQuantity(itemsRequests.getProductId(), itemsRequests.getQuantity());
+            //productsService.reduceProductQuantity(itemsRequests.getProductId(), itemsRequests.getQuantity());
 
         }
-        order.setTotalAmount(totalAmount);
-        order.setOrderItems(orderItems);
-        ordersRepository.save(order);
+        Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
+        newOrder.setTotalAmount(totalAmount);
+        newOrder.setOrderItems(orderItems);
+        ordersRepository.save(newOrder);
         EntityResponse entityResponse = new EntityResponse();
         entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         entityResponse.setMessage("Order successfully placed");
@@ -107,10 +116,12 @@ public class OrdersImpl implements OrdersService {
 
     }
 
-    public EntityDeletionResponse cancelOrder(String orderId) {
+    public EntityDeletionResponse cancelOrder(String orderId, String username) {
         Orders orders = ordersRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("product not found")
         );
+
+        orders.setOrderStatus(OrderStatus.CANCELLED);
 
         for (OrderItems orderItems : orders.getOrderItems()) {
 
@@ -118,7 +129,7 @@ public class OrdersImpl implements OrdersService {
             inventory.setQuantitySold(inventory.getQuantitySold() - orderItems.getQuantity());
             inventoryRepository.save(inventory);
         }
-        ordersRepository.delete(orders);
+
 
         EntityDeletionResponse entityDeletionResponse = new EntityDeletionResponse();
         entityDeletionResponse.setMessage("Order successfully cancelled");
@@ -127,39 +138,87 @@ public class OrdersImpl implements OrdersService {
         return entityDeletionResponse;
     }
 
-    public List<OrdersResponse> getOrders(String userId) {
-        Users users = usersRepository.findUsersByUserId(userId);
-        List<Orders> ordersList = ordersRepository.findAllByUserIdOrderByCreatedOnDesc(users);
-        List<OrdersResponse> ordersResponses = new ArrayList<>();
-        for (Orders orders : ordersList) {
-            OrdersResponse ordersResponse = OrderResponse(orders);
-            /*OrdersResponse ordersResponse;*/
-            ordersResponses.add(ordersResponse);
+    @Transactional
+    public OrdersResponse getOrders(String orderId) {
+        Orders orders = ordersRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
+
+        OrdersResponse response = new OrdersResponse();
+        response.setOrderNumber(orders.getOrderId());
+        response.setTotalCharges(orders.getTotalAmount());
+        //response.setOrderStatus(orders.getOrderStatus().toString());
+
+        CustomerDetails customerDetails = new CustomerDetails();
+        customerDetails.setCustomerEmail(orders.getUserId().getUserEmail());
+        customerDetails.setCustomerPhone(orders.getUserId().getPhoneNumber());
+        customerDetails.setCustomerName(orders.getUserId().getUsername());
+        customerDetails.setOrderNumber(orders.getOrderId());
+        int itemsOrdered = orders.getOrderItems().stream()
+                        .mapToInt(OrderItems::getQuantity).sum();
+        customerDetails.setNumberOfItemsOrdered(itemsOrdered);
+
+        response.setCustomerDetails(customerDetails);
+
+        List<OrderItemsResponse> orderItemResponses = new ArrayList<>();
+        for (OrderItems items : orders.getOrderItems()){
+            OrderItemsResponse itemsResponse = new OrderItemsResponse();
+            itemsResponse.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
+            itemsResponse.setProductName(items.getProductId().getProductName());
+            itemsResponse.setProductPrice(items.getProductId().getProductPrice());
+            itemsResponse.setQuantity(items.getQuantity());
+            itemsResponse.setTotalPrice(items.getTotalPrice());
+            orderItemResponses.add(itemsResponse);
         }
-        return ordersResponses;
+
+        response.setItemsList(orderItemResponses);
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate createdDate = orders.getCreatedOn().atZone(zoneId).toLocalDate();
+        LocalTime timeOrdered = orders.getCreatedOn().atZone(zoneId).toLocalTime();
+        String dateCreated = formatOrderDate(createdDate);
+        String orderTime = formatOrderTime(timeOrdered);
+
+        OrderSummary orderSummary = new OrderSummary();
+        orderSummary.setOrderDate(dateCreated);
+        orderSummary.setOrderTime(orderTime);
+        orderSummary.setOrderTotal((float) orders.getTotalAmount());
+        orderSummary.setDeliveryFee(0);
+
+        response.setOrderSummary(orderSummary);
+
+        if (orders.getOfficeAddress() != null) {
+            response.setAddress(orders.getOfficeAddress());
+        }else {
+            response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
+        }
+
+        return response;
+
+
+
+    }
+    private String formatOrderDate(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
+        return date.format(formatter);
+    }
+    private String formatOrderTime(LocalTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+        return time.format(formatter);
     }
 
-    private OrdersResponse OrderResponse(Orders orders) {
-        OrdersResponse ordersResponse = new OrdersResponse();
-        ordersResponse.setOrderDate(orders.getCreatedOn());
-        ordersResponse.setAddress(orders.getOfficeAddress());
-        ordersResponse.setTotalPrice(orders.getTotalAmount());
 
-        getOrderItemsResponse(orders, ordersResponse);
-        return ordersResponse;
-    }
 
-    public Map<LocalDate, List<OrdersResponse>> getAllOrdersGroupedByDate() {
+    @Transactional
+    public Map<LocalDate, List<AllOrdersResponse>> getAllOrdersGroupedByDate() {
         List<Orders> ordersList = ordersRepository.findAll();
 
         // Reverse order map to ensure the latest dates come first
-        Map<LocalDate, List<OrdersResponse>> ordersByDate = new TreeMap<>(Collections.reverseOrder());
+        Map<LocalDate, List<AllOrdersResponse>> ordersByDate = new TreeMap<>(Collections.reverseOrder());
 
 
         ZoneId zoneId = ZoneId.systemDefault();
 
         for (Orders order : ordersList) {
-            OrdersResponse ordersResponse = getOrderResponse(order);
+            AllOrdersResponse ordersResponse = getOrderResponse(order);
 
             LocalDate orderDate = order.getCreatedOn().atZone(zoneId).toLocalDate();
 
@@ -169,42 +228,51 @@ public class OrdersImpl implements OrdersService {
         return ordersByDate;
     }
 
-    private void getOrderItemsResponse(Orders order, OrdersResponse ordersResponse) {
+
+    private void getOrderItemsResponse(Orders order, AllOrdersResponse ordersResponse) {
         List<OrderItemsResponse> itemsResponses = new ArrayList<>();
+
         for (OrderItems orderItems : order.getOrderItems()) {
             OrderItemsResponse itemsResponse = new OrderItemsResponse();
-            itemsResponse.setProductId(orderItems.getProductId());
+            itemsResponse.setProductName(orderItems.getProductId().getProductName());
             itemsResponse.setQuantity(orderItems.getQuantity());
+            itemsResponse.setProductImageUrl(orderItems.getProductId().getProductImagesList().get(0).getImageUrl());
+            itemsResponse.setProductPrice((orderItems.getProductId().getProductPrice()-orderItems.getProductId().getDiscount()));
             itemsResponse.setTotalPrice(orderItems.getTotalPrice());
             itemsResponses.add(itemsResponse);
         }
-        ordersResponse.setItemsList(itemsResponses);
+        ordersResponse.setItems(itemsResponses);
     }
 
 
-    public List<OrdersResponse> getAllOrdersForOneWeek(){
+    public List<AllOrdersResponse> getAllOrdersForOneWeek(){
 
         Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
         Instant now = Instant.now();
         List<Orders> ordersList = ordersRepository.findAllByCreatedOnBetweenOrderByCreatedOnDesc(oneWeekAgo,now);
 
-        List<OrdersResponse> ordersResponses = new ArrayList<>();
+        List<AllOrdersResponse> ordersResponses = new ArrayList<>();
         for (Orders order : ordersList) {
 
-            OrdersResponse response = getOrderResponse(order);
+            AllOrdersResponse response = getOrderResponse(order);
             ordersResponses.add(response);
         }
         return ordersResponses;
     }
 
-    private OrdersResponse getOrderResponse(Orders order) {
-        OrdersResponse response = new OrdersResponse();
-        response.setOrderDate(order.getCreatedOn());
-        response.setTotalPrice(order.getTotalAmount());
+    private AllOrdersResponse getOrderResponse(Orders order) {
+        AllOrdersResponse response = new AllOrdersResponse();
+        response.setOrderId(order.getOrderId());
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate createdDate = order.getCreatedOn().atZone(zoneId).toLocalDate();
+        String dateCreated = formatOrderDate(createdDate);
+        response.setOrderDate(dateCreated);
+        response.setOrderTotal((float) order.getTotalAmount());
+        //response.setOrderStatus(order.getOrderStatus().toString());
         if (order.getOfficeAddress() != null) {
-            response.setAddress(order.getOfficeAddress());
+            response.setOrderAddress(order.getOfficeAddress());
         }else {
-            response.setAddress(order.getDoorStepAddress());
+            response.setOrderAddress(order.getLongitude()+","+order.getLatitude());
         }
         getOrderItemsResponse(order, response);
         return response;
@@ -294,4 +362,74 @@ public class OrdersImpl implements OrdersService {
         }
         return shipmentResponses;
     }
+
+    public Page<AllOrdersResponse> getOrdersByStatus(OrderStatus status, Pageable pageable) {
+        Page<Orders> ordersPage = ordersRepository.findAllByOrderStatusOrderByCreatedOnAsc(status, pageable);
+
+        List<AllOrdersResponse> responses = ordersPage.getContent().stream()
+                .map(this::mapToAllOrdersResponse)
+                .toList();
+
+        return new PageImpl<>(responses, pageable, ordersPage.getTotalElements());
+    }
+
+    public Page<AllOrdersResponse> getDeliveredOrders(Pageable pageable) {
+        return getOrdersByStatus(OrderStatus.DELIVERED, pageable);
+    }
+
+    public Page<AllOrdersResponse> getUndeliveredOrders(Pageable pageable) {
+        return getOrdersByStatus(OrderStatus.UNDELIVERED, pageable);
+    }
+
+    public Page<AllOrdersResponse> getShippingOrders(Pageable pageable) {
+        return getOrdersByStatus(OrderStatus.SHIPPING, pageable);
+    }
+    public Page<AllOrdersResponse> getCancelledOrders(Pageable pageable){
+        return getOrdersByStatus(OrderStatus.CANCELLED,pageable);
+    }
+
+    private AllOrdersResponse mapToAllOrdersResponse(Orders order) {
+        AllOrdersResponse response = new AllOrdersResponse();
+        response.setOrderId(order.getOrderId());
+        response.setOrderStatus(order.getOrderStatus().toString());
+
+        if (order.getOfficeAddress() != null) {
+            response.setOrderAddress(order.getOfficeAddress());
+        } else {
+            response.setOrderAddress(order.getLongitude() + "," + order.getLatitude());
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate localDate = order.getCreatedOn().atZone(zoneId).toLocalDate();
+        response.setOrderDate(formatOrderDate(localDate));
+
+        List<OrderItemsResponse> items = order.getOrderItems().stream()
+                .map(this::mapToOrderItemsResponse)
+                .toList();
+
+        response.setItems(items);
+        return response;
+    }
+
+    private OrderItemsResponse mapToOrderItemsResponse(OrderItems orderItem) {
+        OrderItemsResponse response = new OrderItemsResponse();
+        response.setProductImageUrl(
+                orderItem.getProductId().getProductImagesList().isEmpty()
+                        ? null
+                        : orderItem.getProductId().getProductImagesList().get(0).getImageUrl()
+        );
+        response.setProductPrice(orderItem.getProductId().getProductPrice());
+        response.setProductName(orderItem.getProductId().getProductName());
+        response.setQuantity(orderItem.getQuantity());
+        return response;
+    }
+
+    public String deleteOrder(String orderId){
+        Orders orders = ordersRepository.findByOrderId(orderId);
+        ordersRepository.delete(orders);
+        return "order deleted successfully";
+    }
+
+
+
 }

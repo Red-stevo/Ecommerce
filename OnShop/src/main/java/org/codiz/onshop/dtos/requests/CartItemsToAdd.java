@@ -8,5 +8,4 @@ public class CartItemsToAdd {
     private String userId;
     private String productId;
     private int quantity;
-    private String cartId;
 }

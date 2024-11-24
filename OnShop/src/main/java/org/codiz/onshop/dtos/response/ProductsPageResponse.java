@@ -3,14 +3,14 @@ package org.codiz.onshop.dtos.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class ProductsPageResponse {
+public class ProductsPageResponse implements Serializable {
     private String productId;
     private String productName;
     private int ratings;
-    private String productImagesUrls;
-    private double productPrice;
+    private String productImagesUrl;
     private double discountedPrice;
-    private double percentageDiscountedPrice;
 
 }

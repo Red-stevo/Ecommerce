@@ -19,6 +19,7 @@ public class OrderItems {
     private Orders orderId;
     @ManyToOne
     @JoinColumn(name = "product_id",referencedColumnName = "productId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Products productId;
     private int quantity;
     private double totalPrice;

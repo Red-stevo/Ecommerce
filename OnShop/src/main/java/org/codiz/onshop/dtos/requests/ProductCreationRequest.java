@@ -15,21 +15,15 @@ public class ProductCreationRequest {
 
     private float productPrice;
 
-    private String brand;
-
     private String color;
-
-    private String aboutProduct;
 
     private double discount;
 
-    /*private List<String> productUrls;*/
     private List<MultipartFile> productUrls;
 
-    private Integer quantity;
+    private Integer count;
 
-    private List<CategoryCreationRequest> categoryCreationRequestList;
+    private List<String> categoryIds;
 
-    private double buyingPrice;
 
 }

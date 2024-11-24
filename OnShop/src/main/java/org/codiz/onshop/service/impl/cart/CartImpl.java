@@ -1,5 +1,6 @@
 package org.codiz.onshop.service.impl.cart;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.CartItemsDeletion;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
@@ -15,6 +16,7 @@ import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,10 +30,16 @@ public class CartImpl implements CartService {
 
 
 
+    @Transactional
     public Cart addItemToCart(CartItemsToAdd items) {
         Users users = usersRepository.findUsersByUserId(items.getUserId());
+
+        if (users == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
         Cart cart = cartRepository.findCartByUsers(users)
-                .orElseGet(()->{
+                .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUsers(users);
                     return cartRepository.save(newCart);
@@ -40,23 +48,23 @@ public class CartImpl implements CartService {
         Products product = productsRepository.findById(items.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        // Check if item already exists in the cart
-        Optional<CartItems> existingCartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProducts().getProductId().equals(items.getProductId()))
-                .findFirst();
+        CartItems existingCartItem = cartItemsRepository.findByCartAndProducts(cart, product);
 
-        if (existingCartItem.isPresent()) {
-            CartItems cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + items.getQuantity());
+        if (existingCartItem != null) {
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + items.getQuantity());
+            cartItemsRepository.save(existingCartItem);
         } else {
             CartItems newCartItem = new CartItems();
             newCartItem.setProducts(product);
             newCartItem.setQuantity(items.getQuantity());
-            cart.addCartItem(newCartItem);
-        }
+            newCartItem.setCart(cart);
+            cartItemsRepository.save(newCartItem);
 
+            //cart.addCartItem(newCartItem);
+        }
         return cartRepository.save(cart);
     }
+
 
     public Cart updateItemQuantity(CartItemsUpdate itemsUpdate) {
         Cart cart = cartRepository.findById(itemsUpdate.getCartId())
