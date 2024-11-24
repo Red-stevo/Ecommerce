@@ -5,8 +5,9 @@ import {AiFillProduct} from "react-icons/ai";
 import MenuToggleComponent from "./Components/MenuToggleComponent.jsx";
 import {FaProductHunt} from "react-icons/fa";
 import {useState} from "react";
-import {PiListDashesFill} from "react-icons/pi";
 import {HiShoppingCart} from "react-icons/hi";
+import {FiMenu} from "react-icons/fi";
+
 
 
 const AdministrationSideBar = () => {
@@ -14,7 +15,7 @@ const AdministrationSideBar = () => {
 
     return (
         <>
-            {hide && <PiListDashesFill className={"dash-board-toggle"} onClick={() => setHide(!hide)} /> }
+            {hide && <FiMenu className={"dash-board-toggle"} onClick={() => setHide(!hide)} /> }
             <div className={`dash-board ${hide && "hide-element"}`}>
                 <span className={"admin-title"}>
                     ADMIN
