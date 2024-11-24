@@ -19,4 +19,6 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     List<Orders> findAllByCreatedOnBetweenOrderByCreatedOnDesc(Instant oneWeekAgo, Instant now);
 
     Page<Orders> findAllByOrderStatusOrderByCreatedOnAsc(OrderStatus orderStatus, Pageable pageable);
+
+    Page<Orders> findAllByOrderByCreatedOnDesc(Pageable pageable);
 }
