@@ -129,8 +129,106 @@ const product = {
         }
 ],
 
-relatedProducts:[],
-productReviews:[]
+relatedProducts:[
+    {
+        productId:1,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:2,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:3,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:4,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:5,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:6,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:7,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:8,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:9,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:10,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+    {
+        productId:11,
+        productImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.HyMNmmOjAf7ZL-NfSvwgwgHaE0%26pid%3DApi&f=1&ipt=cc72685fa3c4739244236a5a0c015f87f95b62565d638773fead08e27d0d99f8&ipo=images",
+        productPrice:300,
+        productName:"Sneakers",
+    },
+],
+productReviews:[
+    {
+        rating:5,
+        username:"Brenda MuKami",
+        reviewContent:"This product exceeded my expectations! The build quality is top-notch, and it's incredibly easy to use. Worth every penny. Would recommend it to anyone looking for a reliable option."
+    },
+    {
+        rating:2,
+        username:"Mirowe Bob",
+        reviewContent:"The design is sleek and modern, but functionality could be better. Battery life is shorter than advertised. Overall, decent for the price, but I wouldn't buy it again."
+    },
+    {
+        rating:4,
+        username:"Bree M",
+        reviewContent:"Excellent performance! It handles heavy tasks like a pro, and the customer support was responsive when I had a question. Packaging was secure, and delivery was faster than expected."
+    },
+    {
+        rating:0,
+        username:"Stephen Muiru",
+        reviewContent:"Not impressed. The material feels cheap, and it stopped working within a week. Tried contacting support, but they were unhelpful. Wouldn't recommend unless they improve their quality"
+    },
+    {
+        rating:2,
+        username:"Stephen Muiru",
+        reviewContent:""
+    },
+    {
+        rating:3,
+        username:"Chebet Faith",
+        reviewContent:"Very happy with this purchase! The instructions were clear, and setup was a breeze. It's been running smoothly for weeks without any issues. Definitely a five-star product for me!"
+    },
+]
 }
 
 

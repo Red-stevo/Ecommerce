@@ -6,6 +6,8 @@ import LoginPage from "./IndexPage/Pages/UserManagementPages/LoginPage.jsx";
 import RegistrationPage from "./IndexPage/Pages/UserManagementPages/RegistrationPage.jsx";
 import CategoricalProductsDisplay from "./IndexPage/Pages/ProductsDisplayPage/CategoricalProductsDisplay.jsx";
 import ProductDisplay from "./IndexPage/Pages/ProductDisplayPage/ProductDisplay.jsx";
+import AdminstrationSideBar from "./IndexPage/AdminPages/AdminstrationSideBar.jsx";
+import AddProductPage from "./IndexPage/AdminPages/ProductUpdatePages/AddProductPage.jsx";
 
 const App = () => {
   return (
@@ -18,6 +20,9 @@ const App = () => {
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />
+              <Route path={"/admin"} element={<AdminstrationSideBar />}>
+                    <Route path={"/admin/newProduct"} element={<AddProductPage />} />
+              </Route>
           </Routes>
       </Router>
   )

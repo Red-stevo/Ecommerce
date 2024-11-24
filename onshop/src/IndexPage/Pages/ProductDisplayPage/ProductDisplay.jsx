@@ -6,12 +6,14 @@ import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
+import {useNavigate} from "react-router-dom";
+import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 
 const ProductDisplay = () => {
-    const { products, productName, productDescription } = useSelector(
-        (state) => state.productReducer.product
-    );
+    const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
+        (state) => state.productReducer.product);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // State
     const [activeSize, setActiveSize] = useState(null);
@@ -91,11 +93,11 @@ const ProductDisplay = () => {
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
                 <div className={"conversion-buttons3"}>
-                    <Button className={"add-cart-button"}>
+                    <Button className={"add-cart-button app-button"}>
                         <TiShoppingCart className={"add-cart-icon"}/>
                         ADD TO CART
                     </Button>
-                    <Button className={"order-button"}>ORDER NOW</Button>
+                    <Button className={"order-button app-button"}>ORDER NOW</Button>
                     <LuShare2 className={"share-icon"} title={"Share"}/>
                 </div> {/*Not in medium screens*/}
 
@@ -129,10 +131,10 @@ const ProductDisplay = () => {
                         </div>{/*Medium screen display.*/}
 
                         {/*Available colours medium screen*/}
-                        <Pagination className={"available-colors"}>
+  {/*Check*/}                      <Pagination className={"available-colors  list-toggle"}>
                             {availableColors.map((color, index) => (
                                 <Pagination.Item key={index} active={activeColor === color}
-                                                 onClick={() => setActiveColor(color)}>
+                                                 className="portion" onClick={() => setActiveColor(color)}>
                                     {color}
                                 </Pagination.Item>
                             ))}
@@ -143,11 +145,11 @@ const ProductDisplay = () => {
                         <div className={"conversion-buttons2"}>
 
                             <div className={"cart-order-buttons"}>
-                                <Button className={"add-cart-button"}>
+                                <Button className={"add-cart-button app-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
                                 </Button>
-                                <Button className={"order-button"}>ORDER NOW</Button>
+                                <Button className={"order-button app-button"}>ORDER NOW</Button>
                             </div>
 
                             <div className={"share-count-buttons"}>
@@ -157,7 +159,7 @@ const ProductDisplay = () => {
                                 {productOnDisplay &&
                                     <span className={"available-count2"}>
                                         Available Products
-                                        <span>
+                                        <span className={"product-count"}>
                                             {productOnDisplay.productCount}
                                         </span>
                                     </span>
@@ -167,10 +169,10 @@ const ProductDisplay = () => {
                         </div> {/*Medium screen display*/}
 
 
-                        <Pagination className={"available-colors2"}>
+{/*Check*/}                        <Pagination className={"available-colors2 list-toggle"}>
                             {availableColors.map((color, index) => (
                                 <Pagination.Item key={index} active={activeColor === color}
-                                                 onClick={() => setActiveColor(color)}>
+                                                 className="portion" onClick={() => setActiveColor(color)}>
                                     {color}
                                 </Pagination.Item>
                             ))}
@@ -179,7 +181,7 @@ const ProductDisplay = () => {
 
                         <div className={"price-and-proportions2"}>
 
-                            <Pagination className={"product-sizes-holder"}>
+  {/*Check*/}                          <Pagination className={"product-sizes-holder list-toggle"}>
                                 {sizes.map((size, index) => (
                                     <Pagination.Item key={index} active={activeSize === size}
                                                      className={"portion"} onClick={() => setActiveSize(size)}>
@@ -188,7 +190,7 @@ const ProductDisplay = () => {
                                 ))}
                             </Pagination>
 
-                            <Button className={"wish-list-button"}><FaRegHeart/>WISHLIST</Button>
+                            <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
                         </div> {/*Medium screen display*/}
 
 
@@ -199,11 +201,11 @@ const ProductDisplay = () => {
 
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
-                        <Button className={"add-cart-button"}>
+                        <Button className={"add-cart-button app-button"}>
                             <TiShoppingCart className={"add-cart-icon"}/>
                             ADD TO CART
                         </Button>
-                        <Button className={"order-button"}>ORDER NOW</Button>
+                        <Button className={"order-button app-button"}>ORDER NOW</Button>
                         <LuShare2 className={"share-icon"} title={"Share"}/>
                     </div> {/*Not in medium screens*/}
 
@@ -225,21 +227,22 @@ const ProductDisplay = () => {
 
 
                     <div className={"price-and-proportions"}>
-                        <Pagination className={"product-sizes-holder"}>
+ {/*check*/}                       <Pagination className="product-sizes-holder list-toggle">
                             {sizes.map((size, index) => (
                                 <Pagination.Item key={index} active={activeSize === size}
-                                                 className={"portion"} onClick={() => setActiveSize(size)}>
+                                    className="portion" onClick={() => setActiveSize(size)}>
                                     {size}
                                 </Pagination.Item>
                             ))}
                         </Pagination>
-                        <Button className={"wish-list-button"}><FaRegHeart/>WISHLIST</Button>
+
+                        <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
                     </div> {/*Not in medium screens.*/}
 
                     {productOnDisplay &&
                         <span className={"available-count"}>
                             Available Products
-                            <span>
+                            <span className={"product-count"}>
                                 {productOnDisplay.productCount}
                             </span>
                         </span>/*Not in medium screens*/
@@ -252,10 +255,29 @@ const ProductDisplay = () => {
                 </div>
             </div>
             <div>
-                <span>Related Products</span>
+                <span className={"header-related-products"}>Related Products</span>
+                <div className={"related-products-holder"}>
+                    {relatedProducts.length > 0 && relatedProducts.map((product) => (
+                        <div key={product.productId} className={"related-product"}
+                             onClick={() => navigate(`/home/product/${product.productId}`)}>
+                            <Image src={product.productImage} className={"related-product-image"}/>
+                            <span className={"related-product-name"}>{product.productName}</span>
+                            <span className={"related-product-price"}>ksh {product.productPrice}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div>
-                <span>Product Reviews</span>
+            <div className={"review-section"}>
+                <span className={"product-reviews-section"}>Product Reviews</span>
+                <div className={"product-reviews-holder"}>
+                    {productReviews.length > 0 &&  productReviews.map((review, index) => (
+                        <div key={index} className={"review"}>
+                            <span className={"review-username"}>{review.username}</span>
+                            <span className={"review-content"}>{review.reviewContent}</span>
+                            <StarRating active={true} value={review.rating}/>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

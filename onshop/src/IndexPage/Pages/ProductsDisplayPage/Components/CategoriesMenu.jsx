@@ -1,5 +1,6 @@
 import {Image} from "react-bootstrap";
 import {FcHome} from "react-icons/fc";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -14,15 +15,15 @@ const productCategory = [
 
 
 const CategoriesMenu = () => {
-
+        const navigate= useNavigate();
     return (
             <div className="product-category-menu hide-scrollbar" >
-                <div className="categories">
+                <div className="categories" onClick={() => navigate("/home/products/all")}>
                     <div className="category-name">Home</div>
                     <FcHome className="category-icon" />
                 </div>
                 {productCategory.map(({ category, categoryId, iconUrl }, index) => (
-                    <div key={index} className="categories">
+                    <div key={index} className="categories" onClick={() => navigate(`/home/products/${category}`)}>
                         <div className="category-name">{category}</div>
                         <Image src={iconUrl} alt={`${category} icon`} height={50} width={50} className="category-icon" />
                     </div>

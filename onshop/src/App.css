@@ -1,13 +1,15 @@
-.app-button {
+.app-button,button.app-button:active,
+ button.app-button:focus  {
     background-color: #FFC107;
     border: 1px solid #FFC107;
 }
 
-.app-button:hover, app-button:active  {
-    border: #FFC107 solid 1px;
-    background-color: transparent;
-    color: #FFC107;
+button.app-button:hover {
+    border: rgba(255, 193, 7, 0.65) solid 1px !important;
+    background-color: rgba(255, 193, 7, 0.32) !important;
+    color: white;
 }
+
 
 
 .search-buttons-left {
@@ -19,11 +21,11 @@
 
 .search-buttons-left:hover, .search-buttons-left:active,
 .search-buttons-left:checked  {
-    border-left: #FFC107 solid 1px;
-    border-top: #FFC107 solid 1px;
-    border-bottom: #FFC107 solid 1px;
+    border-left:rgba(255, 193, 7, 0.7) solid 1px;
+    border-top:rgba(255, 193, 7, 0.7) solid 1px;
+    border-bottom:rgba(255, 193, 7, 0.7) solid 1px;
     background-color: transparent;
-    color: #FFC107;
+    color: white;
 }
 
 

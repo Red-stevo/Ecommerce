@@ -32,7 +32,7 @@ const LoginPage = () => {
                             <Link className={"forgot-password-link"} to={"#"}>Forgot password?</Link>
                         </span>
                         <div className={"login-button-holder"}>
-                            <Button className={"login-button"}>Login</Button>
+                            <Button className={"login-button app-button"}>Login</Button>
                         </div>
                     </Form>
                     <span className={"or-sign-in"}>or signin with</span>
