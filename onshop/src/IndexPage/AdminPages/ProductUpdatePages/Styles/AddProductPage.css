@@ -102,6 +102,8 @@
 
 .cancel-categories {
     cursor: pointer;
+    font-weight: bolder;
+    font-size: 14px;
 }
 
 .categories-preview-holder {
@@ -112,4 +114,60 @@
 
 .preview-image-video {
     display: flex;
+}
+
+.submit-buttons {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding:5px;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+@media screen and (max-device-width: 1060px) {
+    .title-form-buttons-holder {
+        padding-left: 100px;
+    }
+
+    .product-input-form {
+        width: 90%;
+    }
+
+}
+
+@media screen and (max-device-width: 910px) {
+    .title-form-buttons-holder {
+        padding-left: 50px;
+    }
+
+    .product-input-form {
+        width: 95%;
+    }
+
+}
+
+@media screen and (max-device-width: 767px) {
+    .title-form-buttons-holder {
+        margin-top: 50px;
+        align-content: center;
+        padding-left: 50px;
+    }
+
+    .product-input-form {
+        width: 90%;
+    }
+
+}
+
+@media screen and (max-device-width: 767px) {
+    .title-form-buttons-holder {
+        align-content: center;
+        padding-left: 0;
+    }
+
+    .product-input-form {
+        width: 100%;
+    }
+
 }

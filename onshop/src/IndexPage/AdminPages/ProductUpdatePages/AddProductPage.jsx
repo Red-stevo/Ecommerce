@@ -1,7 +1,7 @@
 import "./Styles/AddProductPage.css";
 import {Button, FloatingLabel, Form, InputGroup} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 
@@ -24,6 +24,13 @@ const AddProductPage = () => {
     const [previewFile, setPreviewFile] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
+    const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
+
+    const handleImageRemove = (imageIndex) => {
+       setUploads(uploads.filter((_,index) => index !== imageIndex));
+       setPreviewFile(previewFile.filter((_, index) => index !== imageIndex))
+    }
+
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -31,6 +38,13 @@ const AddProductPage = () => {
         {files.length > 0 && files.forEach((file) => {
 
             if (!file) return;
+
+            /*Check the file size, if too large ignore the file.*/
+            if (file.size > 10485760){
+                console.log("The File '",file.name,"' is too large");
+                return;
+            }
+
 
             /*add file to the upload list.*/
             setUploads((prevState) => [...prevState, file]);
@@ -43,7 +57,7 @@ const AddProductPage = () => {
                     setPreviewFile((prevState) => [...prevState, {file:e.target.result, type:"image"}]);
                 };
                 reader.readAsDataURL(file);
-                // eslint-disable-next-line no-constant-binary-expression
+
             } else if (file.type.startsWith("video/") || file.type.startsWith("application/")) {
                 reader.onload = (e) => {
                     setPreviewFile((prevState) => [...prevState, {file:e.target.result, type:"video"}]);
@@ -54,8 +68,6 @@ const AddProductPage = () => {
                 console.error("File type not supported. Please upload an image or video.");
             }
         })}
-
-
     };
 
 
@@ -82,7 +94,8 @@ const AddProductPage = () => {
                         {/*Pre view selected categories*/}
                         {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
                             <div key={index} className={"categories-preview"}>
-                                {category} <IoIosClose className={"cancel-categories"}/>
+                                {category} <IoIosClose className={"cancel-categories"}
+                                                       onClick={() => removeCategory(category)} />
                             </div>))
                         }
                     </div>
@@ -126,17 +139,17 @@ const AddProductPage = () => {
                                 upload
                             </label>
                             <input onChange={handleFileChange}
-                                type="file" multiple={true} accept="image/*, video/*" id="fileUpload"
+                                type="file" multiple={true} accept="image/*, video/*, application/*" id="fileUpload"
                                 className="file-input-filled" />
                         </>
-                        <FileReview previewImages={previewFile} />
+                        <FileReview previewImages={previewFile} handleRemove={handleImageRemove} />
                     </div>
 
 
-                 {/*   <div>
-                        <Button>Save</Button>
-                        <Button>Publish</Button>
-                    </div>*/}
+                    <div className={"submit-buttons"}>
+                        <Button className={"app-button"}>Save</Button>
+                        <Button className={"app-button"}>Publish</Button>
+                    </div>
                 </Form>
             </div>
         </div>

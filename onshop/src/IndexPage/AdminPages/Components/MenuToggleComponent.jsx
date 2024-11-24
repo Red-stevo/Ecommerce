@@ -8,12 +8,13 @@ const MenuToggleComponent = ({productIcon=null, menuTitle="", childrenLink= []})
     const [productMenuToggle, setProductMenuToggle] = useState(false);
 
     return (
-        <div className={"products-pages main-links"} onClick={() => setProductMenuToggle(!productMenuToggle)}>
-            {productIcon}
-            {menuTitle}
-            {productMenuToggle ?
-                <IoMdArrowDropdown className={"product-arrow"} /> : <IoMdArrowDropright  className={"product-arrow"}/>}
-
+        <div className={"products-pages main-links"} >
+            <div onClick={() => setProductMenuToggle(!productMenuToggle)}>
+                {productIcon} {menuTitle}
+                {productMenuToggle ?
+                    <IoMdArrowDropdown className={"product-arrow"} /> : <IoMdArrowDropright  className={"product-arrow"}/>
+                }
+            </div>
             {productMenuToggle && childrenLink.length > 0 && childrenLink.map(({title, link}, index) => (
                 <div key={index} className={"page-links-section"}>
                     <Link to={`/admin/${link}`} className={"page-link-text"}>
