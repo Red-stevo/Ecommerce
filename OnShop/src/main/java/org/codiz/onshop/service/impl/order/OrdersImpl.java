@@ -208,24 +208,18 @@ public class OrdersImpl implements OrdersService {
 
 
     @Transactional
-    public Map<LocalDate, List<AllOrdersResponse>> getAllOrdersGroupedByDate() {
-        List<Orders> ordersList = ordersRepository.findAll();
+    public  Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable) {
+        Page<Orders> ordersList = ordersRepository.findAllByOrderByCreatedOnDesc(pageable);
 
-        // Reverse order map to ensure the latest dates come first
-        Map<LocalDate, List<AllOrdersResponse>> ordersByDate = new TreeMap<>(Collections.reverseOrder());
-
-
-        ZoneId zoneId = ZoneId.systemDefault();
+        List<AllOrdersResponse> responses = new ArrayList<>();
 
         for (Orders order : ordersList) {
             AllOrdersResponse ordersResponse = getOrderResponse(order);
+            responses.add(ordersResponse);
 
-            LocalDate orderDate = order.getCreatedOn().atZone(zoneId).toLocalDate();
-
-            ordersByDate.computeIfAbsent(orderDate, k -> new ArrayList<>()).add(ordersResponse);
         }
 
-        return ordersByDate;
+        return new PageImpl<>(responses) ;
     }
 
 
