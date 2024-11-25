@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.dtos.requests.CartItemsDeletion;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.requests.CartItemsUpdate;
+import org.codiz.onshop.dtos.response.CartResponse;
 import org.codiz.onshop.entities.cart.Cart;
 import org.codiz.onshop.service.serv.cart.CartService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,9 +40,16 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @GetMapping("/get")
-    Optional<Cart> getCartById(@RequestParam String cartId){
-        return cartService.getCartById(cartId);
+    @GetMapping("/{userId}")
+    public ResponseEntity<CartResponse> getCartById(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("productName").ascending());
+        CartResponse cartResponse = cartService.getCartById(userId, pageable);
+        return ResponseEntity.ok(cartResponse);
     }
 
 
