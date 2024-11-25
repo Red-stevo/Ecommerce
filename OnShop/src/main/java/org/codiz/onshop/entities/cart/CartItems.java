@@ -18,7 +18,7 @@ public class CartItems {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @JsonIgnore
     private Cart cart;
