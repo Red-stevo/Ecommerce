@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface CartItemsRepository extends JpaRepository<CartItems, String> {
 
     CartItems findByCart(Cart cart);
+
+    CartItems findCartItemsByCartItemId(String cartItemId);
 }
