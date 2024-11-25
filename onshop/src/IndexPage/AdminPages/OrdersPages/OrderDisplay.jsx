@@ -6,9 +6,7 @@ const orderDetails = {
     username:"Stephen Muiru",
     orderId:"AS43D4FFT6YT0P",
     orderStatus:"UNDELIVERED",
-    items:[
-        {i}
-    ]
+    items:[]
 }
 
 
