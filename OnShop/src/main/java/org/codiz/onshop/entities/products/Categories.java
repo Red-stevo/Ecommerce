@@ -1,8 +1,10 @@
 package org.codiz.onshop.entities.products;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -19,8 +21,10 @@ public class Categories {
     private String categoryIcon;
 
     @ManyToMany(mappedBy = "categoriesList", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
+    @JsonIgnore
+    @ToString.Exclude
     private List<Products> products;
 
 }

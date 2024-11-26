@@ -16,7 +16,7 @@ public class OrderShipping {
     private String shippingId;
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Orders order;
     private Instant shippingDate;
     private Instant deliveryDate;

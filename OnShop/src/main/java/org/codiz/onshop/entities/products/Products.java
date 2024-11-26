@@ -1,5 +1,6 @@
 package org.codiz.onshop.entities.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,6 +30,8 @@ public class Products implements Serializable {
     private int count;
 
     @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    @ToString.Exclude
     private List<ProductImages> productImagesList;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -38,6 +41,8 @@ public class Products implements Serializable {
             joinColumns = @JoinColumn(name = "product_id"), // Column for Products
             inverseJoinColumns = @JoinColumn(name = "category_id") // Column for Categories
     )
+    @JsonIgnore
+    @ToString.Exclude
     private List<Categories> categoriesList;
 
 

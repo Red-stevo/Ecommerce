@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.codiz.onshop.entities.users.Users;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,6 +34,7 @@ public class Cart {
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CartItems> cartItems;
 
     @PrePersist
