@@ -55,6 +55,8 @@
     font-size: 16px;
     font-family: Montserr Montserrat, sans-serif;
     font-weight: 400;
+    margin-bottom: 20px;
+
 }
 
 .product-icon {
@@ -91,7 +93,6 @@
     font-size: 32px;
     cursor: pointer;
 }
-
 
 
 
