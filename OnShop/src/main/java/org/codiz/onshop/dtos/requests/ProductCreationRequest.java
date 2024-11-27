@@ -17,6 +17,8 @@ public class ProductCreationRequest {
 
     private String color;
 
+    private String size;
+
     private double discount;
 
     private List<MultipartFile> productUrls;

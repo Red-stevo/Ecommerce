@@ -4,10 +4,7 @@ package org.codiz.onshop.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
-import org.codiz.onshop.dtos.response.AllOrdersResponse;
-import org.codiz.onshop.dtos.response.EntityDeletionResponse;
-import org.codiz.onshop.dtos.response.EntityResponse;
-import org.codiz.onshop.dtos.response.OrdersResponse;
+import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.springframework.data.domain.Page;
@@ -18,6 +15,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -101,4 +100,13 @@ public class OrdersController {
         String result = ordersService.updateStatus(orderId, status);
         return ResponseEntity.ok(result);
     }
+
+
+    @GetMapping("/get-order-status")
+    public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String orderId){
+        return ResponseEntity.ok(ordersService.getOrderStatus(orderId));
+    }
+
+
+
 }

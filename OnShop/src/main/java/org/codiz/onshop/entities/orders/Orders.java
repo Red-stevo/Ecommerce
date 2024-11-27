@@ -36,7 +36,7 @@ public class Orders {
     public void generateId() {
         if (this.orderId == null) {
             String uuid = UUID.randomUUID().toString().replace("-", "");
-            this.orderId = uuid.substring(0, 10);
+            this.orderId = uuid.substring(0, 6);
         }
         if (this.orderStatus == null) {
             this.orderStatus = OrderStatus.UNDELIVERED;

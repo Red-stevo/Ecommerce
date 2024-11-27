@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
-import org.codiz.onshop.dtos.requests.ShipmentRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.*;
 import org.codiz.onshop.entities.products.Inventory;
@@ -13,7 +12,6 @@ import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.order.OrdersItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersRepository;
-import org.codiz.onshop.repositories.order.OrdersShippingRepository;
 import org.codiz.onshop.repositories.products.InventoryRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
@@ -35,7 +33,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +47,6 @@ public class OrdersImpl implements OrdersService {
     private final ProductsJpaRepository productsJpaRepository;
     private final ProductsService productsService;
     private final InventoryRepository inventoryRepository;
-    private final OrdersShippingRepository shippingRepository;
     private final ModelMapper modelMapper;
 
     public String generateShipmentTracingId() {
@@ -254,6 +253,7 @@ public class OrdersImpl implements OrdersService {
 
         for (OrderItems orderItems : order.getOrderItems()) {
             OrderItemsResponse itemsResponse = new OrderItemsResponse();
+            itemsResponse.setProductId(orderItems.getProductId().getProductId());
             itemsResponse.setProductName(orderItems.getProductId().getProductName());
             itemsResponse.setQuantity(orderItems.getQuantity());
             itemsResponse.setProductImageUrl(orderItems.getProductId().getProductImagesList().get(0).getImageUrl());
@@ -300,89 +300,7 @@ public class OrdersImpl implements OrdersService {
     }
 
 
-    public EntityResponse createShipment(ShipmentRequest request){
 
-        Orders orders = ordersRepository.findByOrderId(request.getOrderId());
-        OrderShipping shipping = new OrderShipping();
-        shipping.setShippingDate(request.getShipDate());
-        shipping.setDeliveryDate(request.getDeliveryDate());
-        shipping.setShippingStatus(request.getStatus());
-        shipping.setTrackingId(generateShipmentTracingId());
-        shipping.setOrder(orders);
-
-        EntityResponse entityResponse = new EntityResponse();
-        entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        entityResponse.setMessage("Shipment successfully created");
-        entityResponse.setStatus(HttpStatus.OK);
-        return entityResponse;
-
-    }
-
-    public EntityResponse updateShipment(String trackingId, ShipmentRequest request){
-
-        OrderShipping shipping = shippingRepository.findByTrackingId(trackingId);
-        shipping.setShippingDate(request.getShipDate());
-        shipping.setDeliveryDate(request.getDeliveryDate());
-        shipping.setShippingStatus(request.getStatus());
-        shipping.setTrackingId(trackingId);
-        shippingRepository.save(shipping);
-
-        EntityResponse entityResponse = new EntityResponse();
-        entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        entityResponse.setMessage("Shipment successfully updated");
-        entityResponse.setStatus(HttpStatus.OK);
-
-        return entityResponse;
-    }
-
-    public ShipmentResponse getShipment(String trackingId){
-        OrderShipping shipping = shippingRepository.findByTrackingId(trackingId);
-        return modelMapper.map(shipping, ShipmentResponse.class);
-    }
-
-    public List<ShipmentResponse> getAllShipments(){
-        List<OrderShipping> shippingList = shippingRepository.findAll();
-        return getShipmentResponses(shippingList);
-    }
-    public String deleteShipment(String trackingId){
-
-        OrderShipping shipping = shippingRepository.findByTrackingId(trackingId);
-        shippingRepository.delete(shipping);
-        return "Shipment successfully deleted";
-    }
-
-    public List<ShipmentResponse> findProcessingShipment(){
-        List<OrderShipping> shippingList = shippingRepository.findAllByShippingStatusEquals(ShippingStatus.PROCESSING);
-        return getShipmentResponses(shippingList);
-    }
-    public List<ShipmentResponse> findDeliveredShipment(){
-        List<OrderShipping> shippingList = shippingRepository.findAllByShippingStatusEquals(ShippingStatus.DELIVERED);
-        return getShipmentResponses(shippingList);
-    }
-    public List<ShipmentResponse> findReturnedShipment(){
-        List<OrderShipping> shippingList = shippingRepository.findAllByShippingStatusEquals(ShippingStatus.RETURNED);
-        return getShipmentResponses(shippingList);
-    }
-    public List<ShipmentResponse> findTransitShipment(){
-        List<OrderShipping> shippingList = shippingRepository.findAllByShippingStatusEquals(ShippingStatus.TRANSIT);
-        return getShipmentResponses(shippingList);
-    }
-
-
-
-    private List<ShipmentResponse> getShipmentResponses(List<OrderShipping> shippingList) {
-        List<ShipmentResponse> shipmentResponses = new ArrayList<>();
-        for (OrderShipping shipping : shippingList) {
-            ShipmentResponse shipmentResponse = new ShipmentResponse();
-            shipmentResponse.setTrackingId(shipping.getTrackingId());
-            shipmentResponse.setShipDate(shipping.getShippingDate());
-            shipmentResponse.setShippingStatus(shipping.getShippingStatus());
-            shipmentResponse.setDeliveryDate(shipping.getDeliveryDate());
-
-            shipmentResponses.add(shipmentResponse);
-        }
-        return shipmentResponses;
-    }
 
     public Page<AllOrdersResponse> getOrdersByStatus(OrderStatus status, Pageable pageable) {
         Page<Orders> ordersPage = ordersRepository.findAllByOrderStatusOrderByCreatedOnAsc(status, pageable);
@@ -451,6 +369,27 @@ public class OrdersImpl implements OrdersService {
         orders.setOrderStatus(status);
         ordersRepository.save(orders);
         return "order status updated successfully";
+    }
+
+    public OrderStatusResponse getOrderStatus(String orderId){
+        Orders orders = ordersRepository.findByOrderId(orderId);
+
+        OrderStatusResponse orderStatus = new OrderStatusResponse();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setStatus(orders.getOrderStatus().toString());
+
+        List<OrderTrackingProducts> products = new ArrayList<>();
+
+        for (OrderItems items : orders.getOrderItems()){
+            OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
+            orderTrackingProducts.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
+            orderTrackingProducts.setProductPrice(items.getProductId().getProductPrice());
+            orderTrackingProducts.setProductName(items.getProductId().getProductName());
+            products.add(orderTrackingProducts);
+
+        }
+        orderStatus.setProducts(products);
+        return orderStatus;
     }
 
 

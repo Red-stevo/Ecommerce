@@ -20,20 +20,12 @@ public interface OrdersService {
     EntityDeletionResponse cancelOrder(String orderId,String username);
     OrdersResponse getOrders(String orderId);
     Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable);
-    EntityResponse createShipment(ShipmentRequest request);
-    EntityResponse updateShipment(String trackingId, ShipmentRequest request);
-    ShipmentResponse getShipment(String trackingId);
-    List<ShipmentResponse> getAllShipments();
-    String deleteShipment(String trackingId);
-    List<ShipmentResponse> findProcessingShipment();
-    List<ShipmentResponse> findDeliveredShipment();
-    List<ShipmentResponse> findReturnedShipment();
-    List<ShipmentResponse> findTransitShipment();
     List<AllOrdersResponse> getAllOrdersForOneWeek();
     Page<AllOrdersResponse> getDeliveredOrders(Pageable pageable);
     Page<AllOrdersResponse> getUndeliveredOrders(Pageable pageable);
     Page<AllOrdersResponse> getShippingOrders(Pageable pageable);
     Page<AllOrdersResponse> getCancelledOrders(Pageable pageable);
     String updateStatus(String orderId, OrderStatus status);
+    OrderStatusResponse getOrderStatus(String orderId);
 
 }

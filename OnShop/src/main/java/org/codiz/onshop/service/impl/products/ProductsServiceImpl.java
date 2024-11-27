@@ -489,6 +489,7 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setProductPrice(updateRequest.getProductPrice());
         existingProduct.setDiscount((float) updateRequest.getDiscount());
         existingProduct.setColor(updateRequest.getColor());
+        existingProduct.setSize(updateRequest.getSize());
     }
 
 
