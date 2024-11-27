@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/orders")
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class OrdersController {
     private final OrdersService ordersService;
 

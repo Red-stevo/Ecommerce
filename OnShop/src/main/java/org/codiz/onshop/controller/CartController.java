@@ -19,6 +19,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
+@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class CartController {
 
     private final CartService cartService;
