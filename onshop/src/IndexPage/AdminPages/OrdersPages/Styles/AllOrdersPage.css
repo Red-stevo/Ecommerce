@@ -60,6 +60,7 @@
     width: 100%;
     justify-content: center;
     align-content: center;
+    margin-top: 20px;
 }
 
 @media screen and (max-device-width: 899px) {
@@ -104,12 +105,17 @@
     }
 
     .all-orders-page {
-        margin-top: 10px;
+        padding-top: 30px;
     }
 
     .filter-component {
         width: 100%;
     }
+
+    .load-more-orders {
+        margin-top: 20px;
+    }
+
 
 
 }

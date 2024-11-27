@@ -14,6 +14,7 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
         {
             productName:"Wireless Head Phones",
@@ -21,12 +22,14 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
         {
             productName:"Wireless Head Phones",
             productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.qr01Z40JyywlFtAb_wlmTQHaHa%26pid%3DApi&f=1&ipt=953ffc87e7155ed3e9410b9e960d4b74ca53ae0b2f5f9aca8b1e295f0a548e3a&ipo=images",            productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:true,
         },
         {
             productName:"Wireless EarPhones",
@@ -34,6 +37,7 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
     ],
     customerDetails:{
@@ -96,9 +100,9 @@ const OrderDisplay = () => {
 
                     {itemList.length > 0 && itemList.map(({productName, productPrice,
                                                               productImageUrl, totalPrice,
-                                                              quantity}, index) => (
+                                                              quantity, canceled}, index) => (
 
-                        <div className={"order-products"} key={index}>
+                        <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}>
                             <span className={"product-name"} title={productName}>
                                 <Image src={productImageUrl}  className={"product-image-order"}/>
                                 {productName.length > 10 ? productName.substring(0, 10)+"...": productName}

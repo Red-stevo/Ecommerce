@@ -73,6 +73,20 @@
     margin-bottom: 10px;
 }
 
+.not-canceled-order {
+    border: 1px #02ff02 solid;
+    margin-right: 5px;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.canceled-order {
+    border: 1px #ff0000 solid;
+    margin-right: 5px;
+    padding: 4px;
+    border-radius: 10px;
+}
+
 .order-products-item, .product-name {
     flex-grow: 4;
 }

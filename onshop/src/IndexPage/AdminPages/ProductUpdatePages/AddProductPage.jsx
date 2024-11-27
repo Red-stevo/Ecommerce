@@ -4,6 +4,7 @@ import {MdCloudUpload} from "react-icons/md";
 import {useEffect, useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
+import {useForm} from "react-hook-form";
 
 
 const categories = [
@@ -23,6 +24,7 @@ const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);
     const [previewFile, setPreviewFile] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const {register, handleSubmit} = useForm();
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
 
@@ -70,14 +72,28 @@ const AddProductPage = () => {
         })}
     };
 
+    const handleAddProduct = (data) => {
+        console.log(data);
+
+        const productCreationRequest = {...data,
+            productUrls:uploads,
+            categoryIds:selectedCategories,
+        }
+
+        console.log(productCreationRequest);
+
+    }
+
 
     return (
         <div className={"add-product-page"}>
             <div className={"title-form-buttons-holder"}>
                 <span className={"page-title"}>Add Product</span>
-                <Form className={"product-input-form"}>
+                <Form className={"product-input-form"} onSubmit={handleSubmit(handleAddProduct)}>
                     <Form.Group>
-                        <input className={"form-control"} placeholder={"Product Name"}/>
+                        <input className={"form-control"} required={true}
+                               placeholder={"Product Name"} id={"productName"}
+                               {...register("productName")} />
                     </Form.Group>
 
                     <FloatingLabel className={"event-description"} controlId="floatingTextarea" label="Event Decription">
@@ -85,7 +101,10 @@ const AddProductPage = () => {
                             required={true}
                             className={"input-field form-control"}
                             placeholder={"Event Description"}
-                            style={{ height: '100px' }}/>
+                            style={{ height: '100px' }}
+                            id={"productDescription"}
+                            {...register("productDescription")}
+                        />
 
                     </FloatingLabel>
 
@@ -111,24 +130,30 @@ const AddProductPage = () => {
 
                     <div className={"size-color"}>
                         <Form.Group>
-                            <input className={"form-control"} placeholder={"Product Variety"}/>
+                            <input className={"form-control"} required={true}
+                                   placeholder={"Product Variety"}
+                                    id={"color"} {...register("color")} />
                         </Form.Group>
 
                         <Form.Group>
-                            <input className={"form-control"} placeholder={"Product Proportion"}/>
+                            <input className={"form-control"} placeholder={"Product Proportion"}
+                                   id={"size"} {...register("size")} required={true}/>
                         </Form.Group>
                     </div>
 
                     <div className={"price-count"}>
                         <InputGroup className="">
-                            <Form.Control className={"productPrice"}
-                                          aria-label="Product Price" placeholder={'Product Price'} />
-                            <Form.Control className={"productDiscount"}
-                                          aria-label="Product discount" placeholder={"Product discount"} />
+                            <input className={"productPrice form-control"} required={true}
+                                          aria-label="Product Price" placeholder={'Product Price'}
+                                   id={"productPrice"} {...register("productPrice") } />
+                            <input className={"productDiscount form-control"} required={true}
+                                          aria-label="Product discount" placeholder={"Product discount"}
+                            id={"discount"} {...register("discount")} />
                         </InputGroup>
 
                         <Form.Group>
-                            <input className={"form-control"} placeholder={"Product Count"}/>
+                            <input className={"form-control"} placeholder={"Product Count"} required={true}
+                                   id={"count"} {...register("count")} />
                         </Form.Group>
                     </div>
 
@@ -147,8 +172,8 @@ const AddProductPage = () => {
 
 
                     <div className={"submit-buttons"}>
-                        <Button className={"app-button"}>Save</Button>
-                        <Button className={"app-button"}>Publish</Button>
+                        <Button className={"app-button"} >Save</Button>
+                        <Button className={"app-button"} type={"submit"} >Publish</Button>
                     </div>
                 </Form>
             </div>
