@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.AllOrdersResponse;
+import org.codiz.onshop.dtos.response.EntityDeletionResponse;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.OrdersResponse;
 import org.codiz.onshop.entities.orders.OrderStatus;
@@ -28,6 +29,16 @@ public class OrdersController {
     @PostMapping("/place-order")
     public ResponseEntity<EntityResponse> placeOrder(@RequestBody OrderPlacementRequest request){
         return ResponseEntity.ok(ordersService.placeOrder(request));
+    }
+
+    @PutMapping("/cancel-order-item")
+    public ResponseEntity<String> removeOrderItems(@RequestParam String orderItemId, @RequestParam String userId){
+        return ResponseEntity.ok(ordersService.removeOrderItems(orderItemId, userId));
+    }
+
+    @PutMapping("/cancel-order")
+    public ResponseEntity<EntityDeletionResponse> cancelOrder(@RequestParam String orderId, @RequestParam String username){
+        return ResponseEntity.ok(ordersService.cancelOrder(orderId, username));
     }
 
     @GetMapping("/{orderId}")

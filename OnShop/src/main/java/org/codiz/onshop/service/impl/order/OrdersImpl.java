@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.sql.Timestamp;
@@ -88,6 +89,7 @@ public class OrdersImpl implements OrdersService {
             items.setOrderId(order);
             items.setQuantity(itemsRequests.getQuantity());
             items.setProductId(products);
+            items.setStatus(OrderItemStatus.PENDING);
 
             double totalPrice = products.getProductPrice() * itemsRequests.getQuantity();
             items.setTotalPrice(totalPrice);
@@ -100,6 +102,7 @@ public class OrdersImpl implements OrdersService {
         Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
         newOrder.setTotalAmount(totalAmount);
         newOrder.setOrderItems(orderItems);
+        newOrder.setOrderStatus(OrderStatus.UNDELIVERED);
         ordersRepository.save(newOrder);
         EntityResponse entityResponse = new EntityResponse();
         entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -108,10 +111,14 @@ public class OrdersImpl implements OrdersService {
         return entityResponse;
     }
 
-    public String removeOrderItems(String orderItemId) {
+    public String removeOrderItems(String orderItemId,String userId) {
         OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).get();
+        if (!userId.equals(items.getOrderId().getUserId().getUserId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         productsService.addProductQuantity(items.getProductId().getProductId(), items.getQuantity());
-        ordersItemsRepository.delete(items);
+        items.setStatus(OrderItemStatus.CANCELLED);
+        ordersItemsRepository.save(items);
         return "item successfully removed";
 
     }
@@ -121,7 +128,19 @@ public class OrdersImpl implements OrdersService {
                 () -> new RuntimeException("product not found")
         );
 
+        if (!username.equals(orders.getUserId().getUsername())){
+            throw new RuntimeException("invalid request");
+        }
+
         orders.setOrderStatus(OrderStatus.CANCELLED);
+
+        List<OrderItems> items = new ArrayList<>();
+
+        for (OrderItems orderItem : orders.getOrderItems()) {
+            orderItem.setStatus(OrderItemStatus.CANCELLED);
+            items.add(orderItem);
+        }
+        ordersItemsRepository.saveAll(items);
 
         for (OrderItems orderItems : orders.getOrderItems()) {
 
@@ -145,7 +164,7 @@ public class OrdersImpl implements OrdersService {
         OrdersResponse response = new OrdersResponse();
         response.setOrderNumber(orders.getOrderId());
         response.setTotalCharges(orders.getTotalAmount());
-        //response.setOrderStatus(orders.getOrderStatus().toString());
+        response.setOrderStatus(orders.getOrderStatus().toString());
 
         CustomerDetails customerDetails = new CustomerDetails();
         customerDetails.setCustomerEmail(orders.getUserId().getUserEmail());
@@ -160,12 +179,7 @@ public class OrdersImpl implements OrdersService {
 
         List<OrderItemsResponse> orderItemResponses = new ArrayList<>();
         for (OrderItems items : orders.getOrderItems()){
-            OrderItemsResponse itemsResponse = new OrderItemsResponse();
-            itemsResponse.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
-            itemsResponse.setProductName(items.getProductId().getProductName());
-            itemsResponse.setProductPrice(items.getProductId().getProductPrice());
-            itemsResponse.setQuantity(items.getQuantity());
-            itemsResponse.setTotalPrice(items.getTotalPrice());
+            OrderItemsResponse itemsResponse = getOrderItemsResponse(items);
             orderItemResponses.add(itemsResponse);
         }
 
@@ -196,6 +210,18 @@ public class OrdersImpl implements OrdersService {
 
 
     }
+
+    private static OrderItemsResponse getOrderItemsResponse(OrderItems items) {
+        OrderItemsResponse itemsResponse = new OrderItemsResponse();
+        itemsResponse.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
+        itemsResponse.setProductName(items.getProductId().getProductName());
+        itemsResponse.setProductPrice(items.getProductId().getProductPrice());
+        itemsResponse.setQuantity(items.getQuantity());
+        itemsResponse.setTotalPrice(items.getTotalPrice());
+        itemsResponse.setStatus(items.getStatus());
+        return itemsResponse;
+    }
+
     private String formatOrderDate(LocalDate date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
         return date.format(formatter);
@@ -233,6 +259,7 @@ public class OrdersImpl implements OrdersService {
             itemsResponse.setProductImageUrl(orderItems.getProductId().getProductImagesList().get(0).getImageUrl());
             itemsResponse.setProductPrice((orderItems.getProductId().getProductPrice()-orderItems.getProductId().getDiscount()));
             itemsResponse.setTotalPrice(orderItems.getTotalPrice());
+            itemsResponse.setStatus(orderItems.getStatus());
             itemsResponses.add(itemsResponse);
         }
         ordersResponse.setItems(itemsResponses);
@@ -418,11 +445,6 @@ public class OrdersImpl implements OrdersService {
         return response;
     }
 
-    public String deleteOrder(String orderId){
-        Orders orders = ordersRepository.findByOrderId(orderId);
-        ordersRepository.delete(orders);
-        return "order deleted successfully";
-    }
 
     public String updateStatus(String orderId, OrderStatus status){
         Orders orders = ordersRepository.findByOrderId(orderId);

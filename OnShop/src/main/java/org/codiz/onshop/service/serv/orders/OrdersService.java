@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 public interface OrdersService {
     EntityResponse placeOrder(OrderPlacementRequest request);
-    String removeOrderItems(String orderItemId);
+    String removeOrderItems(String orderItemId,String userId);
     EntityDeletionResponse cancelOrder(String orderId,String username);
     OrdersResponse getOrders(String orderId);
     Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable);

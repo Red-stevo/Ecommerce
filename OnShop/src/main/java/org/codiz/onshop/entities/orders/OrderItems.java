@@ -23,4 +23,12 @@ public class OrderItems {
     private Products productId;
     private int quantity;
     private double totalPrice;
+    private OrderItemStatus status;
+
+    @PrePersist
+    public void Status() {
+        if (status == null) {
+            this.status = OrderItemStatus.PENDING;
+        }
+    }
 }
