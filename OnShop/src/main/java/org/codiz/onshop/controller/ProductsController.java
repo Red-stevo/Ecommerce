@@ -1,6 +1,7 @@
 package org.codiz.onshop.controller;
 
 
+import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
@@ -96,6 +97,10 @@ public class ProductsController {
         return ResponseEntity.ok(productsService.findAllCategories());
     }
 
+    @GetMapping("/create-category")
+    public ResponseEntity<EntityResponse> createCategory(List<CategoryCreationRequest> categoryCreationRequest){
+        return ResponseEntity.ok(productsService.createCategory(categoryCreationRequest));
+    }
 
 
 }
