@@ -1,6 +1,7 @@
 .order-display-page {
     width: 100%;
     min-height: 100%;
+    padding-bottom: 5%;
 }
 
 .username-display {
@@ -111,7 +112,7 @@
     font-family: "Roboto Light", "Font Awesome 5 Free", sans-serif;
 }
 
-.order-products-item, .order-products-item, .order-products-quantity, .order-products-price, .order-products-total-price {
+.order-products-item, .order-products-quantity, .order-products-price, .order-products-total-price {
     font-weight: 700;
     font-family: Monospaced, MathJax_AMS, sans-serif;
     font-size: 20px;
@@ -141,4 +142,114 @@
 
 .address-title {
     margin-bottom: 10px;
+}
+
+.product-image-order {
+    width: 50px;
+    height: 50px;
+}
+
+.order-status-button {
+    height: fit-content;
+    font-size: 12px;
+}
+
+
+@media screen and (max-device-width: 1142px) {
+
+    .order-section-1, .user-details-section {
+        flex-direction: column;
+    }
+
+    .order-section-products, .customer-order-details {
+        width: 75%;
+        align-self: center;
+    }
+
+    .order-summary, .address-details {
+        width: 75%;
+        margin-top: 2%;
+        align-self: center;
+        margin-right: 0;
+    }
+}
+
+
+@media screen and (max-device-width: 899px) {
+
+
+    .order-section-products, .customer-order-details, .order-summary, .address-details {
+        width: 95%;
+    }
+
+}
+
+
+@media screen and (max-device-width: 540px) {
+
+    .order-section-products, .customer-order-details, .order-summary, .address-details {
+        width: 100%;
+    }
+
+    .order-number {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .order-products-item, .order-products-quantity, .order-products-price, .order-products-total-price {
+        font-weight: 400;
+        font-family: Monospaced, MathJax_AMS, sans-serif;
+        font-size: 16px;
+    }
+
+    .product-name, .product-quantity, .product-price, .product-total-price {
+        font-size: 14px;
+    }
+
+    .product-name {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .order-products-item, .product-name {
+        flex-grow: 3;
+    }
+
+    .order-products-quantity, .order-products-price, .order-products-total-price,
+    .product-quantity, .product-price, .product-total-price {
+        flex-grow: 3;
+    }
+
+    .order-status-num {
+        padding-left: 0;
+        padding-right:0;
+    }
+
+    .order-section-products, .customer-order-details {
+        margin-left: 0;
+        padding: 0;
+    }
+
+    .order-summary, .address-details {
+        padding: 0;
+        margin-right: 0;
+    }
+
+    .order-date-single, .order-time, .order-sub-total, .order-delivery, .order-total {
+        font-weight: 500;
+    }
+
+    .order-date-value, .order-time-value, .order-time-value, .order-time-value, .order-time-value {
+        font-size: 15px;
+    }
+
+    .title-holder-order-summary, .value-holder-order-summary {
+        margin-right: 0;
+    }
+
+    .order-summary {
+        justify-content: space-between;
+    }
+
 }

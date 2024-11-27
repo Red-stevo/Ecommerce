@@ -5,7 +5,7 @@ import {LiaTimesSolid} from "react-icons/lia";
 
 
 const orderDetails = {
-    orderId:"AS43D4FFT6YT0P",
+    orderId:"AS43D4",
     orderStatus:"UNDELIVERED",
     itemList:[
         {
@@ -79,8 +79,8 @@ const OrderDisplay = () => {
 
 
             <div className={"order-status-num"}>
-                <span className={"order-num"}>Order No. <span className={"order-number"}>#{orderId}</span></span>
-                <Button className={"order-status app-button"}>{orderStatus}</Button>
+                <span className={"order-num"}>ID <span className={"order-number"}>#{orderId}</span></span>
+                <Button className={"order-status-button app-button"}>{orderStatus}</Button>
             </div>
 
 
@@ -100,8 +100,8 @@ const OrderDisplay = () => {
 
                         <div className={"order-products"} key={index}>
                             <span className={"product-name"} title={productName}>
-                                <Image src={productImageUrl} height={50} width={50} className={"product-image-order"}/>
-                                {productName.length > 13 ? productName.substring(0, 13)+"...": productName}
+                                <Image src={productImageUrl}  className={"product-image-order"}/>
+                                {productName.length > 10 ? productName.substring(0, 10)+"...": productName}
                             </span>
                             <span className={"product-quantity"} >
                                 <LiaTimesSolid />

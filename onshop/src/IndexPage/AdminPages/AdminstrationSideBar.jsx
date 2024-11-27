@@ -44,7 +44,7 @@ const AdministrationSideBar = () => {
                 <MenuToggleComponent
                     productIcon={<HiShoppingCart className={"product-icon"}/>}
                     menuTitle={"Order"}
-                    childrenLink={[{title:"all orders", link:"orders"},]}/>
+                    childrenLink={[{title:"all orders", link:""},]}/>
 
             </div>
 
