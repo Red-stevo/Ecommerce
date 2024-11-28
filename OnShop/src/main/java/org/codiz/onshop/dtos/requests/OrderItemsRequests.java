@@ -7,4 +7,5 @@ import org.codiz.onshop.entities.products.Products;
 public class OrderItemsRequests {
     private String productId;
     private int quantity;
+    private String specificationId;
 }

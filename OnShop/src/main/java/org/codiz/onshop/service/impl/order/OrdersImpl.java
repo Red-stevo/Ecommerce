@@ -9,11 +9,13 @@ import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.*;
 import org.codiz.onshop.entities.products.Inventory;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.order.OrdersItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersRepository;
 import org.codiz.onshop.repositories.products.InventoryRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
+import org.codiz.onshop.repositories.products.SpecificProductsRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -48,6 +50,7 @@ public class OrdersImpl implements OrdersService {
     private final ProductsService productsService;
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
+    private final SpecificProductsRepository specificProductsRepository;
 
     public String generateShipmentTracingId() {
 
@@ -84,13 +87,14 @@ public class OrdersImpl implements OrdersService {
         for (OrderItemsRequests itemsRequests : request.getRequestsList()) {
 
             Products products = productsJpaRepository.findByProductId(itemsRequests.getProductId());
+            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getProductId());
             OrderItems items = new OrderItems();
             items.setOrderId(order);
             items.setQuantity(itemsRequests.getQuantity());
             items.setProductId(products);
             items.setStatus(OrderItemStatus.PENDING);
 
-            double totalPrice = products.getProductPrice() * itemsRequests.getQuantity();
+            double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
             items.setTotalPrice(totalPrice);
             totalAmount += totalPrice;
             ordersItemsRepository.save(items);
@@ -212,9 +216,9 @@ public class OrdersImpl implements OrdersService {
 
     private static OrderItemsResponse getOrderItemsResponse(OrderItems items) {
         OrderItemsResponse itemsResponse = new OrderItemsResponse();
-        itemsResponse.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
+        itemsResponse.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
         itemsResponse.setProductName(items.getProductId().getProductName());
-        itemsResponse.setProductPrice(items.getProductId().getProductPrice());
+        itemsResponse.setProductPrice(items.getSpecificProductDetails().getProductPrice());
         itemsResponse.setQuantity(items.getQuantity());
         itemsResponse.setTotalPrice(items.getTotalPrice());
         itemsResponse.setStatus(items.getStatus());
@@ -256,8 +260,8 @@ public class OrdersImpl implements OrdersService {
             itemsResponse.setProductId(orderItems.getProductId().getProductId());
             itemsResponse.setProductName(orderItems.getProductId().getProductName());
             itemsResponse.setQuantity(orderItems.getQuantity());
-            itemsResponse.setProductImageUrl(orderItems.getProductId().getProductImagesList().get(0).getImageUrl());
-            itemsResponse.setProductPrice((orderItems.getProductId().getProductPrice()-orderItems.getProductId().getDiscount()));
+            itemsResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+            itemsResponse.setProductPrice((orderItems.getSpecificProductDetails().getProductPrice()-orderItems.getSpecificProductDetails().getDiscount()));
             itemsResponse.setTotalPrice(orderItems.getTotalPrice());
             itemsResponse.setStatus(orderItems.getStatus());
             itemsResponses.add(itemsResponse);
@@ -353,11 +357,11 @@ public class OrdersImpl implements OrdersService {
     private OrderItemsResponse mapToOrderItemsResponse(OrderItems orderItem) {
         OrderItemsResponse response = new OrderItemsResponse();
         response.setProductImageUrl(
-                orderItem.getProductId().getProductImagesList().isEmpty()
+                orderItem.getSpecificProductDetails().getProductImagesList().isEmpty()
                         ? null
-                        : orderItem.getProductId().getProductImagesList().get(0).getImageUrl()
+                        : orderItem.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl()
         );
-        response.setProductPrice(orderItem.getProductId().getProductPrice());
+        response.setProductPrice(orderItem.getSpecificProductDetails().getProductPrice());
         response.setProductName(orderItem.getProductId().getProductName());
         response.setQuantity(orderItem.getQuantity());
         return response;
@@ -382,8 +386,8 @@ public class OrdersImpl implements OrdersService {
 
         for (OrderItems items : orders.getOrderItems()){
             OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
-            orderTrackingProducts.setProductImageUrl(items.getProductId().getProductImagesList().get(0).getImageUrl());
-            orderTrackingProducts.setProductPrice(items.getProductId().getProductPrice());
+            orderTrackingProducts.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+            orderTrackingProducts.setProductPrice(items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount());
             orderTrackingProducts.setProductName(items.getProductId().getProductName());
             products.add(orderTrackingProducts);
 

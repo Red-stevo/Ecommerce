@@ -3,6 +3,7 @@ package org.codiz.onshop.entities.orders;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -21,6 +22,11 @@ public class OrderItems {
     @JoinColumn(name = "product_id",referencedColumnName = "productId")
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private Products productId;
+
+    @ManyToOne
+    @JoinColumn(name = "specific_product_id",referencedColumnName = "specific_product_id")
+    private SpecificProductDetails specificProductDetails;
+
     private int quantity;
     private double totalPrice;
     private OrderItemStatus status;

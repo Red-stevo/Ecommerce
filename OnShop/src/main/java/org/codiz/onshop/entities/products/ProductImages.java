@@ -19,4 +19,9 @@ public class ProductImages {
     @JsonIgnore
     @ToString.Exclude
     private Products products;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    private SpecificProductDetails specificProductDetails;
 }

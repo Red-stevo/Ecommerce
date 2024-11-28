@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
+import org.codiz.onshop.dtos.requests.ProductCreatedDetails;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -22,7 +23,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +45,7 @@ public class ProductsServiceImpl implements ProductsService {
     private final UsersRepository usersRepository;
     private final ProductRatingsRepository ratingsRepository;
     private final InventoryRepository inventoryRepository;
+    private final SpecificProductsRepository specificProductsRepository;
 
 
     @Transactional
@@ -102,44 +103,43 @@ public class ProductsServiceImpl implements ProductsService {
     public EntityResponse postProduct(ProductCreationRequest requests) {
         try {
 
-                Products product = new Products();
+            Products product = new Products();
 
-                settingProduct(requests, product);
-                Inventory inventory = new Inventory();
-                inventory.setProducts(product);
-                inventory.setQuantityBought(requests.getCount());
-                inventory.setLastUpdate(Instant.now());
-
-
-                // Set product images
-                List<ProductImages> images = setImageUrls(requests.getProductUrls());
-                product.setProductImagesList(images); // Link images to the product
-
-                List<Categories> categories = new ArrayList<>();
-                for (String categoriesIds : requests.getCategoryIds()){
-                    Categories categories1 = categoriesRepository.findCategoriesByCategoryId(categoriesIds);
-                    categories.add(categories1);
-                }
-                product.setCategoriesList(categories);
-                categories.forEach(categories1 -> categories1.getProducts().add(product));
-
-                productsRepository.save(product);
-                /*product.getProductImagesList().forEach(ProductImages::getProducts);*/
-
-                inventoryRepository.save(inventory);
+            product.setProductName(requests.getProductName());
+            product.setProductDescription(requests.getProductDescription());
 
 
 
 
-            // Save products with images
-            /*products.forEach(product -> {
-                productsRepository.save(product); // Cascade saves product images if configured correctly
-                product.getProductImages().forEach(image -> image.getProducts().add(product));// Maintain bidirectional relationship
-            });*/
+            List<Categories> categories = new ArrayList<>();
+            for (String categoryName : requests.getCategoryName()){
+                Categories categories1 = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
+                categories.add(categories1);
+            }
+            product.setCategoriesList(categories);
+            categories.forEach(categories1 -> categories1.getProducts().add(product));
+
+
+            List<SpecificProductDetails> detailsList = new ArrayList<>();
+            for (ProductCreatedDetails details : requests.getProductCreatedDetails()){
+                SpecificProductDetails details1 = new SpecificProductDetails();
+                details1.setCount(details.getCount());
+                details1.setColor(details.getColor());
+                details1.setDiscount(details.getDiscount());
+                details1.setSize(details.getSize());
+                details1.setProductPrice(details.getProductPrice());
+                List<ProductImages> images = setImageUrls(details.getProductUrls());
+                details1.setProductImagesList(images);
+
+
+                detailsList.add(details1);
+            }
+            product.setSpecificProductDetailsList(detailsList);
 
 
 
 
+            productsRepository.save(product);
 
             EntityResponse response = new EntityResponse();
             response.setMessage("Successfully posted the product");
@@ -186,11 +186,22 @@ public class ProductsServiceImpl implements ProductsService {
 
     private ProductsPageResponse mapToProductsPageResponse(Products product) {
         ProductsPageResponse response = new ProductsPageResponse();
+
+
+        int rating = (int) Math.round(ratingsRepository.findAverageRatingByProductId(product.getProductId()));
         response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
-        response.setRatings(product.getProductRatingsList().size()); // Correct mapping
-        response.setProductImagesUrl(getFirstImageUrl(product.getProductImagesList()));
-        response.setDiscountedPrice(product.getProductPrice()-product.getDiscount());
+        response.setRatings(rating);
+        for (SpecificProductDetails details : product.getSpecificProductDetailsList()) {
+            response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
+            float price = details.getProductPrice();
+            float discount = details.getDiscount();
+            response.setDiscountedPrice(price-discount);
+        }
+
+        //response.setProductImagesUrl(getFirstImageUrl(product.getSpecificProductDetailsList()
+        //        .getFirst().getProductImagesList()));
+
         return response;
     }
 
@@ -251,14 +262,17 @@ public class ProductsServiceImpl implements ProductsService {
             response.setProductName(product.getProductName());
             response.setProductId(product.getProductId());
 
-            double discount = product.getDiscount();
-            double price = product.getProductPrice() - discount;
+            for (SpecificProductDetails details : product.getSpecificProductDetailsList()){
+                double discount = details.getDiscount();
+                double productPrice = details.getProductPrice();
+                double price = productPrice - discount;
+                response.setDiscountedPrice(price);
 
-            response.setDiscountedPrice(price);
-
-            if (product.getProductImagesList() != null && !product.getProductImagesList().isEmpty()) {
-                response.setProductImagesUrl(product.getProductImagesList().get(0).getImageUrl());
+                if (details.getProductImagesList() != null && !details.getProductImagesList().isEmpty()) {
+                    response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
+                }
             }
+
 
             response.setRatings(getAverageRating(product.getProductId()));
             productsPageResponses.add(response);
@@ -292,28 +306,33 @@ public class ProductsServiceImpl implements ProductsService {
         SpecificProductResponse specificProductResponse = new SpecificProductResponse();
         specificProductResponse.setProductName(products.getProductName());
         specificProductResponse.setProductDescription(products.getProductDescription());
+        specificProductResponse.setProductPrice(products.getSpecificProductDetailsList()
+                .get(0).getProductPrice());
 
-        List<SpecificProductDetails> detailsList = new ArrayList<>();
+        List<SpecificProductDetailsResponse> detailsList = new ArrayList<>();
         List<Products> productsList = productsRepository.findAllByProductNameAndProductDescriptionLike(products.getProductName(),
                 products.getProductDescription());
 
         for (Products products1 : productsList){
-            SpecificProductDetails specs = new SpecificProductDetails();
-
+            SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
             specs.setProductId(products1.getProductId());
-            specs.setProductColor(products1.getColor());
-            specs.setProductCount(products1.getCount());
+            for (SpecificProductDetails details1 : products1.getSpecificProductDetailsList()){
 
-            List<String> imageUrls = products1.getProductImagesList().stream()
-                    .map(ProductImages::getImageUrl).toList();
+                specs.setProductColor(details1.getColor());
+                specs.setProductSize(details1.getSize());
+                specs.setProductCount(details1.getCount());
+                specs.setProductOldPrice(details1.getProductPrice());
+                float price = details1.getProductPrice() - details1.getDiscount();
+                specs.setProductPrice(price);
 
-            specs.setProductImages(imageUrls);
-            specs.setProductSize(products1.getSize());
-            specs.setProductOldPrice(products1.getProductPrice());
+                List<String> imageUrls = new ArrayList<>();
+                for (ProductImages productImages : details1.getProductImagesList()){
+                    imageUrls.add(productImages.getImageUrl());
+                }
+                specs.setProductImages(imageUrls);
 
-            double discount = products1.getDiscount();
-            float discountedPrice = (float) (products1.getProductPrice() - discount);
-            specs.setProductPrice(discountedPrice);
+            }
+
             detailsList.add(specs);
 
         }
@@ -338,8 +357,9 @@ public class ProductsServiceImpl implements ProductsService {
             for (Products relatedProduct : relatedProducts) {
                 RelatedProducts relatedProducts1 = new RelatedProducts();
                 relatedProducts1.setProductName(relatedProduct.getProductName());
-                relatedProducts1.setProductPrice(relatedProduct.getProductPrice());
-                relatedProducts1.setProductImage(relatedProduct.getProductImagesList().get(0).getImageUrl());
+                relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().getFirst().getProductPrice());
+                relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().getFirst()
+                        .getProductImagesList().get(0).getImageUrl());
                 relatedProductsList.add(relatedProducts1);
             }
         }
@@ -387,34 +407,13 @@ public class ProductsServiceImpl implements ProductsService {
             );
 
             // Update product details
-            settingProduct(updateRequest, existingProduct);
+            existingProduct.setProductName(updateRequest.getProductName());
+            existingProduct.setProductDescription(updateRequest.getProductDescription());
 
-            if (updateRequest.getCount() != null){
-                addProductQuantity(productId, updateRequest.getCount());
-            }
-
-            // Update product images
-            if (updateRequest.getProductUrls() != null && !updateRequest.getProductUrls().isEmpty()) {
-                // Clear existing images
-                for (ProductImages productImages:existingProduct.getProductImagesList()) {
-                    String url = productImages.getImageUrl();
-                    cloudinaryService.deleteImage(url);
-                }
-                existingProduct.getProductImagesList().forEach(image -> image.setProducts(null));
-                existingProduct.getProductImagesList().clear();
-
-
-                // Add new images
-                List<ProductImages> newImages = setImageUrls(updateRequest.getProductUrls());
-                newImages.forEach(image -> image.setProducts(existingProduct));
-                existingProduct.getProductImagesList().addAll(newImages);
-            }
-
-            // Update categories
             List<Categories> updatedCategories = new ArrayList<>();
-            if (updateRequest.getCategoryIds() != null) {
+            if (updateRequest.getCategoryName() != null) {
                 //settingCategory(updateRequest);
-                for (String creationRequest : updateRequest.getCategoryIds()){
+                for (String creationRequest : updateRequest.getCategoryName()){
                     Categories categories = categoriesRepository.findCategoriesByCategoryId(creationRequest);
                     Categories categories1;
                     if (categories == null){
@@ -436,6 +435,38 @@ public class ProductsServiceImpl implements ProductsService {
                 updatedCategories.forEach(category -> category.getProducts().add(existingProduct));
                 existingProduct.setCategoriesList(updatedCategories);
             }
+
+            List<SpecificProductDetails> specificProductDetailsList = new ArrayList<>();
+
+            for (ProductCreatedDetails details : updateRequest.getProductCreatedDetails()){
+                SpecificProductDetails specificProductDetails = new SpecificProductDetails();
+                specificProductDetails.setSize(details.getSize());
+                specificProductDetails.setCount(details.getCount());
+                specificProductDetails.setProductPrice(details.getProductPrice());
+                specificProductDetails.setDiscount(details.getDiscount());
+                specificProductDetails.setColor(details.getColor());
+                if (details.getProductUrls() != null && !details.getProductUrls().isEmpty()){
+
+                    for (SpecificProductDetails details1: existingProduct.getSpecificProductDetailsList()) {
+                        for (ProductImages productImages : details1.getProductImagesList()){
+                            String url = productImages.getImageUrl();
+                            cloudinaryService.deleteImage(url);
+
+                            details1.getProductImagesList().forEach(image -> image.setProducts(null));
+                            details1.getProductImagesList().clear();
+                        }
+                    }
+
+
+                    List<ProductImages> images = setImageUrls(details.getProductUrls());
+                    images.forEach(image -> image.setProducts(existingProduct));
+                    specificProductDetails.getProductImagesList().addAll(images);
+                }
+
+                specificProductDetailsList.add(specificProductDetails);
+            }
+
+            existingProduct.setSpecificProductDetailsList(specificProductDetailsList);
 
             // Save the updated product
             productsRepository.save(existingProduct);
@@ -465,31 +496,31 @@ public class ProductsServiceImpl implements ProductsService {
                 ()->new RuntimeException("The product with ID " + productId + " does not exist")
         );
 
+       for (SpecificProductDetails productDetails : products.getSpecificProductDetailsList()) {
 
-        for (ProductImages productImages:products.getProductImagesList()) {
-            try {
-                String url = productImages.getImageUrl();
-                cloudinaryService.deleteImage(url);
-            }catch (IOException e){
-                throw new RuntimeException("could not delete image from cloudinary");
-            }
+           List<ProductImages> images = productDetails.getProductImagesList();
 
-        }
+           for (ProductImages productImages : images) {
+               try {
+                   String imageUrl = productImages.getImageUrl();
+                   cloudinaryService.deleteImage(imageUrl);
+               }catch (Exception e){
+                   throw new RuntimeException("could not delete image from cloudinary");
+               }
+           }
+       }
+
+
+
 
         productsRepository.delete(products);
         return "product successfully deleted";
 
     }
 
-
-
-    private void settingProduct(ProductCreationRequest updateRequest, Products existingProduct) {
-        existingProduct.setProductName(updateRequest.getProductName());
-        existingProduct.setProductDescription(updateRequest.getProductDescription());
-        existingProduct.setProductPrice(updateRequest.getProductPrice());
-        existingProduct.setDiscount((float) updateRequest.getDiscount());
-        existingProduct.setColor(updateRequest.getColor());
-        existingProduct.setSize(updateRequest.getSize());
+    @Override
+    public List<InventoryResponse> showInventory() {
+        return List.of();
     }
 
 
@@ -601,7 +632,7 @@ public class ProductsServiceImpl implements ProductsService {
     * method to get all the inventory
     * */
 
-    public List<InventoryResponse> showInventory() {
+    /*public List<InventoryResponse> showInventory() {
         List<Inventory> inventory = inventoryRepository.findAll();
 
 
@@ -631,9 +662,9 @@ public class ProductsServiceImpl implements ProductsService {
                 .toList();
     }
 
-    /*
+    *//*
     * method to get the inventory of a specific product
-    * */
+    * *//*
     public InventoryResponse showProductInventory(String productId) {
         Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
         if (inventory == null) {
@@ -642,5 +673,5 @@ public class ProductsServiceImpl implements ProductsService {
         }
         return modelMapper.map(inventory, InventoryResponse.class);
 
-    }
+    }*/
 }
