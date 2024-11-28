@@ -8,24 +8,13 @@ import java.util.List;
 
 @Data
 public class ProductCreationRequest {
+    private List<String> categoryName;
 
     private String productName;
 
     private String productDescription;
 
-    private float productPrice;
-
-    private String color;
-
-    private String size;
-
-    private double discount;
-
-    private List<MultipartFile> productUrls;
-
-    private Integer count;
-
-    private List<String> categoryIds;
+    private List<ProductCreatedDetails> productCreatedDetails;
 
 
 }

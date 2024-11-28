@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ProductImagesRepository extends JpaRepository<ProductImages, String> {
-    List<ProductImages> findByProducts_ProductId(String productId);
-    List<ProductImages> findByProducts(Products products);
-    ;
+
 }

@@ -7,15 +7,18 @@ import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.requests.CartItemsUpdate;
 import org.codiz.onshop.dtos.response.CartItemsResponse;
 import org.codiz.onshop.dtos.response.CartResponse;
+import org.codiz.onshop.dtos.response.SpecificProductDetailsResponse;
 import org.codiz.onshop.dtos.response.YouMayLike;
 import org.codiz.onshop.entities.cart.Cart;
 import org.codiz.onshop.entities.cart.CartItems;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.cart.CartItemsRepository;
 import org.codiz.onshop.repositories.cart.CartRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
+import org.codiz.onshop.repositories.products.SpecificProductsRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class CartImpl implements CartService {
     private final ProductsJpaRepository productsRepository;
     private final CartItemsRepository cartItemsRepository;
     private final UsersRepository usersRepository;
+    private final SpecificProductsRepository specificProductsRepository;
 
 
 
@@ -54,8 +58,12 @@ public class CartImpl implements CartService {
                     return cartRepository.save(newCart);
                 });
 
-        Products product = productsRepository.findById(items.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+       /* Products product = productsRepository.findById(items.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));*/
+
+        SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId());
+
+
 
         CartItems existingCartItem = cartItemsRepository.findByCart(cart);
         System.out.println(existingCartItem);
@@ -65,7 +73,7 @@ public class CartImpl implements CartService {
             cartItemsRepository.save(existingCartItem);
         } else {
             CartItems newCartItem = new CartItems();
-            newCartItem.setProducts(product);
+            newCartItem.setProducts(productDetails);
             newCartItem.setQuantity(items.getQuantity());
             newCartItem.setCart(cart);
             cartItemsRepository.save(newCartItem);
@@ -113,19 +121,21 @@ public class CartImpl implements CartService {
         List<CartItemsResponse> itemsResponses = new ArrayList<>();
         for (CartItems items : cart.get().getCartItems()) {
             CartItemsResponse itemsResponse = new CartItemsResponse();
-            System.out.println("categories : "+items.getProducts().getCategoriesList());
+            Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
+
             itemsResponse.setCartItemId(items.getCartItemId());
-            itemsResponse.setProductId(items.getProducts().getProductId());
-            itemsResponse.setProductName(items.getProducts().getProductName());
-            itemsResponse.setProductPrice(items.getProducts().getProductPrice());
+            itemsResponse.setProductId(products.getProductId());
+            itemsResponse.setProductName(products.getProductName());
             itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
+            itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
+
             itemsResponses.add(itemsResponse);
         }
         cartResponse.setCartItemsResponses(itemsResponses);
 
         // Fetch "You May Like" products
         List<String> categoryIds = cart.get().getCartItems().stream()
-                .flatMap(item -> item.getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
+                .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
                 .distinct()
                 .toList();
 
@@ -135,8 +145,10 @@ public class CartImpl implements CartService {
             YouMayLike like = new YouMayLike();
             like.setProductId(product.getProductId());
             like.setProductName(product.getProductName());
-            like.setProductPrice(product.getProductPrice());
-            like.setProductImageUrl(product.getProductImagesList().isEmpty() ? null : product.getProductImagesList().get(0).getImageUrl());
+            like.setProductPrice(product.getSpecificProductDetailsList().get(0).getProductPrice());
+            like.setProductImageUrl(product.getSpecificProductDetailsList()
+                    .get(0).getProductImagesList().isEmpty() ? null :
+                    product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
             return like;
         }).toList();
 

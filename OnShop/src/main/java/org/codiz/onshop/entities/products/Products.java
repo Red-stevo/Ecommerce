@@ -23,7 +23,7 @@ public class Products implements Serializable {
     private String productId;
     private String productName;
     private String productDescription;
-    private float productPrice;
+    /*private float productPrice;
     private float discount;
     private String size;
     private String color;
@@ -32,7 +32,12 @@ public class Products implements Serializable {
     @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
-    private List<ProductImages> productImagesList;
+    private List<ProductImages> productImagesList;*/
+
+    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<SpecificProductDetails>specificProductDetailsList;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference

@@ -14,9 +14,14 @@ public class ProductImages {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String imageId;
     private String imageUrl;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    /*@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     @ToString.Exclude
-    private Products products;
+    private Products products;*/
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    private SpecificProductDetails specificProductDetails;
 }

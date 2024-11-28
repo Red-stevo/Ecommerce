@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SpecificProductDetails {
+public class SpecificProductDetailsResponse {
     private String productId;
     private float productPrice;
     private float productOldPrice;
