@@ -1,7 +1,7 @@
 import "./Styles/AddProductPage.css";
 import {Button, FloatingLabel, Form, InputGroup} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
@@ -24,8 +24,10 @@ const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);
     const [previewFile, setPreviewFile] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, reset
+    } = useForm();
     const [productTopDetails, setProductTopDetails] = useState(null);
+    const [productDetailsList, setProductDetailsList] = useState([]);
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
 
@@ -74,14 +76,33 @@ const AddProductPage = () => {
     };
 
     const handleAddProduct = (data) => {
-        console.log(data);
-
-        const productCreationRequest = {...data,
-            productUrls:uploads,
-            categoryIds:selectedCategories,
+        if (!productTopDetails){
+            const {productDescription,productName } = data;
+            setProductTopDetails({productName, productDescription});
         }
 
-        console.log(productCreationRequest);
+        const {color, size, productPrice, discount, count} = data;
+
+        const productCreationRequest =
+            {color, size, productPrice, discount, count, productUrls:uploads, categoryIds:selectedCategories};
+
+        setProductDetailsList((prevState) => [...prevState, productCreationRequest]);
+
+
+        //reset start.
+        setUploads([]);
+        setPreviewFile([]);
+        setSelectedCategories([]);
+
+        reset({color:'',size:'',productPrice:'',discount:'',count:''});
+    }
+
+    const handlePublish = () => {
+        const  data = {...productTopDetails, productDetailsList};
+
+        reset({productName:'', productDescription:''});
+        setProductTopDetails(null);
+        setProductDetailsList([]);
 
     }
 
@@ -94,16 +115,19 @@ const AddProductPage = () => {
                     <Form.Group>
                         <input className={"form-control"} required={true}
                                placeholder={"Product Name"} id={"productName"}
+                               disabled={productTopDetails !== null}
                                {...register("productName")} />
                     </Form.Group>
 
-                    <FloatingLabel className={"event-description"} controlId="floatingTextarea" label="Event Decription">
+                    <FloatingLabel className={"event-description"} controlId="floatingTextarea"
+                                   label="Event Decription">
                         <textarea
                             required={true}
                             className={"input-field form-control"}
                             placeholder={"Event Description"}
-                            style={{ height: '100px' }}
+                            style={{height: '100px'}}
                             id={"productDescription"}
+                            disabled={productTopDetails !== null}
                             {...register("productDescription")}
                         />
 
@@ -115,14 +139,15 @@ const AddProductPage = () => {
                         {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
                             <div key={index} className={"categories-preview"}>
                                 {category} <IoIosClose className={"cancel-categories"}
-                                                       onClick={() => removeCategory(category)} />
+                                                       onClick={() => removeCategory(category)}/>
                             </div>))
                         }
                     </div>
 
                     <select className={"form-select"}
-                        onChange={(e) =>
-                            setSelectedCategories((prevState) => [...prevState, e.target.value])}>
+                            onChange={(e) =>
+                                setSelectedCategories((prevState) => [...prevState, e.target.value])}>
+                        <option>Select Product Categories</option>
 
                         {categories.length > 0 && categories.map(({categoryId, categoryName}) => (
                             <option key={categoryId} value={categoryName}>{categoryName}</option>))
@@ -130,7 +155,7 @@ const AddProductPage = () => {
                     </select>
 
                     <div className={"size-color"}>
-                        <Form.Group>
+                <Form.Group>
                             <input className={"form-control"} required={true}
                                    placeholder={"Product Variety"}
                                     id={"color"} {...register("color")} />
@@ -173,8 +198,8 @@ const AddProductPage = () => {
 
 
                     <div className={"submit-buttons"}>
-                        <Button className={"app-button"} >Save</Button>
-                        <Button className={"app-button"} type={"submit"} >Publish</Button>
+                        <Button className={"app-button"} type={"submit"} >Save</Button>
+                        <Button className={"app-button"} onClick={() => handlePublish()}>Publish</Button>
                     </div>
                 </Form>
             </div>
