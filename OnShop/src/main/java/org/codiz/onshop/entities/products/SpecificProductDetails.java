@@ -20,7 +20,7 @@ public class SpecificProductDetails{
     private String color;
     private int count;
 
-    @OneToMany(mappedBy = "specific_products_details",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "specificProductDetails",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
     private List<ProductImages> productImagesList;

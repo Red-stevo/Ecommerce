@@ -357,8 +357,8 @@ public class ProductsServiceImpl implements ProductsService {
             for (Products relatedProduct : relatedProducts) {
                 RelatedProducts relatedProducts1 = new RelatedProducts();
                 relatedProducts1.setProductName(relatedProduct.getProductName());
-                relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().getFirst().getProductPrice());
-                relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().getFirst()
+                relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().get(0).getProductPrice());
+                relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().get(0)
                         .getProductImagesList().get(0).getImageUrl());
                 relatedProductsList.add(relatedProducts1);
             }
@@ -452,14 +452,14 @@ public class ProductsServiceImpl implements ProductsService {
                             String url = productImages.getImageUrl();
                             cloudinaryService.deleteImage(url);
 
-                            details1.getProductImagesList().forEach(image -> image.setProducts(null));
+                            details1.getProductImagesList().forEach(image -> image.setSpecificProductDetails(null));
                             details1.getProductImagesList().clear();
                         }
                     }
 
 
                     List<ProductImages> images = setImageUrls(details.getProductUrls());
-                    images.forEach(image -> image.setProducts(existingProduct));
+                    images.forEach(image -> image.setSpecificProductDetails(specificProductDetails));
                     specificProductDetails.getProductImagesList().addAll(images);
                 }
 
