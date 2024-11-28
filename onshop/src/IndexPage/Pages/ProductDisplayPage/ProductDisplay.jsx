@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProductDetails } from "../../../ApplicationStateManagement/productStore.js";
+import { getProductDetails } from "../../../ApplicationStateManagement/ProductStores/productStore.js";
 import { Button, Image, Pagination } from "react-bootstrap";
 import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";

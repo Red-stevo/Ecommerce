@@ -5,6 +5,8 @@ import {useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {postProduct} from "../../../ApplicationStateManagement/ProductStores/AddProductStore.js";
 
 
 const categories = [
@@ -28,6 +30,8 @@ const AddProductPage = () => {
     } = useForm();
     const [productTopDetails, setProductTopDetails] = useState(null);
     const [productDetailsList, setProductDetailsList] = useState([]);
+    const dispatch = useDispatch();
+
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
 
@@ -98,12 +102,16 @@ const AddProductPage = () => {
     }
 
     const handlePublish = () => {
+
         const  data = {...productTopDetails, productDetailsList};
 
         reset({productName:'', productDescription:''});
         setProductTopDetails(null);
         setProductDetailsList([]);
 
+
+        /*Display save product action.*/
+        dispatch(postProduct(data));
     }
 
 
@@ -199,7 +207,11 @@ const AddProductPage = () => {
 
                     <div className={"submit-buttons"}>
                         <Button className={"app-button"} type={"submit"} >Save</Button>
-                        <Button className={"app-button"} onClick={() => handlePublish()}>Publish</Button>
+                        <Button className={"app-button"}
+                                onClick={() => handlePublish()}
+                                disabled={!(productTopDetails && productDetailsList.length > 0)}>
+                            Publish
+                        </Button>
                     </div>
                 </Form>
             </div>
