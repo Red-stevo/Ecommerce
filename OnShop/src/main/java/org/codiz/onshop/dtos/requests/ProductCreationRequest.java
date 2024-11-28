@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class ProductCreationRequest {
     private List<String> categoryName;
+
     private String productName;
 
     private String productDescription;
