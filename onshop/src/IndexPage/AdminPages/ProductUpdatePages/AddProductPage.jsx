@@ -85,13 +85,13 @@ const AddProductPage = () => {
     const handleAddProduct = (data) => {
         if (!productTopDetails){
             const {productDescription,productName } = data;
-            setProductTopDetails({productName, productDescription});
+            setProductTopDetails({productName, productDescription, categoryIds:selectedCategories});
         }
 
         const {color, size, productPrice, discount, count} = data;
 
         const productCreationRequest =
-            {color, size, productPrice, discount, count, productUrls:uploads, categoryIds:selectedCategories};
+            {color, size, productPrice, discount, count, productUrls:uploads};
 
         setProductDetailsList((prevState) => [...prevState, productCreationRequest]);
 
@@ -99,7 +99,7 @@ const AddProductPage = () => {
         //reset start.
         setUploads([]);
         setPreviewFile([]);
-        setSelectedCategories([]);
+
 
         reset({color:'',size:'',productPrice:'',discount:'',count:''});
     }
@@ -158,6 +158,7 @@ const AddProductPage = () => {
                         </div>
 
                         <select className={"form-select"}
+                                disabled={productTopDetails !== null}
                                 onChange={(e) =>
                                     setSelectedCategories((prevState) => [...prevState, e.target.value])}>
                             <option>Select Product Categories</option>

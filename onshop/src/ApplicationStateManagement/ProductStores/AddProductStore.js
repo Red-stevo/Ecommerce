@@ -18,7 +18,7 @@ export const postProduct = createAsyncThunk("new-product/create",
 
         /*Axios request to save products.*/
         try {
-            const response = await RequestsConfig.post("", data);
+            const response = await RequestsConfig.post("/products/post", data);
             return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
