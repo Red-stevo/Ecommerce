@@ -1,8 +1,8 @@
 package org.codiz.onshop.entities.orders;
 
 public enum ShippingStatus {
-    PROCESSING,
+    PLACED_ORDER,
     DELIVERED,
     TRANSIT,
-    RETURNED
+    SIGNED
 }

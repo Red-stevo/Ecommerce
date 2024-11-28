@@ -28,7 +28,7 @@ public interface ProductsService {
     SpecificProductResponse specificProductResponse(String productId);
     EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest);
     String deleteProduct(String productId);
-    InventoryResponse showProductInventory(String productId);
+    //InventoryResponse showProductInventory(String productId);
     List<InventoryResponse> showInventory();
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);

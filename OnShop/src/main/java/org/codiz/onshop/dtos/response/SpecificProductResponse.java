@@ -10,7 +10,7 @@ public class SpecificProductResponse {
     private String productName;
     private double productPrice;
     private String productDescription;
-    private List<SpecificProductDetails> products;
+    private List<SpecificProductDetailsResponse> products;
     private List<RelatedProducts> relatedProducts;
     private List<ProductReviews> reviews;
 }

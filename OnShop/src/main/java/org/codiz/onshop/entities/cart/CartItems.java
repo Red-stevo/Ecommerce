@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -25,7 +26,7 @@ public class CartItems {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private Products products;
+    private SpecificProductDetails products;
 
     private Integer quantity;
 
