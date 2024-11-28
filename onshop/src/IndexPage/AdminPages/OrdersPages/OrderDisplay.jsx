@@ -5,7 +5,7 @@ import {LiaTimesSolid} from "react-icons/lia";
 
 
 const orderDetails = {
-    orderId:"AS43D4FFT6YT0P",
+    orderId:"AS43D4",
     orderStatus:"UNDELIVERED",
     itemList:[
         {
@@ -14,6 +14,7 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
         {
             productName:"Wireless Head Phones",
@@ -21,12 +22,14 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
         {
             productName:"Wireless Head Phones",
             productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.qr01Z40JyywlFtAb_wlmTQHaHa%26pid%3DApi&f=1&ipt=953ffc87e7155ed3e9410b9e960d4b74ca53ae0b2f5f9aca8b1e295f0a548e3a&ipo=images",            productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:true,
         },
         {
             productName:"Wireless EarPhones",
@@ -34,6 +37,7 @@ const orderDetails = {
             productPrice:2300,
             quantity:5,
             totalPrice:23500,
+            canceled:false,
         },
     ],
     customerDetails:{
@@ -79,8 +83,8 @@ const OrderDisplay = () => {
 
 
             <div className={"order-status-num"}>
-                <span className={"order-num"}>Order No. <span className={"order-number"}>#{orderId}</span></span>
-                <Button className={"order-status app-button"}>{orderStatus}</Button>
+                <span className={"order-num"}>ID <span className={"order-number"}>#{orderId}</span></span>
+                <Button className={"order-status-button app-button"}>{orderStatus}</Button>
             </div>
 
 
@@ -96,12 +100,12 @@ const OrderDisplay = () => {
 
                     {itemList.length > 0 && itemList.map(({productName, productPrice,
                                                               productImageUrl, totalPrice,
-                                                              quantity}, index) => (
+                                                              quantity, canceled}, index) => (
 
-                        <div className={"order-products"} key={index}>
+                        <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}>
                             <span className={"product-name"} title={productName}>
-                                <Image src={productImageUrl} height={50} width={50} className={"product-image-order"}/>
-                                {productName.length > 13 ? productName.substring(0, 13)+"...": productName}
+                                <Image src={productImageUrl}  className={"product-image-order"}/>
+                                {productName.length > 10 ? productName.substring(0, 10)+"...": productName}
                             </span>
                             <span className={"product-quantity"} >
                                 <LiaTimesSolid />

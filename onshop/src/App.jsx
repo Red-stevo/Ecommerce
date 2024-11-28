@@ -24,7 +24,7 @@ const App = () => {
               <Route path={"/auth/registration"} element={<RegistrationPage />} />
               <Route path={"/admin"} element={<AdminstrationSideBar />}>
                     <Route path={"/admin/newProduct"} element={<AddProductPage />} />
-                    <Route path={"/admin/orders"} element={<AllOrdersPage />} />
+                    <Route path={"/admin"} element={<AllOrdersPage />} />
                     <Route path={"/admin/orders/:orderId"} element={<OrderDisplay />} />
               </Route>
           </Routes>

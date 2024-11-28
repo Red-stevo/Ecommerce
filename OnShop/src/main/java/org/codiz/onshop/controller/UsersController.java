@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class UsersController {
 
     private final UsersService usersService;

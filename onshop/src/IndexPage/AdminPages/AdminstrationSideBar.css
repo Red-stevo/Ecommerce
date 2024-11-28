@@ -1,7 +1,7 @@
 
 .admin-main-page {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .dash-board {
@@ -35,9 +35,9 @@
 }
 
 .dashboard-title {
-    width: 90%;
+    width: 100%;
     font-size: 24px;
-    border-bottom: rgb(255, 183, 26) solid 1px;
+    border-bottom: white solid 1px;
     padding-bottom: 10px;
     font-family: Montserr Montserrat, sans-serif;
 }
@@ -65,7 +65,9 @@
 }
 
 .page-links-section {
-    margin-left: 40px;
+    margin-left: 50px;
+    margin-top: 15px;
+    border-bottom: 1px white solid;
 }
 
 .product-arrow {
@@ -75,7 +77,7 @@
 .page-link-text {
     text-decoration: none;
     color: rgba(255, 183, 26, 0.75);
-    font-size: 14px;
+    font-size: 16px;
     font-family: Montserr Montserrat, sans-serif;
     font-weight: 400;
 }
@@ -84,8 +86,15 @@
     width: 100vw;
     min-height: 100vh;
     padding-left: 250px;
-    background: linear-gradient(to bottom, rgba(143, 184, 213, 0.87), rgba(164, 211, 201, 0.61), whitesmoke, #e4eebc);
+    background: linear-gradient(to bottom, rgba(143, 184, 213, 0.87), rgba(164, 211, 201, 0.61),rgba(143, 184, 213, 0.87), whitesmoke, #e4eebc);
+    scrollbar-width: none;
 }
+
+
+.admin-page-base::-webkit-scrollbar {
+    display: none;
+}
+
 
 .dash-board-toggle {
     position: fixed;
@@ -106,6 +115,12 @@
     }
 
     .admin-page-base {
-        padding: 20px;
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 540px){
+    .admin-page-base {
+        padding: 0;
     }
 }
