@@ -5,9 +5,10 @@ import {useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {postProduct} from "../../../ApplicationStateManagement/ProductStores/AddProductStore.js";
-import Loader from "../../../Loader.jsx";
+import Loader from "../../../Loading/Loader.jsx";
+
 
 
 const categories = [
@@ -32,6 +33,7 @@ const AddProductPage = () => {
     const [productTopDetails, setProductTopDetails] = useState(null);
     const [productDetailsList, setProductDetailsList] = useState([]);
     const dispatch = useDispatch();
+    const {loading,errorMessage} = useSelector(state => state.newProductReducer);
 
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
@@ -118,7 +120,7 @@ const AddProductPage = () => {
 
     return (
         <>
-
+            {loading && <Loader />}
             <div className={"add-product-page"}>
                 <div className={"title-form-buttons-holder"}>
                     <span className={"page-title"}>Add Product</span>
