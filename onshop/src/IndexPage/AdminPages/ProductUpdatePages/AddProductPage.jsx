@@ -25,6 +25,7 @@ const AddProductPage = () => {
     const [previewFile, setPreviewFile] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const {register, handleSubmit} = useForm();
+    const [productTopDetails, setProductTopDetails] = useState(null);
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
 
