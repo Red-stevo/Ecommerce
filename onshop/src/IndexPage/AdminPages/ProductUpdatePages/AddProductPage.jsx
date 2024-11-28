@@ -7,6 +7,7 @@ import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {postProduct} from "../../../ApplicationStateManagement/ProductStores/AddProductStore.js";
+import Loader from "../../../Loader.jsx";
 
 
 const categories = [
@@ -116,106 +117,109 @@ const AddProductPage = () => {
 
 
     return (
-        <div className={"add-product-page"}>
-            <div className={"title-form-buttons-holder"}>
-                <span className={"page-title"}>Add Product</span>
-                <Form className={"product-input-form"} onSubmit={handleSubmit(handleAddProduct)}>
-                    <Form.Group>
-                        <input className={"form-control"} required={true}
-                               placeholder={"Product Name"} id={"productName"}
-                               disabled={productTopDetails !== null}
-                               {...register("productName")} />
-                    </Form.Group>
+        <>
 
-                    <FloatingLabel className={"event-description"} controlId="floatingTextarea"
-                                   label="Event Decription">
-                        <textarea
-                            required={true}
-                            className={"input-field form-control"}
-                            placeholder={"Event Description"}
-                            style={{height: '100px'}}
-                            id={"productDescription"}
-                            disabled={productTopDetails !== null}
-                            {...register("productDescription")}
-                        />
-
-                    </FloatingLabel>
-
-                    {/*Preview the selected categories.*/}
-                    <div className={"categories-preview-holder"}>
-                        {/*Pre view selected categories*/}
-                        {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
-                            <div key={index} className={"categories-preview"}>
-                                {category} <IoIosClose className={"cancel-categories"}
-                                                       onClick={() => removeCategory(category)}/>
-                            </div>))
-                        }
-                    </div>
-
-                    <select className={"form-select"}
-                            onChange={(e) =>
-                                setSelectedCategories((prevState) => [...prevState, e.target.value])}>
-                        <option>Select Product Categories</option>
-
-                        {categories.length > 0 && categories.map(({categoryId, categoryName}) => (
-                            <option key={categoryId} value={categoryName}>{categoryName}</option>))
-                        }
-                    </select>
-
-                    <div className={"size-color"}>
-                <Form.Group>
+            <div className={"add-product-page"}>
+                <div className={"title-form-buttons-holder"}>
+                    <span className={"page-title"}>Add Product</span>
+                    <Form className={"product-input-form"} onSubmit={handleSubmit(handleAddProduct)}>
+                        <Form.Group>
                             <input className={"form-control"} required={true}
-                                   placeholder={"Product Variety"}
-                                    id={"color"} {...register("color")} />
+                                   placeholder={"Product Name"} id={"productName"}
+                                   disabled={productTopDetails !== null}
+                                   {...register("productName")} />
                         </Form.Group>
 
-                        <Form.Group>
-                            <input className={"form-control"} placeholder={"Product Proportion"}
-                                   id={"size"} {...register("size")} required={true}/>
-                        </Form.Group>
-                    </div>
+                        <FloatingLabel className={"event-description"} controlId="floatingTextarea"
+                                       label="Event Decription">
+                            <textarea
+                                required={true}
+                                className={"input-field form-control"}
+                                placeholder={"Event Description"}
+                                style={{height: '100px'}}
+                                id={"productDescription"}
+                                disabled={productTopDetails !== null}
+                                {...register("productDescription")}
+                            />
 
-                    <div className={"price-count"}>
-                        <InputGroup className="">
-                            <input className={"productPrice form-control"} required={true}
-                                          aria-label="Product Price" placeholder={'Product Price'}
-                                   id={"productPrice"} {...register("productPrice") } />
-                            <input className={"productDiscount form-control"} required={true}
-                                          aria-label="Product discount" placeholder={"Product discount"}
-                            id={"discount"} {...register("discount")} />
-                        </InputGroup>
+                        </FloatingLabel>
 
-                        <Form.Group>
-                            <input className={"form-control"} placeholder={"Product Count"} required={true}
-                                   id={"count"} {...register("count")} />
-                        </Form.Group>
-                    </div>
+                        {/*Preview the selected categories.*/}
+                        <div className={"categories-preview-holder"}>
+                            {/*Pre view selected categories*/}
+                            {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
+                                <div key={index} className={"categories-preview"}>
+                                    {category} <IoIosClose className={"cancel-categories"}
+                                                           onClick={() => removeCategory(category)}/>
+                                </div>))
+                            }
+                        </div>
 
-                    <div className={"images-review"}>
-                        <>
-                            <label htmlFor="fileUpload" className="custom-label">
-                                <MdCloudUpload className={"upload-icon"} />
-                                upload
-                            </label>
-                            <input onChange={handleFileChange}
-                                type="file" multiple={true} accept="image/*, video/*, application/*" id="fileUpload"
-                                className="file-input-filled" />
-                        </>
-                        <FileReview previewImages={previewFile} handleRemove={handleImageRemove} />
-                    </div>
+                        <select className={"form-select"}
+                                onChange={(e) =>
+                                    setSelectedCategories((prevState) => [...prevState, e.target.value])}>
+                            <option>Select Product Categories</option>
+
+                            {categories.length > 0 && categories.map(({categoryId, categoryName}) => (
+                                <option key={categoryId} value={categoryName}>{categoryName}</option>))
+                            }
+                        </select>
+
+                        <div className={"size-color"}>
+                    <Form.Group>
+                                <input className={"form-control"} required={true}
+                                       placeholder={"Product Variety"}
+                                        id={"color"} {...register("color")} />
+                            </Form.Group>
+
+                            <Form.Group>
+                                <input className={"form-control"} placeholder={"Product Proportion"}
+                                       id={"size"} {...register("size")} required={true}/>
+                            </Form.Group>
+                        </div>
+
+                        <div className={"price-count"}>
+                            <InputGroup className="">
+                                <input className={"productPrice form-control"} required={true}
+                                              aria-label="Product Price" placeholder={'Product Price'}
+                                       id={"productPrice"} {...register("productPrice") } />
+                                <input className={"productDiscount form-control"} required={true}
+                                              aria-label="Product discount" placeholder={"Product discount"}
+                                id={"discount"} {...register("discount")} />
+                            </InputGroup>
+
+                            <Form.Group>
+                                <input className={"form-control"} placeholder={"Product Count"} required={true}
+                                       id={"count"} {...register("count")} />
+                            </Form.Group>
+                        </div>
+
+                        <div className={"images-review"}>
+                            <>
+                                <label htmlFor="fileUpload" className="custom-label">
+                                    <MdCloudUpload className={"upload-icon"} />
+                                    upload
+                                </label>
+                                <input onChange={handleFileChange}
+                                    type="file" multiple={true} accept="image/*, video/*, application/*" id="fileUpload"
+                                    className="file-input-filled" />
+                            </>
+                            <FileReview previewImages={previewFile} handleRemove={handleImageRemove} />
+                        </div>
 
 
-                    <div className={"submit-buttons"}>
-                        <Button className={"app-button"} type={"submit"} >Save</Button>
-                        <Button className={"app-button"}
-                                onClick={() => handlePublish()}
-                                disabled={!(productTopDetails && productDetailsList.length > 0)}>
-                            Publish
-                        </Button>
-                    </div>
-                </Form>
+                        <div className={"submit-buttons"}>
+                            <Button className={"app-button"} type={"submit"} >Save</Button>
+                            <Button className={"app-button"}
+                                    onClick={() => handlePublish()}
+                                    disabled={!(productTopDetails && productDetailsList.length > 0)}>
+                                Publish
+                            </Button>
+                        </div>
+                    </Form>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
