@@ -1,5 +1,4 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import {RequestsConfig} from "./RequestsConfig.js";
 
 const product = {
     productName:"J4 cactus jack sneakers",
@@ -230,9 +229,6 @@ productReviews:[
     },
 ]
 }
-
-
-
 
 
 const productStoreAdapter = createEntityAdapter({selectId:product => product.productId});
