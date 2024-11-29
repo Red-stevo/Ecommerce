@@ -12,12 +12,16 @@ import Loader from "../../../Loading/Loader.jsx";
 
 
 const categories = [
-    {categoryName:"men", categoryId:1},
-    {categoryName:"Utensils", categoryId:2},
-    {categoryName:"Electronics", categoryId:3},
-    {categoryName:"Women", categoryId:4},
-    {categoryName:"Clothes", categoryId:5},
-    {categoryName:"Shoes", categoryId:6},
+    {categoryName:"Fashion", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120001"},
+    {categoryName:"books", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120002"},
+    {categoryName:"home-appliances", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120003"},
+    {categoryName:"toys", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120004"},
+    {categoryName:"sports", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120005"},
+    {categoryName:"groceries", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120006"},
+    {categoryName:"furniture", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120007"},
+    {categoryName:"automobiles", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120008"},
+    {categoryName:"health", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120009"},
+    {categoryName:"beauty", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac1200010"},
 ]
 
 
@@ -47,9 +51,16 @@ const AddProductPage = () => {
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
 
-        {files.length > 0 && files.forEach((file) => {
+        {files.length > 0 && files.forEach((image) => {
 
-            if (!file) return;
+            if (!image) return;
+
+            /*Rename files*/
+            const file = new File([image], `${productDetailsList.length}+${image.name}`,
+                {
+                    type: image.type,
+                    lastModified: image.lastModified,
+                })
 
             /*Check the file size, if too large ignore the file.*/
             if (file.size > 10485760){
@@ -85,7 +96,7 @@ const AddProductPage = () => {
     const handleAddProduct = (data) => {
         if (!productTopDetails){
             const {productDescription,productName } = data;
-            setProductTopDetails({productName, productDescription, categoryIds:selectedCategories});
+            setProductTopDetails({productName, productDescription, categoryName:selectedCategories});
         }
 
         const {color, size, productPrice, discount, count} = data;
@@ -106,11 +117,12 @@ const AddProductPage = () => {
 
     const handlePublish = () => {
 
-        const  data = {...productTopDetails, productDetailsList};
+        const  data = {...productTopDetails, productCreatedDetails:productDetailsList};
 
         reset({productName:'', productDescription:''});
         setProductTopDetails(null);
         setProductDetailsList([]);
+        setSelectedCategories([]);
 
 
         /*Display save product action.*/

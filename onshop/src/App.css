@@ -1,13 +1,13 @@
 .app-button,button.app-button:active,
- button.app-button:focus  {
-    background-color: #FFC107;
-    border: 1px solid #FFC107;
+ button.app-button:focus, button.app-button:disabled  {
+    background-color: #FFC107 !important;
+    border: 1px solid #FFC107 !important;
 }
 
 button.app-button:hover {
     border: rgba(255, 193, 7, 0.65) solid 1px !important;
     background-color: rgba(255, 193, 7, 0.32) !important;
-    color: white;
+    color: white !important;
 }
 
 
@@ -43,4 +43,21 @@ button.app-button:hover {
     border-top: #FFC107 solid 1px;
     border-bottom: #FFC107 solid 1px;
     background-color: #FFC107;
+}
+
+
+
+.danger-button,button.danger-button:active,
+button.danger-button:focus, button.danger-button:disabled  {
+    background-color: #ff0000; !important;
+    border: 1px solid #ff0000; !important;
+    font-weight:700;
+    height: fit-content;
+    padding: 3px;
+}
+
+button.danger-button:hover {
+    border: rgba(245, 245, 245, 0.9) solid 1px !important;
+    background-color: rgba(245, 245, 245, 0.9) !important;
+    color: #ff0000 !important;
 }
