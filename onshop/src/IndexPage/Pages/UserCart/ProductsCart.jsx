@@ -4,6 +4,7 @@ import {useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
+import {FaMoneyBill1Wave} from "react-icons/fa6";
 
 
 
@@ -71,13 +72,15 @@ const cartProducts = {
     ],
     currentPage:0,
     totalPages:5,
-    hasMore:true
+    hasMore:true,
+    totalProductPrice:24500,
 }
 
 const ProductsCart = () => {
     const [selectAllCheck, setSelectAllCheck] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
-        totalPages, hasMore, youMayLikes} = cartProducts;
+        totalPages, hasMore, youMayLikes,
+    totalProductPrice} = cartProducts;
 
 
     return (
@@ -101,7 +104,24 @@ const ProductsCart = () => {
                    <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                 count={count} color={color} productImageUrl={productImageUrl} key={productId} />
                 ))}
+
+
+                {/*Price display*/}
+                <div className={"total-price-shop"}>
+                    <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalProductPrice}</div>
+
+                    <div className={"button-shop"}>
+                        <span className={"continue-shopping"}>back shopping</span>
+                        <span className={"continue-shopping checkout-button"}>
+                            <FaMoneyBill1Wave className={"money-bill"} />Check out
+                        </span>
+                    </div>
+                </div>
             </div>
+
+
+
+
         </div>
     );
 };
