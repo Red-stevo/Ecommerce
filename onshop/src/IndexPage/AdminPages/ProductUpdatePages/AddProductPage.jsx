@@ -51,9 +51,16 @@ const AddProductPage = () => {
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
 
-        {files.length > 0 && files.forEach((file) => {
+        {files.length > 0 && files.forEach((image) => {
 
-            if (!file) return;
+            if (!image) return;
+
+            /*Rename files*/
+            const file = new File([image], `${productDetailsList.length}+${image.name}`,
+                {
+                    type: image.type,
+                    lastModified: image.lastModified,
+                })
 
             /*Check the file size, if too large ignore the file.*/
             if (file.size > 10485760){
@@ -120,8 +127,6 @@ const AddProductPage = () => {
 
         /*Display save product action.*/
         dispatch(postProduct(data));
-
-        console.log(data);
     }
 
 
