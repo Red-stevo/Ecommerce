@@ -10,6 +10,7 @@ import AdminstrationSideBar from "./IndexPage/AdminPages/AdminstrationSideBar.js
 import AddProductPage from "./IndexPage/AdminPages/ProductUpdatePages/AddProductPage.jsx";
 import AllOrdersPage from "./IndexPage/AdminPages/OrdersPages/AllOrdersPage.jsx";
 import OrderDisplay from "./IndexPage/AdminPages/OrdersPages/OrderDisplay.jsx";
+import ProductsCart from "./IndexPage/Pages/UserCart/ProductsCart.jsx";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
                  <Route path={"/"} element={<IndexBody />}/>
                   <Route path={"/home/products/:productsCategory"} element={<CategoricalProductsDisplay />}/>
                   <Route path={"/home/product/:productId"} element={<ProductDisplay />} />
+                  <Route path={"/home/user/cart"} element={<ProductsCart />} />
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />

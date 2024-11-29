@@ -1,0 +1,41 @@
+.cart-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 10px;
+
+}
+
+
+.top-buttons {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-content: center;
+    margin-left: 7%;
+}
+
+.delete-order-product {
+    align-self: center;
+}
+
+
+.select-all-holder {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    padding: 7px;
+    gap: 5px;
+    text-align: center;
+}
+
+.select-checked, .select-unchecked {
+    align-self: center;
+}
+
+.ordered-products-display {
+    padding-left: 20%;
+    padding-right: 20%;
+    width: 100%;
+    background-color: #0c8cdc;
+}
+
