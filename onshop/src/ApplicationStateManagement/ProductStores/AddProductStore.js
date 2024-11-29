@@ -1,6 +1,5 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
-import {toFormData} from "axios";
 
 const newProductAdapter = createEntityAdapter();
 
