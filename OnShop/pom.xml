@@ -83,12 +83,6 @@
             <artifactId>tika-core</artifactId>
             <version>2.9.2</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.algolia</groupId>
-            <artifactId>algoliasearch</artifactId>
-            <version>4.8.0</version>
-        </dependency>
--->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -104,6 +98,15 @@
             <artifactId>cloudinary-http44</artifactId>
             <version>1.31.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.androidstudy.daraja/daraja -->
+        <dependency>
+            <groupId>com.androidstudy.daraja</groupId>
+            <artifactId>daraja</artifactId>
+            <version>2.0.2</version>
+            <type>pom</type>
+        </dependency>
+
     </dependencies>
 
     <build>
