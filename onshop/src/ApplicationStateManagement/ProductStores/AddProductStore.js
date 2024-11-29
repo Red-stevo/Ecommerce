@@ -1,5 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
+import {toFormData} from "axios";
 
 const newProductAdapter = createEntityAdapter();
 
@@ -10,15 +11,41 @@ const  initialState = newProductAdapter.getInitialState({
 })
 
 export const postProduct = createAsyncThunk("new-product/create",
-    async (data=null,
+    async (productData= null,
      {
          fulfillWithValue,
-        rejectWithValue
+         rejectWithValue
      }) => {
 
         /*Axios request to save products.*/
         try {
-            const response = await RequestsConfig.post("/products/post", data);
+
+            const productCreationRequest = new FormData();
+
+            // Append JSON data
+            productCreationRequest.append('productData', JSON.stringify({
+                productName: productData.productName,
+                productDescription: productData.productDescription,
+                categoryName: productData.categoryName,
+                productCreatedDetails: productData.productCreatedDetails.map(detail => ({
+                    color: detail.color,
+                    size: detail.size,
+                    productPrice: detail.productPrice,
+                    discount: detail.discount,
+                    count: detail.count
+                }))
+            }));
+
+            // Append each file
+            productData.productCreatedDetails.forEach(detail => {
+                detail.productUrls.forEach(file => {
+                    productCreationRequest.append('files', file);
+                });
+            });
+
+
+
+            await RequestsConfig.post("/products/post", productCreationRequest);
             return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
