@@ -46,13 +46,13 @@ public class CartController {
     public ResponseEntity<CartResponse> getCartById(
             @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("productName").ascending());
         CartResponse cartResponse = cartService.getCartById(userId, pageable);
         return ResponseEntity.ok(cartResponse);
     }
+
 
     @DeleteMapping("/delete/cart")
     public ResponseEntity<HttpStatus> deleteCart(String cartId){
