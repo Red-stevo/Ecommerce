@@ -5,6 +5,7 @@ import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
+import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
 
 
 
@@ -81,6 +82,19 @@ const ProductsCart = () => {
     const {username, cartId, cartItemsResponses, currentPage,
         totalPages, hasMore, youMayLikes,
     totalProductPrice} = cartProducts;
+    const [index, setIndex] = useState(0);
+
+
+    setTimeout(() => {
+        if (index === 0)
+            setIndex(1);
+        else if (index === 1)
+            setIndex(2);
+        else
+            setIndex(0);
+
+    }, 1500);
+
 
 
     return (
@@ -111,16 +125,19 @@ const ProductsCart = () => {
                     <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalProductPrice}</div>
 
                     <div className={"button-shop"}>
-                        <span className={"continue-shopping"}>back shopping</span>
-                        <span className={"continue-shopping checkout-button"}>
+                        <span className={"continue-shopping"} title={"Continue Shopping"}>
+                            <PiArrowFatLeftThin title={"Continue Shopping"} className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                            <PiArrowFatLineLeftThin title={"Continue Shopping"} className={`${index === 1 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                            <PiArrowFatLinesLeftThin title={"Continue Shopping"} className={`${index === 2 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                        </span>
+                        <span className={"checkout-button"}>
                             <FaMoneyBill1Wave className={"money-bill"} />Check out
                         </span>
                     </div>
+
                 </div>
+
             </div>
-
-
-
 
         </div>
     );

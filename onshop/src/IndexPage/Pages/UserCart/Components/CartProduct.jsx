@@ -30,7 +30,7 @@ const CartProduct = ({productPrice, productName, productImageUrl, inStock, color
                 </div>
 
                 <div className={"amount-price"}>
-                    <span>Color : {color}</span>
+                    <span className={"product-color"}>Color : {color}</span>
                     <span><FaMinus className={"vary-quantity"} onClick={() => setProductCount(productCount - 1)}/>
                         <span className={"cart-quantity"}>{productCount}</span>
                         <FaPlus className={"vary-quantity"} onClick={() => setProductCount(productCount + 1)} />

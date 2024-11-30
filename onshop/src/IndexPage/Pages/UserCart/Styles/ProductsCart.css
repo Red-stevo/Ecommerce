@@ -110,11 +110,14 @@
 .continue-shopping {
     font-size: 20px;
     font-weight: 600;
+    cursor: pointer;
+    box-shadow: 1px 3px 4px rgba(181, 204, 201, 0.47);
 }
 
 .button-shop {
     display: flex;
     justify-content: space-between;
+    padding-bottom: 10px;
 }
 
 .checkout-button {
@@ -125,6 +128,7 @@
     font-weight: 700;
     color: white;
     cursor: pointer;
+    height: fit-content;
 }
 
 
@@ -141,7 +145,55 @@
     font-size: 20px;
 }
 
+.unhidden-arrow {
+    display: flex;
+    font-size: 50px;
+    color: #FFC107;
+    font-weight: 900;
+}
 
+
+.hidden-arrow{
+    display: none;
+}
+
+
+@media screen and (max-device-width: 767px) {
+
+    .ordered-products-display {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+
+    .checkout-button {
+        padding: 5px 10px;
+        font-weight: 500;
+    }
+}
+
+@media screen and (max-device-width: 525px) {
+
+    .ordered-products-display {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .checkout-button {
+        padding: 5px 5px;
+    }
+}
+
+@media screen and (max-device-width: 399px) {
+
+    .product-color {
+        display: none;
+        font-weight: 300;
+    }
+
+    .checkout-button {
+        padding: 2px 2px;
+    }
+}
 
 
 
