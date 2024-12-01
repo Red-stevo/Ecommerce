@@ -1,6 +1,7 @@
 package org.codiz.onshop.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
@@ -16,14 +17,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/products")
-@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
+//@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class ProductsController {
     private final ProductsService productsService;
 
@@ -31,11 +35,19 @@ public class ProductsController {
         this.productsService = productsService;
     }
 
-    @PostMapping(value = "/post")
+    @PostMapping(value = "/post",consumes = "multipart/form-data")
     public ResponseEntity<EntityResponse> postProduct(
-            @ModelAttribute ProductCreationRequest productCreationRequest) {
+            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) {
 
-        return ResponseEntity.ok(productsService.postProduct(productCreationRequest));
+        log.info(productData);
+        files.forEach((file) -> {
+            log.info(file.getOriginalFilename());
+        });
+
+        log.info("done");
+
+       /* return ResponseEntity.ok(productsService.postProduct(productCreationRequest))*/;
+       return null;
     }
 
 

@@ -9,5 +9,6 @@ public class CartItemsResponse {
     private String productName;
     private String productId;
     private float productPrice;
+    private int count;
 
 }
