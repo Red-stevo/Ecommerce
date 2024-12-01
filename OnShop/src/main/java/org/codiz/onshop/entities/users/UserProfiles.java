@@ -12,7 +12,7 @@ public class UserProfiles {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String profileId;
-    @OneToOne(mappedBy = "profileId",fetch = FetchType.EAGER,orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER,orphanRemoval = true)
     private Users userId;
     private String fullName;
     private String imageUrl;
@@ -23,7 +23,7 @@ public class UserProfiles {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "preferred_product",
-            joinColumns = @JoinColumn(referencedColumnName = "profileId"),
+            joinColumns = @JoinColumn(name = "profileId"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Products> likedProducts;

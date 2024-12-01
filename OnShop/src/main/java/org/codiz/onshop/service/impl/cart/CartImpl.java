@@ -14,11 +14,13 @@ import org.codiz.onshop.entities.cart.CartItems;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.Products;
 import org.codiz.onshop.entities.products.SpecificProductDetails;
+import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.cart.CartItemsRepository;
 import org.codiz.onshop.repositories.cart.CartRepository;
 import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.repositories.products.SpecificProductsRepository;
+import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.cart.CartService;
 import org.springframework.data.domain.Page;
@@ -40,12 +42,14 @@ public class CartImpl implements CartService {
     private final CartItemsRepository cartItemsRepository;
     private final UsersRepository usersRepository;
     private final SpecificProductsRepository specificProductsRepository;
+    private final UserProfilesRepository profilesRepository;
 
 
 
     @Transactional
     public Cart addItemToCart(CartItemsToAdd items) {
         Users users = usersRepository.findUsersByUserId(items.getUserId());
+
 
         if (users == null) {
             throw new IllegalArgumentException("User not found");
@@ -77,9 +81,10 @@ public class CartImpl implements CartService {
             newCartItem.setQuantity(items.getQuantity());
             newCartItem.setCart(cart);
             cartItemsRepository.save(newCartItem);
-
-            //cart.addCartItem(newCartItem);
+            cart.addCartItem(newCartItem);
         }
+
+
         return cartRepository.save(cart);
     }
 
