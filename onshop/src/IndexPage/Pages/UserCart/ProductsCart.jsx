@@ -1,6 +1,6 @@
 import "./Styles/ProductsCart.css";
 import {Button} from "react-bootstrap";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
@@ -83,6 +83,14 @@ const ProductsCart = () => {
         totalPages, hasMore, youMayLikes,
     totalProductPrice} = cartProducts;
     const [index, setIndex] = useState(0);
+    const [selectedProducts, setSelectedProducts] = useState([]);
+
+
+    useEffect(() => {
+        if (selectedProducts.length !== cartItemsResponses.length) setSelectAllCheck(false);
+        else setSelectAllCheck(true);
+
+    }, [selectedProducts, cartItemsResponses]);
 
 
     setTimeout(() => {
@@ -96,6 +104,9 @@ const ProductsCart = () => {
     }, 1500);
 
 
+    useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
 
     return (
         <div className={"cart-page"}>
@@ -116,7 +127,9 @@ const ProductsCart = () => {
                     ({productId, productPrice, productName, productImageUrl,
                      color, inStock, count}) => (
                    <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
-                                count={count} color={color} productImageUrl={productImageUrl} key={productId} />
+                                setSelectedProducts={setSelectedProducts} count={count} color={color}
+                                selectAllCheck={selectAllCheck}
+                                id={productId}  productImageUrl={productImageUrl} key={productId} />
                 ))}
 
 
