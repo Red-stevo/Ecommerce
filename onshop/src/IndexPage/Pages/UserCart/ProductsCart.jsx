@@ -1,10 +1,11 @@
 import "./Styles/ProductsCart.css";
 import {Button} from "react-bootstrap";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
+import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
 
 
 
@@ -81,6 +82,27 @@ const ProductsCart = () => {
     const {username, cartId, cartItemsResponses, currentPage,
         totalPages, hasMore, youMayLikes,
     totalProductPrice} = cartProducts;
+    const [index, setIndex] = useState(0);
+    const [selectedProducts, setSelectedProducts] = useState([]);
+
+
+    useEffect(() => {
+        if (selectedProducts.length !== cartItemsResponses.length) setSelectAllCheck(false);
+        else setSelectAllCheck(true);
+
+    }, [selectedProducts, cartItemsResponses]);
+
+
+    setTimeout(() => {
+        if (index === 0)
+            setIndex(1);
+        else if (index === 1)
+            setIndex(2);
+        else
+            setIndex(0);
+
+    }, 1500);
+
 
 
     return (
@@ -102,7 +124,9 @@ const ProductsCart = () => {
                     ({productId, productPrice, productName, productImageUrl,
                      color, inStock, count}) => (
                    <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
-                                count={count} color={color} productImageUrl={productImageUrl} key={productId} />
+                                setSelectedProducts={setSelectedProducts} count={count} color={color}
+                                selectAllCheck={selectAllCheck}
+                                id={productId}  productImageUrl={productImageUrl} key={productId} />
                 ))}
 
 
@@ -111,16 +135,19 @@ const ProductsCart = () => {
                     <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalProductPrice}</div>
 
                     <div className={"button-shop"}>
-                        <span className={"continue-shopping"}>back shopping</span>
-                        <span className={"continue-shopping checkout-button"}>
+                        <span className={"continue-shopping"} title={"Continue Shopping"}>
+                            <PiArrowFatLeftThin title={"Continue Shopping"} className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                            <PiArrowFatLineLeftThin title={"Continue Shopping"} className={`${index === 1 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                            <PiArrowFatLinesLeftThin title={"Continue Shopping"} className={`${index === 2 ? "unhidden-arrow" : "hidden-arrow"}`} />
+                        </span>
+                        <span className={"checkout-button"}>
                             <FaMoneyBill1Wave className={"money-bill"} />Check out
                         </span>
                     </div>
+
                 </div>
+
             </div>
-
-
-
 
         </div>
     );
