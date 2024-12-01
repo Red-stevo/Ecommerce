@@ -3,13 +3,18 @@ package org.codiz.onshop.service.impl.users;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.dtos.requests.UserProfileUpdateRequest;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
 import org.codiz.onshop.dtos.response.EntityDeletionResponse;
+import org.codiz.onshop.dtos.response.UserProfileResponse;
 import org.codiz.onshop.dtos.response.UserResponse;
 import org.codiz.onshop.entities.users.Role;
+import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
+import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
+import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.users.UsersService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -27,6 +32,8 @@ public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final ModelMapper modelMapper;
+    private final CloudinaryService cloudinaryService;
+    private final UserProfilesRepository userProfilesRepository;
 
 
     public EntityResponse registerUser(UserRegistrationRequest request) {
@@ -104,6 +111,18 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
+    public String updateUSer(UserRegistrationRequest request,String userId) {
+        Users users = usersRepository.findUsersByUserId(userId);
+
+        users.setUsername(request.getUsername());
+        users.setPassword(request.getPassword());
+        users.setRole(Role.valueOf(String.valueOf(request.getRole())));
+        users.setUserEmail(request.getUserEmail());
+        users.setPhoneNumber(request.getPhoneNumber());
+        usersRepository.save(users);
+        return "user updated";
+    }
+
 
 
 
@@ -153,6 +172,43 @@ public class UsersServiceImpl implements UsersService {
         response.setStatus(HttpStatus.BAD_REQUEST);
         return response;
     }
+
+
+    public UserProfileResponse showUserProfile(String userId){
+        Users users = usersRepository.findUsersByUsername(userId).get();
+        UserProfiles profiles = userProfilesRepository.findByUserId(users);
+
+        UserProfileResponse userProfileResponse = new UserProfileResponse();
+        userProfileResponse.setUsername(users.getUsername());
+        userProfileResponse.setFullName(profiles.getFullName());
+        userProfileResponse.setGender(String.valueOf(profiles.getGender()));
+        userProfileResponse.setEmail(users.getUserEmail());
+        userProfileResponse.setPhoneNumber(users.getPhoneNumber());
+        userProfileResponse.setAddress(profiles.getAddress());
+        return userProfileResponse;
+    }
+
+    public String updateProfile(UserProfileUpdateRequest request) {
+        Users users = usersRepository.findUsersByUserId(request.getUserId());
+
+        UserProfiles profiles = userProfilesRepository.findByUserId(users);
+        if (profiles == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found");
+        }
+
+        String url = cloudinaryService.uploadImage(request.getImageUrl());
+
+        profiles.setFullName(request.getFirstName());
+        profiles.setGender(request.getGender());
+        profiles.setImageUrl(url);
+        profiles.setAddress(request.getAddress());
+        profiles.setSecondaryEmail(request.getSecondaryEmail());
+
+        userProfilesRepository.save(profiles);
+        return "profile updated";
+
+    }
+
 
 
 }
