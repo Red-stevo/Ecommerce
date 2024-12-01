@@ -104,9 +104,6 @@ const ProductsCart = () => {
     }, 1500);
 
 
-    useEffect(() => {
-        console.log(selectedProducts);
-    }, [selectedProducts]);
 
     return (
         <div className={"cart-page"}>
