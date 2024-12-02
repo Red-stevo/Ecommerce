@@ -12,8 +12,10 @@ import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.*;
+import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.products.*;
+import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -46,6 +48,10 @@ public class ProductsServiceImpl implements ProductsService {
     private final ProductRatingsRepository ratingsRepository;
     private final InventoryRepository inventoryRepository;
     private final SpecificProductsRepository specificProductsRepository;
+    private final UserProfilesRepository userProfilesRepository;
+
+
+    UserProfiles userProfiles;
 
 
     @Transactional
@@ -166,10 +172,14 @@ public class ProductsServiceImpl implements ProductsService {
                 .flatMap(category -> category.getProducts().stream())
                 .toList();
 
+
+
         List<Products> combinedResults = Stream.concat(
                 productPage.getContent().stream(),
                 categoryProducts.stream()
         ).distinct().toList();
+
+
 
         List<ProductsPageResponse> responseList = combinedResults.stream()
                 .map(this::mapToProductsPageResponse)
