@@ -12,10 +12,10 @@ import java.time.Instant;
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long inventoryId;
-    private int quantityBought;
-    private Instant lastUpdate;
+    private String inventoryId;
+    private int inStockQuantity;
     private int quantitySold;
+    private Instant lastUpdate;
 
 
     @OneToOne
