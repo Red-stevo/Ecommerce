@@ -181,6 +181,16 @@
     .checkout-button {
         padding: 5px 5px;
     }
+
+
+    .top-buttons {
+        padding-left: 0;
+    }
+
+    .out-stock, .cart-product-name, .product-price-cart {
+        font-size: 15px;
+    }
+
 }
 
 @media screen and (max-device-width: 399px) {

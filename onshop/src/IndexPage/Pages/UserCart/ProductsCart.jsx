@@ -78,7 +78,7 @@ const cartProducts = {
 }
 
 const ProductsCart = () => {
-    const [selectAllCheck, setSelectAllCheck] = useState(false);
+    const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
         totalPages, hasMore, youMayLikes,
     totalProductPrice} = cartProducts;
@@ -87,8 +87,8 @@ const ProductsCart = () => {
 
 
     useEffect(() => {
-        if (selectedProducts.length !== cartItemsResponses.length) setSelectAllCheck(false);
-        else setSelectAllCheck(true);
+        if (selectedProducts.length !== cartItemsResponses.length) setCheckIcon(false);
+        else setCheckIcon(true);
 
     }, [selectedProducts, cartItemsResponses]);
 
@@ -103,16 +103,22 @@ const ProductsCart = () => {
 
     }, 1500);
 
+    const handleDeselection = () => {
+        setCheckIcon(false);
+
+        setSelectedProducts(() => []);
+    }
+
 
 
     return (
         <div className={"cart-page"}>
             {/*Page header.*/}
            <div className={"top-buttons"}>
-               <div onClick={() => setSelectAllCheck(!selectAllCheck)} className={"select-all-holder"}>
-                   {selectAllCheck ?
-                       <ImCheckboxChecked className={"select-checked"} /> :
-                       <ImCheckboxUnchecked className={"select-unchecked"} />}
+               <div className={"select-all-holder"}>
+                   {checkIcon ?
+                       <ImCheckboxChecked className={"select-checked"} onClick={handleDeselection} /> :
+                       <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)} />}
                    <span>select all</span>
                </div>
                <Button className={"danger-button delete-order-product"}>Delete</Button>
@@ -125,7 +131,7 @@ const ProductsCart = () => {
                      color, inStock, count}) => (
                    <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                 setSelectedProducts={setSelectedProducts} count={count} color={color}
-                                selectAllCheck={selectAllCheck}
+                                selectAllCheck={checkIcon} unCheckAll={selectedProducts}
                                 id={productId}  productImageUrl={productImageUrl} key={productId} />
                 ))}
 

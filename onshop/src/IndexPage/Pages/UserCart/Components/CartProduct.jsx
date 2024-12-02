@@ -3,7 +3,10 @@ import {useEffect, useState} from "react";
 import {Image} from "react-bootstrap";
 import {FaMinus, FaPlus} from "react-icons/fa";
 
-const CartProduct = ({productPrice, productName, productImageUrl, inStock, color,count, id, setSelectedProducts, selectAllCheck}) => {
+const CartProduct = (
+    {
+        productPrice, productName, productImageUrl, inStock, color,
+        count, id, setSelectedProducts, selectAllCheck, unCheckAll}) => {
     const [select, setSelect] = useState(false);
     const [productCount, setProductCount] = useState(count);
 
@@ -23,9 +26,12 @@ const CartProduct = ({productPrice, productName, productImageUrl, inStock, color
 
 
     useEffect(() => {
-        if (selectAllCheck)
-            setSelect(true);
-    }, [selectAllCheck])
+        if (selectAllCheck) setSelect(true);
+    }, [selectAllCheck]);
+
+    useEffect(() => {
+        if (unCheckAll.length === 0) setSelect(false);
+    }, [unCheckAll]);
 
     return (
         <div className={"cart-product-details"}>
@@ -39,7 +45,7 @@ const CartProduct = ({productPrice, productName, productImageUrl, inStock, color
             <div className={"name-amount-holder"}>
 
                 <div className={"name-stock"}>
-                    <span>{productName}</span>
+                    <span className={"cart-product-name"}>{productName}</span>
                     {!inStock && <span className={"out-stock"}>Out Of Stock</span>}
                 </div>
 
@@ -49,7 +55,7 @@ const CartProduct = ({productPrice, productName, productImageUrl, inStock, color
                         <span className={"cart-quantity"}>{productCount}</span>
                         <FaPlus className={"vary-quantity"} onClick={() => setProductCount(productCount + 1)} />
                     </span>
-                    <span>ksh {productPrice}</span>
+                    <span className={"product-price-cart"}>ksh {productPrice}</span>
                 </div>
             </div>
         </div>
