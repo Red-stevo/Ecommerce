@@ -1,11 +1,13 @@
 import "./Styles/ProductsCart.css";
-import {Button} from "react-bootstrap";
+import {Button, Image} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
 import Cart from "../Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
 import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
+import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -61,7 +63,7 @@ const cartProducts = {
         {productId:"ASD38", productName:"Laptop", productPrice:1850.00, rating:4,
             productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
         },
-        {productId:"ASD39", productName:"Laptop", productPrice:1850.00, rating:4,
+        {productId:"ASD39", productName:"LapLaptopLaptopLaptoptop", productPrice:1850.00, rating:4,
             productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
         },
         {productId:"ASD310", productName:"Laptop", productPrice:1850.00, rating:4,
@@ -73,22 +75,22 @@ const cartProducts = {
     ],
     currentPage:0,
     totalPages:5,
-    hasMore:true,
     totalProductPrice:24500,
 }
 
 const ProductsCart = () => {
-    const [selectAllCheck, setSelectAllCheck] = useState(false);
+    const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
         totalPages, hasMore, youMayLikes,
     totalProductPrice} = cartProducts;
     const [index, setIndex] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
-        if (selectedProducts.length !== cartItemsResponses.length) setSelectAllCheck(false);
-        else setSelectAllCheck(true);
+        if (selectedProducts.length !== cartItemsResponses.length) setCheckIcon(false);
+        else setCheckIcon(true);
 
     }, [selectedProducts, cartItemsResponses]);
 
@@ -103,16 +105,22 @@ const ProductsCart = () => {
 
     }, 1500);
 
+    const handleDeselection = () => {
+        setCheckIcon(false);
+
+        setSelectedProducts(() => []);
+    }
+
 
 
     return (
         <div className={"cart-page"}>
             {/*Page header.*/}
            <div className={"top-buttons"}>
-               <div onClick={() => setSelectAllCheck(!selectAllCheck)} className={"select-all-holder"}>
-                   {selectAllCheck ?
-                       <ImCheckboxChecked className={"select-checked"} /> :
-                       <ImCheckboxUnchecked className={"select-unchecked"} />}
+               <div className={"select-all-holder"}>
+                   {checkIcon ?
+                       <ImCheckboxChecked className={"select-checked"} onClick={handleDeselection} /> :
+                       <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)} />}
                    <span>select all</span>
                </div>
                <Button className={"danger-button delete-order-product"}>Delete</Button>
@@ -125,7 +133,7 @@ const ProductsCart = () => {
                      color, inStock, count}) => (
                    <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                 setSelectedProducts={setSelectedProducts} count={count} color={color}
-                                selectAllCheck={selectAllCheck}
+                                selectAllCheck={checkIcon} unCheckAll={selectedProducts}
                                 id={productId}  productImageUrl={productImageUrl} key={productId} />
                 ))}
 
@@ -144,11 +152,35 @@ const ProductsCart = () => {
                             <FaMoneyBill1Wave className={"money-bill"} />Check out
                         </span>
                     </div>
-
                 </div>
-
             </div>
 
+            {/*You may also like*/}
+            <section className={"you-may-also-like-section"}>
+                <span className={"you-may-like-header"}>You May Also Like</span>
+
+                <div className={"you-may-like-products"}>
+                    {youMayLikes && youMayLikes.map((
+                        {
+                            productId, productPrice, productName,
+                            productImageUrl, rating}) => (
+                                <div key={productId} className={"you-may-like-product"} onClick={() => navigate(`/home/product/${productId}`)}>
+                                    <Image className={"you-may-like-product-image"} src={productImageUrl} />
+                                    <span title={productName}>
+                                        {productName.substring(0, 12) } {productName.length > 12 && "..."}
+                                    </span>
+                                    <span className={"price"}>
+                                        ksh {productPrice}
+                                    </span>
+                                    <StarRating value={rating} active={true} />
+                                </div>
+                    ))}
+                </div>
+
+            </section>
+            <div className={"load-more-button-holder"}>
+            <Button className={"app-button load-more-button"}>Load More</Button>
+            </div>
         </div>
     );
 };
