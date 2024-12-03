@@ -375,11 +375,13 @@ public class OrdersImpl implements OrdersService {
         return "order status updated successfully";
     }
 
-    public OrderStatusResponse getOrderStatus(String orderId){
-        Orders orders = ordersRepository.findByOrderId(orderId);
+    public OrderStatusResponse getOrderStatus(String userId){
+        Users usr = usersRepository.findUsersByUserId(userId);
+
+        Orders orders = ordersRepository.findByUserId(usr);
 
         OrderStatusResponse orderStatus = new OrderStatusResponse();
-        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderId(orders.getOrderId());
         orderStatus.setStatus(orders.getOrderStatus().toString());
 
         List<OrderTrackingProducts> products = new ArrayList<>();
