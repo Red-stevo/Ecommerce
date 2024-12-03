@@ -2,7 +2,7 @@ import "./Styles/ProductsCart.css";
 import {Button, Image} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
-import Cart from "../Components/IndexHeader/Cart.jsx";
+import Cart from "../IndexPage/Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
 import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
