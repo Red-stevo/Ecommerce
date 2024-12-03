@@ -104,8 +104,8 @@ public class OrdersController {
 
 
     @GetMapping("/get-order-status")
-    public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String orderId){
-        return ResponseEntity.ok(ordersService.getOrderStatus(orderId));
+    public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String userId){
+        return ResponseEntity.ok(ordersService.getOrderStatus(userId));
     }
 
 }
