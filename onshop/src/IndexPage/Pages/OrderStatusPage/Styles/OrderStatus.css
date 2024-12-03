@@ -93,4 +93,55 @@
 }
 
 
+.ordered-products-section {
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 30px;
+    padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ordered-product-image {
+    width: 80px;
+    height: 80px;
+}
+
+.product-image-details-holder {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    background-color: rgba(218, 165, 32, 0.08);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.ordered-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ordered-product-name, .ordered-product-price {
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+
+@media screen and (max-device-width: 490px) {
+    .ordered-products-section {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+
+}
+
+
+
+
+
 
