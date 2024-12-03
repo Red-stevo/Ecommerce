@@ -4,7 +4,7 @@ import {TbTruckDelivery} from "react-icons/tb";
 import {CiDeliveryTruck} from "react-icons/ci";
 import {LuPackageCheck} from "react-icons/lu";
 import {useEffect, useRef, useState} from "react";
-import {Image} from "react-bootstrap";
+import {Button, Image} from "react-bootstrap";
 
 const shippingStatus = {
 
@@ -41,23 +41,28 @@ const statusList = [
 const OrderStatus = () => {
     const {orderId, status, orderTrackingProducts} = shippingStatus;
     const stepRef = useRef([]);
-    const [margins, setMargins] = useState({
-        marginsLeft:0,
-        marginRight:0,
+    const [margins,setMargins] = useState({marginsLeft:0, marginRight:0});
+    const  [calcProgressBarWidth, setCalcProgressBarWidth] = useState(() => {
+        if(status >= statusList.length) return 100;
+        else return status / (statusList.length - 1)  * 100;
     });
 
-    const  calcProgressBarWidth = () => {
-        if(status >= statusList.length) return 100;
-        else return status / (statusList.length - 1)  * 100
-    }
+    /*Track window resize*/
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+    useEffect(() => {
+        const updateWidth = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
+    }, []);
 
+    /*UPDATE the left and right margins for the progress bar.*/
     useEffect(() => {
         setMargins( {
             marginsLeft:stepRef.current[0].offsetWidth/2,
             marginRight: stepRef.current[statusList.length - 1].offsetWidth/2
         });
-    }, [stepRef]);
+    }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
 
     return (
@@ -87,9 +92,11 @@ const OrderStatus = () => {
                          marginLeft:`${margins.marginsLeft}px`, marginRight:`${margins.marginRight}px`}}>
 
                     <div className={"order-progress-bar"}
-                         style={{width:`${calcProgressBarWidth()}%`,}} />
+                         style={{width:`${calcProgressBarWidth}%`,}} />
 
                 </div>
+
+
             </section>
 
             <section className={"ordered-products-section"}>
@@ -100,7 +107,10 @@ const OrderStatus = () => {
                         <Image className={"ordered-product-image"} src={productImageUrl} />
                         <div className={"ordered-product-details"}>
                             <span className={"ordered-product-name"}>{productName}</span>
-                            <span className={"ordered-product-price"}>ksh {productPrice}</span>
+                            <span className={"ordered-product-price"}>
+                               <>ksh {productPrice}</>
+                                <span className={"cancel-order"}>cancel</span>
+                            </span>
                         </div>
                     </div>
                 ))}
