@@ -1,6 +1,7 @@
 .wish-list-page {
     width: 100%;
     min-height: 100vh;
+    padding-bottom: 30px;
 }
 
 .wish-list-page-header {
@@ -11,6 +12,7 @@
     background-color: rgba(218, 165, 32, 0.08);
     justify-content: space-between;
     padding-right: 20px;
+    margin-bottom: 20px;
 }
 
 
@@ -84,6 +86,35 @@
 
 .wish-list-product-name {
     width: 35%;
+}
+
+.wish-list-bottom-button {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    padding-right: 8%;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.clear-wish-list {
+    border: 1px transparent solid;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: transparent;
+}
+
+.clear-wish-list:hover {
+    border: 1px rgba(128, 128, 128, 0.68) solid;
+}
+
+.add-all {
+    padding: 2px 15px 2px 15px;
+    font-size: 15px;
+}
+.clear-wish-list:active,.clear-wish-list:checked  {
+    background-color: rgba(218, 165, 32, 0.15);
 }
 
 @media screen and (max-device-width: 899px) {
