@@ -1,8 +1,11 @@
 package org.codiz.onshop.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
+import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
@@ -22,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +41,22 @@ public class ProductsController {
 
     @PostMapping(value = "/post",consumes = "multipart/form-data")
     public ResponseEntity<EntityResponse> postProduct(
-            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) {
+            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) throws JsonProcessingException {
+
+        //deserializing the product images data
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
+
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try{
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+
 
         log.info(productData);
         files.forEach((file) -> {
@@ -46,8 +65,8 @@ public class ProductsController {
 
         log.info("done");
 
-       /* return ResponseEntity.ok(productsService.postProduct(productCreationRequest))*/;
-       return null;
+        return ResponseEntity.ok(productsService.postProduct(productCreationRequest,uploads));
+
     }
 
 

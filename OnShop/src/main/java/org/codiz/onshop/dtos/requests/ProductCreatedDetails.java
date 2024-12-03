@@ -17,9 +17,9 @@ public class ProductCreatedDetails {
 
     private float discount;
 
-    private List<MultipartFile> productUrls;
+    //private List<FileUploads> productUrls;
 
-    private Integer count;
+    private int count;
 
 
 }

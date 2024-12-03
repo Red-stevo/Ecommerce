@@ -11,7 +11,7 @@ import java.time.Instant;
 @Entity
 public class Inventory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String inventoryId;
     private int inStockQuantity;
     private int quantitySold;
