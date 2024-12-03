@@ -1,7 +1,7 @@
 import {Carousel, Image} from "react-bootstrap";
 import {MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight} from "react-icons/md";
 import DiscountDisplay from "../DiscountDisplay.jsx";
-import onOfferImage from "./../../../../assets/onOffer.png";
+import onOfferImage from "../../../../../assets/onOffer.png";
 import {FaTag} from "react-icons/fa";
 
 const discountProducts = [
