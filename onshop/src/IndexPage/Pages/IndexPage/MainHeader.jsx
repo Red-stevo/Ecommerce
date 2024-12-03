@@ -1,8 +1,8 @@
 import {Button, Image, InputGroup, Navbar} from "react-bootstrap";
 import {FaSearch} from "react-icons/fa";
-import CategoryDropDown from "../Components/IndexHeader/CategoryDropDown.jsx";
-import Cart from "../Components/IndexHeader/Cart.jsx";
-import UserAccount from "../Components/IndexHeader/UserAccount.jsx";
+import CategoryDropDown from "./Components/IndexHeader/CategoryDropDown.jsx";
+import Cart from "./Components/IndexHeader/Cart.jsx";
+import UserAccount from "./Components/IndexHeader/UserAccount.jsx";
 import "./Styles/MainHeader.css";
 import {Outlet, useNavigate} from "react-router-dom";
 import logo from "./../../../assets/applicationLogo.png";
