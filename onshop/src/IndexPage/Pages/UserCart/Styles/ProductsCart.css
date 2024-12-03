@@ -86,6 +86,7 @@
 
 .out-stock {
     color: rgba(255, 0, 0, 0.94);
+    margin-left: 2px;
 }
 
 .total-price-shop {
@@ -255,6 +256,7 @@
     .checkout-button {
         padding: 2px 2px;
     }
+
 }
 
 
