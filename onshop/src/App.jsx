@@ -11,6 +11,7 @@ import AddProductPage from "./IndexPage/AdminPages/ProductUpdatePages/AddProduct
 import AllOrdersPage from "./IndexPage/AdminPages/OrdersPages/AllOrdersPage.jsx";
 import OrderDisplay from "./IndexPage/AdminPages/OrdersPages/OrderDisplay.jsx";
 import ProductsCart from "./IndexPage/Pages/UserCart/ProductsCart.jsx";
+import OrderStatus from "./IndexPage/Pages/OrderStatusPage/OrderStatus.jsx";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
                   <Route path={"/home/products/:productsCategory"} element={<CategoricalProductsDisplay />}/>
                   <Route path={"/home/product/:productId"} element={<ProductDisplay />} />
                   <Route path={"/home/user/cart"} element={<ProductsCart />} />
+                  <Route path={"/home/user/order-status"} element={ <OrderStatus /> }/>
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />

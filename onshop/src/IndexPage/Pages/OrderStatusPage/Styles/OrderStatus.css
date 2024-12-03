@@ -1,0 +1,96 @@
+.order-status-page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.header-section {
+    width: 100%;
+    height: fit-content;
+    padding: 10px 10px 0 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-page-title {
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+}
+
+.status-order-id {
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+
+.order-steps {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+
+.order-status-step {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    align-items: center;
+}
+
+
+.status-icon {
+    font-size: 25px;
+    font-family: Montserr Montserrat Monospaced sans-serif;
+}
+
+.status-page-name {
+    font-size: 18px;
+    font-family: Montserrat sans-serif;
+}
+
+.status-index {
+    margin-top: 30px;
+    width:  30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+    color: white;
+    z-index: 10;
+}
+
+.in-line {
+    background-color: grey;
+}
+
+
+.active {
+    background-color: #ffb400;
+}
+
+.done {
+    background-color: #218621;
+}
+
+
+.order-progress {
+    position: absolute;
+    height: 10px;
+    top: 110px;
+    background-color: white;
+}
+
+
+.order-progress-bar {
+    height: 100%;
+    background-color: #0be8c9;
+}
+
+
+
