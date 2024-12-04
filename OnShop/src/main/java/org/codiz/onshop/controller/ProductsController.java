@@ -67,6 +67,34 @@ public class ProductsController {
 
     }
 
+    @PutMapping(value = "/update",consumes = "multipart/form-data")
+    public ResponseEntity<EntityResponse> updateProduct(
+            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files, @RequestParam String productId) throws JsonProcessingException {
+
+        //deserializing the product images data
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
+
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try{
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+
+
+        log.info(productData);
+        files.forEach((file) -> log.info(file.getOriginalFilename()));
+
+        log.info("done");
+
+        return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
+
+    }
+
 
     @PostMapping("/rate")
     public ResponseEntity<EntityResponse> rateProduct(@RequestBody RatingsRequest request){
@@ -126,9 +154,31 @@ public class ProductsController {
         return ResponseEntity.ok(productsService.findAllCategories());
     }
 
-    @GetMapping("/create-category")
-    public ResponseEntity<EntityResponse> createCategory(List<CategoryCreationRequest> categoryCreationRequest){
-        return ResponseEntity.ok(productsService.createCategory(categoryCreationRequest));
+    @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
+    public ResponseEntity<EntityResponse> createCategory(
+            @RequestPart List<MultipartFile> files,
+            @RequestParam List<String> filenames
+    ){
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try {
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+        return ResponseEntity.ok(productsService.createCategory(filenames,uploads));
+    }
+
+    @PutMapping("/update-categories")
+    public ResponseEntity<EntityResponse> updateCategory(
+            @RequestParam String categoryId,
+            @RequestParam String categoryName,
+            @RequestPart  MultipartFile fileUploads) throws IOException {
+        FileUploads uploads = new FileUploads(fileUploads.getOriginalFilename(),fileUploads.getBytes());
+
+        return ResponseEntity.ok().body(productsService.updateCategory(categoryId,categoryName,uploads));
     }
 
 

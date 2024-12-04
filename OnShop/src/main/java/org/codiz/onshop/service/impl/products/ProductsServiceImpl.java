@@ -52,20 +52,34 @@ public class ProductsServiceImpl implements ProductsService {
     private final UserProfilesRepository userProfilesRepository;
 
 
-    UserProfiles userProfiles;
+    //UserProfiles userProfiles;
 
 
     @Transactional
-    public EntityResponse createCategory(List<CategoryCreationRequest> categoryCreationRequest) {
+    public EntityResponse createCategory(List<String> categoryNames, List<FileUploads> uploads) {
 
-        List<Categories> categories = categoryCreationRequest.stream()
-                .map(cat ->{
-                    Categories c = new Categories();
-                    c.setCategoryName(cat.getCategoryName());
-                    String url = cloudinaryService.uploadImage(cat.getCategoryIcon());
-                    c.setCategoryIcon(url);
-                    return c;
-                }).toList();
+        if (categoryNames.size() != uploads.size()) {
+            throw new IllegalArgumentException("The size of category names and file uploads must be the same.");
+        }
+
+        List<Categories> categories = new ArrayList<>();
+
+        for (int i = 0; i < categoryNames.size(); i++) {
+            String categoryName = categoryNames.get(i);
+            FileUploads fileUpload = uploads.get(i);
+
+            if (!categoriesRepository.existsCategoriesByCategoryNameContainingIgnoreCase(categoryName)) {
+                Categories category = new Categories();
+                category.setCategoryName(categoryName);
+
+                String url = cloudinaryService.uploadImage(fileUpload);
+                category.setCategoryIcon(url);
+
+                categories.add(category);
+            }
+        }
+
+
         categoriesRepository.saveAll(categories);
         EntityResponse entityResponse = new EntityResponse();
         entityResponse.setMessage("Category created successfully");
@@ -76,11 +90,11 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Transactional
-    public EntityResponse updateCategory(String categoryId,CategoryCreationRequest categoryCreationRequest) {
+    public EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads) {
         Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
-        categories.setCategoryName(categoryCreationRequest.getCategoryName());
-        if (categoryCreationRequest.getCategoryIcon() != null) {
-            String url = cloudinaryService.uploadImage(categoryCreationRequest.getCategoryIcon());
+        categories.setCategoryName(categoryName);
+        if (fileUploads != null) {
+            String url = cloudinaryService.uploadImage(fileUploads);
             categories.setCategoryIcon(url);
         }
         categoriesRepository.save(categories);
@@ -150,6 +164,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
                 detailsList.add(details1);
+                index ++;
             }
             product.setSpecificProductDetailsList(detailsList);
 
@@ -459,6 +474,7 @@ public class ProductsServiceImpl implements ProductsService {
 
             List<SpecificProductDetails> specificProductDetailsList = new ArrayList<>();
 
+            int index = 0;
             for (ProductCreatedDetails details : updateRequest.getProductCreatedDetails()){
                 SpecificProductDetails specificProductDetails = new SpecificProductDetails();
                 specificProductDetails.setSize(details.getSize());
@@ -478,10 +494,20 @@ public class ProductsServiceImpl implements ProductsService {
                         }
                     }
 
+                    for (FileUploads upload : uploads){
+                        String[] parts = upload.getFileName().split("\\+");
+                        int idx = Integer.parseInt(parts[0]);
+                        if (idx == index){
+                            List<ProductImages> images = setImageUrls(uploads);
+                            images.forEach(image->image.setSpecificProductDetails(specificProductDetails));
+                            specificProductDetails.getProductImagesList().addAll(images);
+                            log.info("success");
+                        }
+                    }
 
-                    List<ProductImages> images = setImageUrls(uploads);
+                    /*List<ProductImages> images = setImageUrls(uploads);
                     images.forEach(image -> image.setSpecificProductDetails(specificProductDetails));
-                    specificProductDetails.getProductImagesList().addAll(images);
+                    specificProductDetails.getProductImagesList().addAll(images);*/
                 }
 
                 specificProductDetailsList.add(specificProductDetails);

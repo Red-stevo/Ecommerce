@@ -33,8 +33,8 @@ public interface ProductsService {
     List<InventoryResponse> showInventory();
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
-    EntityResponse createCategory(List<CategoryCreationRequest> categoryCreationRequest);
-    EntityResponse updateCategory(String categoryId,CategoryCreationRequest categoryCreationRequest);
+    EntityResponse createCategory(List<String> categoryNames, List<FileUploads> uploads);
+    EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads);
     List<Categories> findAllCategories();
     String deleteCategory(String categoryId);
 
