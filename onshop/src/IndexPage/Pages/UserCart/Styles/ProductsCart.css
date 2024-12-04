@@ -86,6 +86,7 @@
 
 .out-stock {
     color: rgba(255, 0, 0, 0.94);
+    margin-left: 2px;
 }
 
 .total-price-shop {
@@ -158,6 +159,47 @@
 }
 
 
+/*You may also like section css.*/
+.you-may-also-like-section {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.you-may-like-header {
+    font-size: 26px;
+    font-family: Monospaced Montserrat sans-serif;
+    padding-left: 7%;
+}
+
+.you-may-like-product {
+    display: flex;
+    width: 200px;
+    height: 250px;
+    flex-direction: column;
+    margin: 7px;
+}
+
+.you-may-like-product:hover {
+    transform: scale(1.001);
+    box-shadow: 2px 4px 6px rgba(128, 0, 128, 0.61);
+    transition: linear 0.5s;
+}
+
+.you-may-like-product-image {
+    width: 190px;
+    height: 200px;
+    margin-left: 5px;
+}
+
+.you-may-like-products {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+
 @media screen and (max-device-width: 767px) {
 
     .ordered-products-display {
@@ -181,6 +223,27 @@
     .checkout-button {
         padding: 5px 5px;
     }
+
+
+    .top-buttons {
+        padding-left: 0;
+    }
+
+    .out-stock, .cart-product-name, .product-price-cart {
+        font-size: 15px;
+    }
+
+    .you-may-like-product {
+        width: 110px;
+        height: 160px;
+        margin: 5px;
+    }
+
+    .you-may-like-product-image {
+        width: 100px;
+        height: 100px;
+    }
+
 }
 
 @media screen and (max-device-width: 399px) {
@@ -193,6 +256,7 @@
     .checkout-button {
         padding: 2px 2px;
     }
+
 }
 
 

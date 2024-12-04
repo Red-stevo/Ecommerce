@@ -12,8 +12,10 @@ import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.*;
+import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.products.*;
+import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -30,6 +32,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -46,6 +52,10 @@ public class ProductsServiceImpl implements ProductsService {
     private final ProductRatingsRepository ratingsRepository;
     private final InventoryRepository inventoryRepository;
     private final SpecificProductsRepository specificProductsRepository;
+    private final UserProfilesRepository userProfilesRepository;
+
+
+    UserProfiles userProfiles;
 
 
     @Transactional
@@ -166,10 +176,14 @@ public class ProductsServiceImpl implements ProductsService {
                 .flatMap(category -> category.getProducts().stream())
                 .toList();
 
+
+
         List<Products> combinedResults = Stream.concat(
                 productPage.getContent().stream(),
                 categoryProducts.stream()
         ).distinct().toList();
+
+
 
         List<ProductsPageResponse> responseList = combinedResults.stream()
                 .map(this::mapToProductsPageResponse)
@@ -518,11 +532,6 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-    @Override
-    public List<InventoryResponse> showInventory() {
-        return List.of();
-    }
-
 
     public int getAverageRating(String productId) {
         Double averageRating = ratingsRepository.findAverageRatingByProductId(productId);
@@ -612,8 +621,8 @@ public class ProductsServiceImpl implements ProductsService {
         );
 
         Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setQuantityBought((inventory.getQuantityBought() - inventory.getQuantitySold()) + quantity);
-        inventory.setQuantitySold(0);
+        inventory.setInStockQuantity(inventory.getInStockQuantity()  + quantity);
+        inventory.setQuantitySold(inventory.getQuantitySold());
         inventory.setLastUpdate(Instant.now());
         inventoryRepository.save(inventory);
 
@@ -624,6 +633,7 @@ public class ProductsServiceImpl implements ProductsService {
                 ()->new RuntimeException("The product with ID " + productId + " does not exist")
         );
         Inventory inventory = inventoryRepository.findByProducts(products);
+        inventory.setInStockQuantity(inventory.getInStockQuantity() - quantity);
         inventory.setQuantitySold(inventory.getQuantitySold() + quantity);
     }
 
@@ -632,8 +642,11 @@ public class ProductsServiceImpl implements ProductsService {
     * method to get all the inventory
     * */
 
-    /*public List<InventoryResponse> showInventory() {
+    public List<InventoryResponse> showInventory() {
         List<Inventory> inventory = inventoryRepository.findAll();
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        String time =
 
 
         return inventory.stream()
@@ -647,7 +660,7 @@ public class ProductsServiceImpl implements ProductsService {
                     Products products = res.getProducts();
 
                     inventoryResponse.setProductName(products.getProductName());
-                    inventoryResponse.setSellingPrice(products.getProductPrice() - products.getDiscount());
+                    inventoryResponse.setSellingPrice();
                     inventoryResponse.setQuantitySold(res.getQuantitySold());
                     inventoryResponse.setQuantityRemaining(res.getQuantityBought() - res.getQuantitySold());
                     inventoryResponse.setLastUpdate(res.getLastUpdate());
@@ -662,9 +675,11 @@ public class ProductsServiceImpl implements ProductsService {
                 .toList();
     }
 
-    *//*
-    * method to get the inventory of a specific product
-    * *//*
+
+    /*
+    * @Author Bobcodiz
+    *  method to get the inventory of a specific product
+    * */
     public InventoryResponse showProductInventory(String productId) {
         Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
         if (inventory == null) {
@@ -673,5 +688,14 @@ public class ProductsServiceImpl implements ProductsService {
         }
         return modelMapper.map(inventory, InventoryResponse.class);
 
-    }*/
+    }
+
+    private String formatOrderDate(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
+        return date.format(formatter);
+    }
+    private String formatOrderTime(LocalTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+        return time.format(formatter);
+    }
 }
