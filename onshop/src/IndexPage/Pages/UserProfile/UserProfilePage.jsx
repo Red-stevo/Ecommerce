@@ -5,6 +5,10 @@ import {LuPackage2} from "react-icons/lu";
 import {TiShoppingCart} from "react-icons/ti";
 import {FaTruckArrowRight} from "react-icons/fa6";
 import {useNavigate} from "react-router-dom";
+import {CiEdit} from "react-icons/ci";
+import Button from "react-bootstrap/Button";
+import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
+import {useState} from "react";
 
 
 
@@ -37,11 +41,12 @@ const UserProfilePage = () => {
     const {userProfileImage, address, email
         , fullName, gender, phoneNumber, username} = userProfileDetails;
     const navigate = useNavigate();
+    const [modalShow, setModalShow] = useState(false);
 
 
     return (
         <div className={"user-profile-page"}>
-
+            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)}/>
             <section className={"user-profile-top-section"}>
 
                 <div className={"notification-details"}>
@@ -71,6 +76,46 @@ const UserProfilePage = () => {
                         <span className={"user-profile-page-name"}>{name}</span>
                     </button>
                 ))}
+
+            </section>
+
+
+            <section className={"user-personal-details"}>
+                <button className={"edit-details-button"} variant="primary" onClick={() => setModalShow(true)}>
+                    <CiEdit className={"edit-personal-details"}/>
+                    <span className={"edit-personal-details-text"}>Edit</span>
+                </button>
+
+                <div className={"personal-details-holder"}>
+
+                    <div className={"personal-details-fields-holder"}>
+
+                        <div className={"personal-details-fields"}>
+                            <span className={"personal-details-field"}>FULL NAME</span>
+                            <span className={"personal-details-field"}>{fullName}</span>
+                        </div>
+
+                        <div className={"personal-details-fields"}>
+                            <span className={"personal-details-field"}>PHONE NUMBER</span>
+                            <span className={"personal-details-field"}>{phoneNumber}</span>
+                        </div>
+                    </div>
+
+                    <div className={"personal-details-fields-holder"}>
+
+                        <div className={"personal-details-fields"}>
+                            <span className={"personal-details-field"}>ADDRESS</span>
+                            <span className={"personal-details-field"}>{address}</span>
+                        </div>
+
+                        <div className={"personal-details-fields"}>
+                            <span className={"personal-details-field"}>GENDER</span>
+                            <span className={"personal-details-field"}>{gender}</span>
+                        </div>
+
+                    </div>
+
+                </div>
 
             </section>
 

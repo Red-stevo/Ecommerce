@@ -70,3 +70,84 @@
     right: 30px;
     top: 65px;
 }
+
+.user-page-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.user-profile-page-link {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: transparent;
+    border: transparent solid 1px;
+}
+
+.user-profile-page-icon {
+    font-size: 40px;
+    color: #ffb500;
+}
+
+.user-profile-page-link:hover {
+    background-color: rgba(255, 181, 0, 0.09);
+}
+
+.user-profile-page-name {
+    font-family: Montserrat Montserr sans-serif;
+}
+
+
+.user-personal-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+.edit-details-button {
+    background-color: transparent;
+    border: transparent solid 1px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-right:5%;
+}
+
+.edit-personal-details {
+    font-size: 32px;
+}
+
+.edit-personal-details-text {
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.personal-details-holder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.personal-details-fields-holder {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.personal-details-fields {
+    display: flex;
+    gap:15px;
+}
+
+.personal-details-field {
+    font-size: 18px;
+    font-family: Montserr Montserrat sans-serif;
+    font-weight: 500;
+}
