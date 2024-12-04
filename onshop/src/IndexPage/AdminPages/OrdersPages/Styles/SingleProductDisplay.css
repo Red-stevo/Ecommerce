@@ -62,6 +62,8 @@
     width: 100%;
     padding-left: 2%;
     padding-right: 5%;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .single-order-product-quantity, .single-order-product-proportion, .single-order-product-variety {
@@ -89,13 +91,11 @@
     }
 
     .quantity-proportion-variety {
-        flex-wrap: wrap;
-        gap: 15px;
         padding-left: 3%;
     }
 
     .single-order-product-page {
-        padding: 5px;
+        padding:24px 5px;
     }
 }
 
