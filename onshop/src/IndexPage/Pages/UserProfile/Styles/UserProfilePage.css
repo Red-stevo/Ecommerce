@@ -7,10 +7,11 @@
 .user-profile-top-section {
     border-bottom: 1px solid grey;
     padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .notification-details, .user-profile-top-section {
-    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 20px;
@@ -40,6 +41,7 @@
 }
 
 .notifications-button {
+    position: relative;
     display: flex;
     width: fit-content;
     height: fit-content;
@@ -67,8 +69,8 @@
     vertical-align: super;
     font-size: 20px;
     color: #ff7100;
-    right: 30px;
-    top: 65px;
+    right: 10px;
+    top:-8px;
 }
 
 .user-page-links {
@@ -150,4 +152,78 @@
     font-size: 18px;
     font-family: Montserr Montserrat sans-serif;
     font-weight: 500;
+}
+
+@media screen and (max-device-width: 988px){
+    .personal-details-fields-holder {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+}
+
+@media screen and (max-device-width: 700px){
+
+    .notification-details{
+        flex-direction: column;
+    }
+}
+
+
+@media screen and (max-device-width: 630px){
+    .personal-details-fields-holder {
+        padding-left: 0;
+        padding-right: 0;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+}
+
+@media screen and (max-device-width: 448px){
+    .Notifications {
+        display: none;
+    }
+
+    .notifications-button {
+        padding: 0;
+    }
+
+    .notifications-count {
+        right: -3px;
+        top:-15px;
+    }
+
+    .user-profile-image-url {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+    }
+
+    .user-profile-username, .user-profile-email {
+        font-weight: 500;
+        font-family: Montserrat Montserr SansSerif sans-serif;
+        font-size: 14px;
+    }
+
+    .user-profile-page-icon {
+        font-size: 24px;
+    }
+
+    .user-profile-page-name {
+        font-size: 10px;
+    }
+
+    .personal-details-field {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-device-width: 630px){
+    .personal-details-field {
+        font-size: 12px;
+    }
+
+    .personal-details-fields {
+        gap:5px;
+    }
 }

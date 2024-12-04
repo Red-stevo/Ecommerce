@@ -61,7 +61,7 @@ const UserProfilePage = () => {
                 </div>
 
                <button className={"notifications-button"}>
-                   Notifications
+                   <span className={"Notifications"}>Notifications</span>
                    <MdCircleNotifications className={"notifications-icon"} />
                    <span className={"notifications-count"}>0</span>
                </button>
@@ -91,12 +91,12 @@ const UserProfilePage = () => {
                     <div className={"personal-details-fields-holder"}>
 
                         <div className={"personal-details-fields"}>
-                            <span className={"personal-details-field"}>FULL NAME</span>
+                            <span className={"personal-details-field"}>FULL NAME : </span>
                             <span className={"personal-details-field"}>{fullName}</span>
                         </div>
 
                         <div className={"personal-details-fields"}>
-                            <span className={"personal-details-field"}>PHONE NUMBER</span>
+                            <span className={"personal-details-field"}>PHONE NUMBER : </span>
                             <span className={"personal-details-field"}>{phoneNumber}</span>
                         </div>
                     </div>
@@ -104,12 +104,12 @@ const UserProfilePage = () => {
                     <div className={"personal-details-fields-holder"}>
 
                         <div className={"personal-details-fields"}>
-                            <span className={"personal-details-field"}>ADDRESS</span>
+                            <span className={"personal-details-field"}>ADDRESS : </span>
                             <span className={"personal-details-field"}>{address}</span>
                         </div>
 
                         <div className={"personal-details-fields"}>
-                            <span className={"personal-details-field"}>GENDER</span>
+                            <span className={"personal-details-field"}>GENDER : </span>
                             <span className={"personal-details-field"}>{gender}</span>
                         </div>
 
