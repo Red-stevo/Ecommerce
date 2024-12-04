@@ -162,6 +162,56 @@
     margin-left: 5%;
 }
 
+.user-profile-email-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+    padding-bottom: 30px;
+}
+
+.email-header {
+    font-weight: 500;
+    font-size: 26px;
+    font-family: Montserrat Montserr sans-serif;
+    border-bottom: 1px solid rgba(98, 73, 3, 0.8);
+}
+
+
+.user-profile-email-holder {
+    padding-left: 6%;
+    padding-top: 20px;
+}
+
+.add-email-button {
+    margin-left: 6%;
+    margin-top: 10px;
+    width: fit-content;
+    padding: 2px 5px;
+    background-color: transparent;
+    border: 1px transparent solid;
+    border-radius: 10px;
+}
+
+.add-email-button:hover {
+    border: 1px solid #443002;
+}
+
+.add-email-button:active {
+    background-color: rgba(68, 48, 2, 0.09);
+}
+
+.email-icon {
+    font-size: 32px;
+    margin-right: 10px;
+}
+
+.email-input {
+    margin-left: 6%;
+    margin-top: 20px;
+    width: 60%;
+    border: solid #443002 1px;
+    background-color: transparent;
+}
 
 
 @media screen and (max-device-width: 988px){
@@ -232,6 +282,10 @@
         width: 100%;
         margin-left: 0;
     }
+
+    .email-input {
+        width: 90%;
+    }
 }
 
 @media screen and (max-device-width: 330px){
@@ -242,4 +296,13 @@
     .personal-details-fields {
         gap:5px;
     }
+
+    .email-icon {
+        font-size: 18px;
+    }
+
+    .add-email-button, .user-profile-email-holder, .email-input  {
+        margin-left: 0;
+    }
+
 }

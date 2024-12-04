@@ -1,6 +1,6 @@
 import "./Styles/UserProfilePage.css";
 import {Image} from "react-bootstrap";
-import {MdCircleNotifications} from "react-icons/md";
+import {MdCircleNotifications, MdEmail} from "react-icons/md";
 import {LuPackage2} from "react-icons/lu";
 import {TiShoppingCart} from "react-icons/ti";
 import {FaTruckArrowRight} from "react-icons/fa6";
@@ -9,6 +9,7 @@ import {CiEdit} from "react-icons/ci";
 import Button from "react-bootstrap/Button";
 import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
 import {useState} from "react";
+import {IoAddSharp} from "react-icons/io5";
 
 
 
@@ -42,6 +43,7 @@ const UserProfilePage = () => {
         , fullName, gender, phoneNumber, username} = userProfileDetails;
     const navigate = useNavigate();
     const [modalShow, setModalShow] = useState(false);
+    const [readEmail, setReadEmail] = useState(false);
 
 
     return (
@@ -116,6 +118,25 @@ const UserProfilePage = () => {
                     </div>
 
                 </div>
+
+            </section>
+
+            <section className={"user-profile-email-section"}>
+                <span className={"email-header"}>My Email Address</span>
+
+                {readEmail ? <input className={"form-control email-input"} type={"text"} placeholder={"email"}/> :
+                    email &&
+                    <span className={"user-profile-email-holder"}>
+                        <MdEmail className={"email-icon"}/>
+                        <span className={"user-profile-email"}>{email}</span>
+                    </span>
+                }
+
+                {!readEmail ? <button onClick={() => setReadEmail((prevState) => !prevState)}
+                        className={"add-email-button"}>Change Email
+                </button> :
+                    <button onClick={() => setReadEmail((prevState) => !prevState)}
+                        className={"add-email-button"}>Save</button>}
 
             </section>
 

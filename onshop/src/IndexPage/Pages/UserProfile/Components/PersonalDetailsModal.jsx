@@ -18,10 +18,6 @@ const PersonalDetailsModal= (props) => {
                     </FormGroup>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Email"} type={"email"} />
-                    </FormGroup>
-
-                    <FormGroup>
                         <input className={"form-control"} placeholder={"Phone Number"} type={"tel"} />
                     </FormGroup>
 
