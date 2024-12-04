@@ -144,12 +144,12 @@ const AddProductPage = () => {
                                    {...register("productName")} />
                         </Form.Group>
 
-                        <FloatingLabel className={"event-description"} controlId="floatingTextarea"
-                                       label="Event Decription">
+                        <FloatingLabel className={"product-description"} controlId="floatingTextarea"
+                                       label="Product Decription">
                             <textarea
                                 required={true}
                                 className={"input-field form-control"}
-                                placeholder={"Event Description"}
+                                placeholder={"Product Description"}
                                 style={{height: '100px'}}
                                 id={"productDescription"}
                                 disabled={productTopDetails !== null}
