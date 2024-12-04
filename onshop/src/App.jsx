@@ -13,6 +13,7 @@ import OrderDisplay from "./IndexPage/AdminPages/OrdersPages/OrderDisplay.jsx";
 import ProductsCart from "./IndexPage/Pages/UserCart/ProductsCart.jsx";
 import OrderStatus from "./IndexPage/Pages/OrderStatusPage/OrderStatus.jsx";
 import WishListPage from "./IndexPage/Pages/WishListPage/WishListPage.jsx";
+import SingleProductDisplay from "./IndexPage/AdminPages/OrdersPages/SingleProductDisplay.jsx";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path={"/admin/newProduct"} element={<AddProductPage />} />
                     <Route path={"/admin"} element={<AllOrdersPage />} />
                     <Route path={"/admin/orders/:orderId"} element={<OrderDisplay />} />
+                    <Route path={"/admin/orders/:orderId/:productId"} element={<SingleProductDisplay />} />
               </Route>
           </Routes>
       </Router>

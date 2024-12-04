@@ -2,6 +2,7 @@ import "./Styles/OrderDisplay.css";
 import {FaRegUser} from "react-icons/fa";
 import {Button, Image} from "react-bootstrap";
 import {LiaTimesSolid} from "react-icons/lia";
+import {useNavigate} from "react-router-dom";
 
 
 const orderDetails = {
@@ -15,6 +16,7 @@ const orderDetails = {
             quantity:5,
             totalPrice:23500,
             canceled:false,
+            productId:"26SQSW"
         },
         {
             productName:"Wireless Head Phones",
@@ -23,6 +25,7 @@ const orderDetails = {
             quantity:5,
             totalPrice:23500,
             canceled:false,
+            productId:"25SQSW"
         },
         {
             productName:"Wireless Head Phones",
@@ -30,6 +33,7 @@ const orderDetails = {
             quantity:5,
             totalPrice:23500,
             canceled:true,
+            productId:"24SQSW"
         },
         {
             productName:"Wireless EarPhones",
@@ -38,6 +42,7 @@ const orderDetails = {
             quantity:5,
             totalPrice:23500,
             canceled:false,
+            productId:"23SQSW"
         },
     ],
     customerDetails:{
@@ -71,6 +76,7 @@ const OrderDisplay = () => {
     const  {
         numberOfItemsOrdered, ordersNumber,
         customerEmail, customerName, customerPhone} = customerDetails;
+    const navigate = useNavigate();
 
 
 
@@ -98,11 +104,12 @@ const OrderDisplay = () => {
                         <span className={"order-products-total-price"} >Total Price</span>
                     </div>
 
-                    {itemList.length > 0 && itemList.map(({productName, productPrice,
+                    {itemList.length > 0 && itemList.map(({productName, productPrice,productId,
                                                               productImageUrl, totalPrice,
                                                               quantity, canceled}, index) => (
 
-                        <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}>
+                        <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}
+                        onClick={() => navigate(`/admin/orders/${orderId}/${productId}`)}>
                             <span className={"product-name"} title={productName}>
                                 <Image src={productImageUrl}  className={"product-image-order"}/>
                                 {productName.length > 10 ? productName.substring(0, 10)+"...": productName}
