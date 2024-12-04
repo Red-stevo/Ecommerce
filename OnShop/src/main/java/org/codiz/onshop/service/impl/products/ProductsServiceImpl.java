@@ -128,6 +128,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
             List<SpecificProductDetails> detailsList = new ArrayList<>();
+            int index = 0;
             for (ProductCreatedDetails details : requests.getProductCreatedDetails()){
                 SpecificProductDetails details1 = new SpecificProductDetails();
                 details1.setCount(details.getCount());
@@ -135,8 +136,17 @@ public class ProductsServiceImpl implements ProductsService {
                 details1.setDiscount(details.getDiscount());
                 details1.setSize(details.getSize());
                 details1.setProductPrice(details.getProductPrice());
-                List<ProductImages> images = setImageUrls(uploads);
-                details1.setProductImagesList(images);
+
+                for (FileUploads upload : uploads){
+                    String[] parts = upload.getFileName().split("\\+");
+                    int idx = Integer.parseInt(parts[0]);
+                    if (idx == index){
+                        List<ProductImages> images = setImageUrls(uploads);
+                        details1.setProductImagesList(images);
+                        log.info("success");
+                    }
+                }
+
 
 
                 detailsList.add(details1);

@@ -59,9 +59,7 @@ public class ProductsController {
 
 
         log.info(productData);
-        files.forEach((file) -> {
-            log.info(file.getOriginalFilename());
-        });
+        files.forEach((file) -> log.info(file.getOriginalFilename()));
 
         log.info("done");
 
