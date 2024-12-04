@@ -10,7 +10,9 @@ import java.util.List;
 public class OrderStatusResponse {
 
     private String orderId;
+
     private String status;
+
     private List<OrderTrackingProducts> products;
 
 }

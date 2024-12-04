@@ -4,7 +4,10 @@ import lombok.Data;
 
 @Data
 public class OrderTrackingProducts {
+
     private String productImageUrl;
+
     private String productName;
+
     private float productPrice;
 }

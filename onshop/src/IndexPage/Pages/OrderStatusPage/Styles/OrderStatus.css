@@ -1,0 +1,203 @@
+.order-status-page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.header-section {
+    width: 100%;
+    height: fit-content;
+    padding: 10px 10px 0 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-page-title {
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+}
+
+.status-order-id {
+    font-family: Montserrat Montserr sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+
+.order-steps {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+
+.order-status-step {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    align-items: center;
+}
+
+
+.status-icon {
+    font-size: 25px;
+}
+
+.status-page-name {
+    font-size: 18px;
+    font-family: Montserrat sans-serif;
+    white-space: nowrap;
+}
+
+.status-index {
+    margin-top: 30px;
+    width:  30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+    color: white;
+    z-index: 10;
+}
+
+.in-line {
+    background-color: grey;
+}
+
+
+.active {
+    background-color: #ffb400;
+}
+
+.done {
+    background-color: #218621;
+}
+
+
+.order-progress {
+    position: absolute;
+    height: 10px;
+    top: 110px;
+    background-color: white;
+}
+
+
+.order-progress-bar {
+    height: 100%;
+    background-color: #0be8c9;
+}
+
+
+.ordered-products-section {
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 30px;
+    padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ordered-product-image {
+    width: 80px;
+    height: 80px;
+}
+
+.product-image-details-holder {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    background-color: rgba(218, 165, 32, 0.08);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.ordered-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width:calc(100% - 84px);
+}
+
+.ordered-product-name, .ordered-product-price {
+    display: flex;
+    justify-content: space-between;
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.cancel-order {
+    color: red;
+    border: transparent solid 1px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.cancel-order:hover {
+    border: red solid 1px;
+}
+
+.cancel-order:active,.cancel-order:checked {
+    background-color:rgba(218, 165, 32, 0.2);
+}
+
+
+@media screen and (max-device-width: 490px) {
+    .ordered-products-section {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .status-icon {
+        font-size: 16px;
+    }
+
+    .status-page-name {
+        font-size: 14px;
+    }
+
+    .status-index {
+        margin-top: 20px;
+        width:  20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 15px;
+    }
+
+    .order-progress {
+        height: 6px;
+        top: 78px;
+    }
+
+    .ordered-product-name, .ordered-product-price {
+        font-size: 18px;
+    }
+
+
+
+}
+
+@media screen and (max-device-width: 300px) {
+    .status-page-name {
+        white-space: pre-wrap;
+        height: 30px;
+    }
+
+    .order-progress {
+        top: 85px;
+    }
+
+}
+
+
+
+
+
+
