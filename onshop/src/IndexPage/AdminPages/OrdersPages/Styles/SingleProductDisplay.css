@@ -45,12 +45,15 @@
     font-size: 20px;
     font-family: Montserr Montserrat sans-serif;
     font-weight: 500;
+    color: #654501;
+    border-bottom: #654501 solid 1px;
 }
 
 .single-order-product-description {
     font-size: 16px;
     font-weight: 300;
     font-family: "Noto Sans", sans-serif;
+    color: #654501;
 }
 
 .quantity-proportion-variety {
@@ -59,6 +62,10 @@
     width: 100%;
     padding-left: 2%;
     padding-right: 5%;
+}
+
+.single-order-product-quantity, .single-order-product-proportion, .single-order-product-variety {
+    color: #a46505;
 }
 
 
