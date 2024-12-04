@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {Form} from "react-bootstrap";
+import {Form, FormGroup} from "react-bootstrap";
 
 const PersonalDetailsModal= (props) => {
     return (
@@ -10,8 +10,31 @@ const PersonalDetailsModal= (props) => {
                     Enter User Details
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <Form>
+            <Modal.Body className={"user-details-modal"} >
+                <Form className={"user-details-form"}>
+
+                    <FormGroup>
+                        <input className={"form-control"} placeholder={"Full Name"} type={"text"} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <input className={"form-control"} placeholder={"Email"} type={"email"} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <input className={"form-control"} placeholder={"Phone Number"} type={"tel"} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <input className={"form-control"} placeholder={"Address"} type={"text"} />
+                    </FormGroup>
+
+                    <select defaultChecked={true} className={"form-select"}>
+                        <option value={1}>Select Gender</option>
+                        <option value={"MALE"}>Male</option>
+                        <option value={"FEMALE"}>Female</option>
+                        <option value={"NOT_SPECIFIED"}>Rather Not Say</option>
+                    </select>
 
                 </Form>
             </Modal.Body>

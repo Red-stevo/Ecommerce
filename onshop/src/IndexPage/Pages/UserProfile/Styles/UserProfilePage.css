@@ -154,6 +154,16 @@
     font-weight: 500;
 }
 
+.user-details-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    margin-left: 5%;
+}
+
+
+
 @media screen and (max-device-width: 988px){
     .personal-details-fields-holder {
         padding-left: 2%;
@@ -202,7 +212,7 @@
     .user-profile-username, .user-profile-email {
         font-weight: 500;
         font-family: Montserrat Montserr SansSerif sans-serif;
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .user-profile-page-icon {
@@ -216,9 +226,15 @@
     .personal-details-field {
         font-size: 16px;
     }
+
+
+    .user-details-form {
+        width: 100%;
+        margin-left: 0;
+    }
 }
 
-@media screen and (max-device-width: 630px){
+@media screen and (max-device-width: 330px){
     .personal-details-field {
         font-size: 12px;
     }
