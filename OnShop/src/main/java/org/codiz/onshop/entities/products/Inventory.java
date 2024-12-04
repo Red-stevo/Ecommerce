@@ -13,9 +13,8 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String inventoryId;
-    private int inStockQuantity;
-    private int quantitySold;
-    private Instant lastUpdate;
+    private InventoryStatus status;
+
 
 
     @OneToOne

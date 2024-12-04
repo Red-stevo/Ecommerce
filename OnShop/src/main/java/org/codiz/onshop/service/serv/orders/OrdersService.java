@@ -5,6 +5,7 @@ import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.requests.ShipmentRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.OrderStatus;
+import org.codiz.onshop.entities.orders.ShippingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public interface OrdersService {
     Page<AllOrdersResponse> getShippingOrders(Pageable pageable);
     Page<AllOrdersResponse> getCancelledOrders(Pageable pageable);
     String updateStatus(String orderId, OrderStatus status);
-    OrderStatusResponse getOrderStatus(String userId);
+    OrderStatusResponse getShippingStatus(String userId);
+    String updateShippingStatus(String orderId, ShippingStatus status);
 
 }

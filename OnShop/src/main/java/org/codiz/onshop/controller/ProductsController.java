@@ -182,4 +182,13 @@ public class ProductsController {
     }
 
 
+    @DeleteMapping("delete-product")
+    public ResponseEntity<String> deleteProduct(@RequestParam String productId){
+        return ResponseEntity.ok(productsService.deleteProduct(productId));
+    }
+
+    @DeleteMapping("/delete-category")
+    public ResponseEntity<String> deleteCategory(String categoryId){
+        return ResponseEntity.ok(productsService.deleteCategory(categoryId));
+    }
 }

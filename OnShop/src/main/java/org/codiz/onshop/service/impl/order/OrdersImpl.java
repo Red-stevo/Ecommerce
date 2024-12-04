@@ -375,14 +375,18 @@ public class OrdersImpl implements OrdersService {
         return "order status updated successfully";
     }
 
-    public OrderStatusResponse getOrderStatus(String userId){
+    public OrderStatusResponse getShippingStatus(String userId){
         Users usr = usersRepository.findUsersByUserId(userId);
 
         Orders orders = ordersRepository.findByUserId(usr);
-
+        ShippingStatus status = orders.getShippingStatus();
         OrderStatusResponse orderStatus = new OrderStatusResponse();
         orderStatus.setOrderId(orders.getOrderId());
-        orderStatus.setStatus(orders.getOrderStatus().toString());
+        if (status == ShippingStatus.SIGNED){
+            orderStatus.setStatus(status.ordinal() + 1);
+        }else {
+            orderStatus.setStatus(status.ordinal());
+        }
 
         List<OrderTrackingProducts> products = new ArrayList<>();
 
@@ -399,5 +403,11 @@ public class OrdersImpl implements OrdersService {
     }
 
 
+    public String updateShippingStatus(String orderId, ShippingStatus status){
+        Orders orders = ordersRepository.findByOrderId(orderId);
+        orders.setShippingStatus(status);
+        ordersRepository.save(orders);
+        return "shipping status updated successfully";
+    }
 
 }
