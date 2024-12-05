@@ -123,11 +123,16 @@ public class ProductsServiceImpl implements ProductsService {
     @CacheEvict(value = "products")
     public EntityResponse postProduct(ProductCreationRequest requests, List<FileUploads> uploads) {
         try {
+            Inventory inventory = new Inventory();
+
+            inventory.setStatus(InventoryStatus.INACTIVE);
+            inventory.setProducts(new ArrayList<>());
 
             Products product = new Products();
 
             product.setProductName(requests.getProductName());
             product.setProductDescription(requests.getProductDescription());
+            product.setInventory(inventory);
 
 
 
@@ -168,10 +173,13 @@ public class ProductsServiceImpl implements ProductsService {
             }
             product.setSpecificProductDetailsList(detailsList);
 
+            inventory.getProducts().add(product);
+            inventoryRepository.save(inventory);
 
 
 
-            productsRepository.save(product);
+
+            //productsRepository.save(product);
 
             EntityResponse response = new EntityResponse();
             response.setMessage("Successfully posted the product");
@@ -566,6 +574,8 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
+
+
     public int getAverageRating(String productId) {
         Double averageRating = ratingsRepository.findAverageRatingByProductId(productId);
         log.info("average rating is {}",averageRating);
@@ -647,88 +657,117 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    public void addProductQuantity(String productId, int quantity) {
 
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("The product with ID " + productId + " does not exist")
-        );
 
-        Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setInStockQuantity(inventory.getInStockQuantity()  + quantity);
-        inventory.setQuantitySold(inventory.getQuantitySold());
-        inventory.setLastUpdate(Instant.now());
-        inventoryRepository.save(inventory);
+    public void addProductQuantity(String specificProductId, int quantity) {
+
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        details.setCount(details.getCount() + quantity);
+        specificProductsRepository.save(details);
 
     }
 
-    public void reduceProductQuantity(String productId, int quantity) {
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("The product with ID " + productId + " does not exist")
-        );
-        Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setInStockQuantity(inventory.getInStockQuantity() - quantity);
-        inventory.setQuantitySold(inventory.getQuantitySold() + quantity);
+    public void reduceProductQuantity(String specificProductId, int quantity) {
+
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        details.setCount(details.getCount() - quantity);
+        specificProductsRepository.save(details);
+
     }
 
 
-    /*
-    * method to get all the inventory
-    * */
 
-    public List<InventoryResponse> showInventory() {
-        List<Inventory> inventory = inventoryRepository.findAll();
+    public Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus,String categoryName,
+                                                 Float price1, Float price2, Pageable pageable )
+    {
 
-        ZoneId zoneId = ZoneId.systemDefault();
-        String time =null;
+        List<InventoryResponse> inventoryResponses = new ArrayList<>();
+        
 
+        if (inventoryStatus != null) {
+            Page<Inventory> inventory = inventoryRepository.findAllByStatus(inventoryStatus,pageable);
 
-        return inventory.stream()
-                .filter(res -> {
-                    Instant now = Instant.now();
-                    return res.getLastUpdate() != null &&
-                            !res.getLastUpdate().isAfter(now);
-                })
-                .map(res -> {
-                    InventoryResponse inventoryResponse = new InventoryResponse();
-                    Products products = res.getProducts();
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (Inventory inventoryItem : inventory.getContent()) {
+                for (Products products : inventoryItem.getProducts()){
+                    for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
+                        InventoryResponse inventoryResponse = new InventoryResponse();
+                        inventoryResponse.setProductName(products.getProductName());
+                        inventoryResponse.setStatus(inventoryItem.getStatus());
+                        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+                        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+                        inventoryResponses.add(inventoryResponse);
+                    }
+                }
+            }
+            
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+            
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+        } else if (categoryName != null) {
+            Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (Products products : categories.getProducts()) {
+                for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
+                    InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
+                    inventoryResponses.add(inventoryResponse);
+                }
+            }
 
-                    inventoryResponse.setProductName(products.getProductName());
-                    //inventoryResponse.setSellingPrice();
-                    inventoryResponse.setQuantitySold(res.getQuantitySold());
-                    //inventoryResponse.setQuantityRemaining(res.getQuantityBought() - res.getQuantitySold());
-                    //inventoryResponse.setLastUpdate(res.getLastUpdate());
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+            
+        } else if (price1 != null && price2 != null) {
 
+            Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(price1,price2,pageable);
 
-
-                    //double totalSold = res.getQuantitySold() * (products.getProductPrice() - products.getDiscount());
-
-
-                    return inventoryResponse;
-                })
-                .toList();
-    }
-
-
-    /*
-    * @Author Bobcodiz
-    *  method to get the inventory of a specific product
-    * */
-    public InventoryResponse showProductInventory(String productId) {
-        Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
-        if (inventory == null) {
-            log.info("the product with ID " + productId + " does not exist");
-            return null;
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
+                InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
+                inventoryResponses.add(inventoryResponse);
+            }
         }
-        return modelMapper.map(inventory, InventoryResponse.class);
+        else {
+            Page<Products> products = productsRepository.findAll(pageable);
+            for (Products products1 : products){
+                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
+                    InventoryResponse inventoryResponse = getInventoryResponse(details);
+                    inventoryResponses.add(inventoryResponse);
+                }
+            }
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = (int) pageable.getOffset() + pageable.getPageSize();
+        List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+        return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
+
 
     }
 
-    private String formatOrderDate(LocalDate date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
-        return date.format(formatter);
+    private static InventoryResponse getInventoryResponse(Products products, SpecificProductDetails specificProductDetails) {
+        InventoryResponse inventoryResponse = new InventoryResponse();
+        inventoryResponse.setProductName(products.getProductName());
+        inventoryResponse.setQuantity(specificProductDetails.getCount());
+        inventoryResponse.setStatus(products.getInventory().getStatus());
+        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        return inventoryResponse;
     }
-    private String formatOrderTime(LocalTime time){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
-        return time.format(formatter);
+
+    private static InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
+        InventoryResponse inventoryResponse = new InventoryResponse();
+        inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
+        inventoryResponse.setQuantity(specificProductDetails.getCount());
+        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
+        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        return inventoryResponse;
     }
+
+
 }

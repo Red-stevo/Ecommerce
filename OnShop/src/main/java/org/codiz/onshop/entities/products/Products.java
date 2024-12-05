@@ -46,6 +46,10 @@ public class Products implements Serializable {
     @ToString.Exclude
     private List<ProductRatings> productRatingsList;
 
+    @ManyToOne(fetch = FetchType.EAGER,optional = true)
+    @JoinColumn(name = "inventoryId",nullable = false)
+    private Inventory inventory;
+
 
 
 
