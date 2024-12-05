@@ -134,6 +134,8 @@ public class CartImpl implements CartService {
             itemsResponse.setProductName(products.getProductName());
             itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
             itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
+            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
+            itemsResponse.setInStock(details.getCount() > 0);
 
             itemsResponses.add(itemsResponse);
         }

@@ -13,5 +13,6 @@ public class OrderItemsResponse {
     private int quantity;
     private double totalPrice;
     private OrderItemStatus status;
+    private String stockStatus;
     private boolean cancelled;
 }

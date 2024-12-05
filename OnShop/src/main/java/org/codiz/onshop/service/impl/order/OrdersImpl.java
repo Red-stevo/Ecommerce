@@ -92,6 +92,7 @@ public class OrdersImpl implements OrdersService {
             items.setOrderId(order);
             items.setQuantity(itemsRequests.getQuantity());
             items.setProductId(products);
+            items.setSpecificProductDetails(details);
             items.setStatus(OrderItemStatus.PENDING);
 
             double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
@@ -99,7 +100,9 @@ public class OrdersImpl implements OrdersService {
             totalAmount += totalPrice;
             ordersItemsRepository.save(items);
             orderItems.add(items);
-            //productsService.reduceProductQuantity(itemsRequests.getProductId(), itemsRequests.getQuantity());
+            details.setCount(details.getCount() - itemsRequests.getQuantity());
+            specificProductsRepository.save(details);
+
 
         }
         Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
@@ -119,7 +122,7 @@ public class OrdersImpl implements OrdersService {
         if (!userId.equals(items.getOrderId().getUserId().getUserId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        productsService.addProductQuantity(items.getProductId().getProductId(), items.getQuantity());
+        productsService.addProductQuantity(items.getSpecificProductDetails().getSpecificProductId(), items.getQuantity());
         items.setStatus(OrderItemStatus.CANCELLED);
         ordersItemsRepository.save(items);
         return "item successfully removed";
@@ -140,17 +143,15 @@ public class OrdersImpl implements OrdersService {
         List<OrderItems> items = new ArrayList<>();
 
         for (OrderItems orderItem : orders.getOrderItems()) {
+            SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(orderItem.getSpecificProductDetails().getSpecificProductId());
+            productDetails.setCount(productDetails.getCount() + orderItem.getQuantity());
+            specificProductsRepository.save(productDetails);
             orderItem.setStatus(OrderItemStatus.CANCELLED);
             items.add(orderItem);
         }
         ordersItemsRepository.saveAll(items);
 
-        for (OrderItems orderItems : orders.getOrderItems()) {
 
-            Inventory inventory = inventoryRepository.findByProducts(orderItems.getProductId());
-            inventory.setQuantitySold(inventory.getQuantitySold() - orderItems.getQuantity());
-            inventoryRepository.save(inventory);
-        }
 
 
         EntityDeletionResponse entityDeletionResponse = new EntityDeletionResponse();
@@ -222,6 +223,7 @@ public class OrdersImpl implements OrdersService {
         itemsResponse.setQuantity(items.getQuantity());
         itemsResponse.setTotalPrice(items.getTotalPrice());
         itemsResponse.setStatus(items.getStatus());
+
         return itemsResponse;
     }
 

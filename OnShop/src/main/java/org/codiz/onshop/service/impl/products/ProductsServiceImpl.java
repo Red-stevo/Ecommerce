@@ -123,11 +123,16 @@ public class ProductsServiceImpl implements ProductsService {
     @CacheEvict(value = "products")
     public EntityResponse postProduct(ProductCreationRequest requests, List<FileUploads> uploads) {
         try {
+            Inventory inventory = new Inventory();
+
+            inventory.setStatus(InventoryStatus.INACTIVE);
+            inventory.setProducts(new ArrayList<>());
 
             Products product = new Products();
 
             product.setProductName(requests.getProductName());
             product.setProductDescription(requests.getProductDescription());
+            product.setInventory(inventory);
 
 
 
@@ -168,10 +173,13 @@ public class ProductsServiceImpl implements ProductsService {
             }
             product.setSpecificProductDetailsList(detailsList);
 
+            inventory.getProducts().add(product);
+            inventoryRepository.save(inventory);
 
 
 
-            productsRepository.save(product);
+
+            //productsRepository.save(product);
 
             EntityResponse response = new EntityResponse();
             response.setMessage("Successfully posted the product");
@@ -565,6 +573,11 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
+    @Override
+    public List<InventoryResponse> showInventory() {
+        return List.of();
+    }
+
 
     public int getAverageRating(String productId) {
         Double averageRating = ratingsRepository.findAverageRatingByProductId(productId);
@@ -647,81 +660,41 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    public void addProductQuantity(String productId, int quantity) {
 
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("The product with ID " + productId + " does not exist")
-        );
 
-        Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setInStockQuantity(inventory.getInStockQuantity()  + quantity);
-        inventory.setQuantitySold(inventory.getQuantitySold());
-        inventory.setLastUpdate(Instant.now());
-        inventoryRepository.save(inventory);
+    public void addProductQuantity(String specificProductId, int quantity) {
+
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        details.setCount(details.getCount() + quantity);
+        specificProductsRepository.save(details);
 
     }
 
-    public void reduceProductQuantity(String productId, int quantity) {
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("The product with ID " + productId + " does not exist")
-        );
-        Inventory inventory = inventoryRepository.findByProducts(products);
-        inventory.setInStockQuantity(inventory.getInStockQuantity() - quantity);
-        inventory.setQuantitySold(inventory.getQuantitySold() + quantity);
-    }
+    public void reduceProductQuantity(String specificProductId, int quantity) {
 
-
-    /*
-    * method to get all the inventory
-    * */
-
-    public List<InventoryResponse> showInventory() {
-        List<Inventory> inventory = inventoryRepository.findAll();
-
-        ZoneId zoneId = ZoneId.systemDefault();
-        String time =null;
-
-
-        return inventory.stream()
-                .filter(res -> {
-                    Instant now = Instant.now();
-                    return res.getLastUpdate() != null &&
-                            !res.getLastUpdate().isAfter(now);
-                })
-                .map(res -> {
-                    InventoryResponse inventoryResponse = new InventoryResponse();
-                    Products products = res.getProducts();
-
-                    inventoryResponse.setProductName(products.getProductName());
-                    //inventoryResponse.setSellingPrice();
-                    inventoryResponse.setQuantitySold(res.getQuantitySold());
-                    //inventoryResponse.setQuantityRemaining(res.getQuantityBought() - res.getQuantitySold());
-                    //inventoryResponse.setLastUpdate(res.getLastUpdate());
-
-
-
-                    //double totalSold = res.getQuantitySold() * (products.getProductPrice() - products.getDiscount());
-
-
-                    return inventoryResponse;
-                })
-                .toList();
-    }
-
-
-    /*
-    * @Author Bobcodiz
-    *  method to get the inventory of a specific product
-    * */
-    public InventoryResponse showProductInventory(String productId) {
-        Inventory inventory = inventoryRepository.findByProducts(productsRepository.findByProductId(productId));
-        if (inventory == null) {
-            log.info("the product with ID " + productId + " does not exist");
-            return null;
-        }
-        return modelMapper.map(inventory, InventoryResponse.class);
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        details.setCount(details.getCount() - quantity);
+        specificProductsRepository.save(details);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private String formatOrderDate(LocalDate date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
