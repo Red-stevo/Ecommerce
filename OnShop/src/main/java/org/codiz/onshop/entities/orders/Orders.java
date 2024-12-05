@@ -27,6 +27,7 @@ public class Orders {
     private String officeAddress;
     private String latitude;
     private String longitude;
+    private ShippingStatus shippingStatus;
     private OrderStatus orderStatus;
     @OneToMany(mappedBy = "orderId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItems> orderItems;
@@ -40,6 +41,9 @@ public class Orders {
         }
         if (this.orderStatus == null) {
             this.orderStatus = OrderStatus.UNDELIVERED;
+        }
+        if (this.shippingStatus == null) {
+            this.shippingStatus = ShippingStatus.PLACED_ORDER;
         }
     }
 
