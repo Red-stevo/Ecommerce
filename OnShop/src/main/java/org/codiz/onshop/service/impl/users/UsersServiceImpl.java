@@ -3,6 +3,7 @@ package org.codiz.onshop.service.impl.users;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.UserProfileUpdateRequest;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
@@ -21,10 +22,12 @@ import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -111,7 +114,7 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
-    public String updateUSer(UserRegistrationRequest request,String userId) {
+    public String updateUser(UserRegistrationRequest request,String userId) {
         Users users = usersRepository.findUsersByUserId(userId);
 
         users.setUsername(request.getUsername());
@@ -196,17 +199,38 @@ public class UsersServiceImpl implements UsersService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found");
         }
 
-        String url = null;
 
         profiles.setFullName(request.getFirstName());
         profiles.setGender(request.getGender());
-        profiles.setImageUrl(url);
         profiles.setAddress(request.getAddress());
         profiles.setSecondaryEmail(request.getSecondaryEmail());
 
         userProfilesRepository.save(profiles);
         return "profile updated";
 
+    }
+
+    public String updateEmail(String userId,String email) {
+        Users users = usersRepository.findUsersByUserId(userId);
+        if (users == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if (Objects.equals(users.getUserEmail(), email)){
+            users.setUserEmail(email);
+        } else if (Objects.equals(users.getProfile().getSecondaryEmail(), email)) {
+            users.setUserEmail(email);
+        }
+
+        usersRepository.save(users);
+        return "email updated";
+    }
+
+    public String updateProfileImage(String userId, FileUploads uploads){
+        Users users = usersRepository.findUsersByUserId(userId);
+        UserProfiles profiles = users.getProfile();
+        profiles.setImageUrl(cloudinaryService.uploadImage(uploads));
+        userProfilesRepository.save(profiles);
+        return "profile updated";
     }
 
 
