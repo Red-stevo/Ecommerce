@@ -196,7 +196,7 @@ public class UsersServiceImpl implements UsersService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found");
         }
 
-        String url = cloudinaryService.uploadImage(request.getImageUrl());
+        String url = null;
 
         profiles.setFullName(request.getFirstName());
         profiles.setGender(request.getGender());

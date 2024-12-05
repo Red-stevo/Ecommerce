@@ -17,4 +17,6 @@ public interface CategoriesRepository extends JpaRepository<Categories, String> 
 
 
     Categories findCategoriesByProducts(List<Products> products);
+
+    boolean existsCategoriesByCategoryNameContainingIgnoreCase(String categoryName);
 }

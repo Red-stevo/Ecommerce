@@ -11,7 +11,7 @@ public class OrderStatusResponse {
 
     private String orderId;
 
-    private String status;
+    private int status;
 
     private List<OrderTrackingProducts> products;
 

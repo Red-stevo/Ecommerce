@@ -1,8 +1,11 @@
 package org.codiz.onshop.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
+import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.EntityResponse;
@@ -10,6 +13,7 @@ import org.codiz.onshop.dtos.response.InventoryResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.dtos.response.SpecificProductResponse;
 import org.codiz.onshop.entities.products.Categories;
+import org.codiz.onshop.entities.products.InventoryStatus;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -37,17 +42,58 @@ public class ProductsController {
 
     @PostMapping(value = "/post",consumes = "multipart/form-data")
     public ResponseEntity<EntityResponse> postProduct(
-            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) {
+            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) throws JsonProcessingException {
+
+        //deserializing the product images data
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
+
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try{
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+
 
         log.info(productData);
-        files.forEach((file) -> {
-            log.info(file.getOriginalFilename());
-        });
+        files.forEach((file) -> log.info(file.getOriginalFilename()));
 
         log.info("done");
 
-       /* return ResponseEntity.ok(productsService.postProduct(productCreationRequest))*/;
-       return null;
+        return ResponseEntity.ok(productsService.postProduct(productCreationRequest,uploads));
+
+    }
+
+    @PutMapping(value = "/update",consumes = "multipart/form-data")
+    public ResponseEntity<EntityResponse> updateProduct(
+            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files, @RequestParam String productId) throws JsonProcessingException {
+
+        //deserializing the product images data
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
+
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try{
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+
+
+        log.info(productData);
+        files.forEach((file) -> log.info(file.getOriginalFilename()));
+
+        log.info("done");
+
+        return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
+
     }
 
 
@@ -99,20 +145,65 @@ public class ProductsController {
     }
 
 
-    @GetMapping("/inventory")
-    public ResponseEntity<List<InventoryResponse>> showInventory(){
-        return ResponseEntity.ok(productsService.showInventory());
-    }
 
     @GetMapping("/categories")
     public ResponseEntity<List<Categories>> findAllCategories(){
         return ResponseEntity.ok(productsService.findAllCategories());
     }
 
-    @GetMapping("/create-category")
-    public ResponseEntity<EntityResponse> createCategory(List<CategoryCreationRequest> categoryCreationRequest){
-        return ResponseEntity.ok(productsService.createCategory(categoryCreationRequest));
+    @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
+    public ResponseEntity<EntityResponse> createCategory(
+            @RequestPart List<MultipartFile> files,
+            @RequestParam List<String> filenames
+    ){
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try {
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+        return ResponseEntity.ok(productsService.createCategory(filenames,uploads));
+    }
+
+    @PutMapping("/update-categories")
+    public ResponseEntity<EntityResponse> updateCategory(
+            @RequestParam String categoryId,
+            @RequestParam String categoryName,
+            @RequestPart  MultipartFile fileUploads) throws IOException {
+        FileUploads uploads = new FileUploads(fileUploads.getOriginalFilename(),fileUploads.getBytes());
+
+        return ResponseEntity.ok().body(productsService.updateCategory(categoryId,categoryName,uploads));
     }
 
 
+    @DeleteMapping("delete-product")
+    public ResponseEntity<String> deleteProduct(@RequestParam String productId){
+        return ResponseEntity.ok(productsService.deleteProduct(productId));
+    }
+
+    @DeleteMapping("/delete-category")
+    public ResponseEntity<String> deleteCategory(String categoryId){
+        return ResponseEntity.ok(productsService.deleteCategory(categoryId));
+    }
+
+
+
+    @GetMapping("/show-inventory")
+    public ResponseEntity<PagedModel<EntityModel<InventoryResponse>>> inventoryList(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            PagedResourcesAssembler<InventoryResponse> assembler,
+            InventoryStatus inventoryStatus,String categoryName, Float price1,Float price2 ){
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InventoryResponse> resp = productsService.inventoryList(inventoryStatus,
+                categoryName,price1,price2,pageable);
+        PagedModel<EntityModel<InventoryResponse>> model = assembler.toModel(resp);
+
+        return ResponseEntity.ok(model);
+
+    }
 }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.OrderStatus;
+import org.codiz.onshop.entities.orders.ShippingStatus;
 import org.codiz.onshop.service.serv.orders.OrdersService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -105,7 +106,15 @@ public class OrdersController {
 
     @GetMapping("/get-order-status")
     public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String userId){
-        return ResponseEntity.ok(ordersService.getOrderStatus(userId));
+        return ResponseEntity.ok(ordersService.getShippingStatus(userId));
     }
+
+    @PutMapping("update_shipping-status")
+    public ResponseEntity<String> updateShippingStatus(@RequestParam String orderId, @RequestParam ShippingStatus status){
+        String result = ordersService.updateShippingStatus(orderId, status);
+        return ResponseEntity.ok(result);
+    }
+
+
 
 }
