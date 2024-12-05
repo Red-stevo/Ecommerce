@@ -1,11 +1,11 @@
 package org.codiz.onshop.entities.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -13,13 +13,24 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String inventoryId;
-    private int inStockQuantity;
-    private int quantitySold;
-    private Instant lastUpdate;
 
+    @Enumerated(EnumType.STRING) // Ensure enum is stored as a string
+    private InventoryStatus status;
 
-    @OneToOne
-    @JoinColumn(name = ("product_id"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Products products;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "product_inventory",
+            joinColumns = @JoinColumn(name = "inventoryId"),
+            inverseJoinColumns = @JoinColumn(name = "productId")
+    )
+    @JsonIgnore
+    private List<Products> products = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.status == null) {
+            this.status = InventoryStatus.INACTIVE;
+        }
+    }
 }
+

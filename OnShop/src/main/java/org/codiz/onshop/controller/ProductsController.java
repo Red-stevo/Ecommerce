@@ -13,6 +13,7 @@ import org.codiz.onshop.dtos.response.InventoryResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.dtos.response.SpecificProductResponse;
 import org.codiz.onshop.entities.products.Categories;
+import org.codiz.onshop.entities.products.InventoryStatus;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -144,10 +145,6 @@ public class ProductsController {
     }
 
 
-    @GetMapping("/inventory")
-    public ResponseEntity<List<InventoryResponse>> showInventory(){
-        return ResponseEntity.ok(productsService.showInventory());
-    }
 
     @GetMapping("/categories")
     public ResponseEntity<List<Categories>> findAllCategories(){
@@ -182,4 +179,31 @@ public class ProductsController {
     }
 
 
+    @DeleteMapping("delete-product")
+    public ResponseEntity<String> deleteProduct(@RequestParam String productId){
+        return ResponseEntity.ok(productsService.deleteProduct(productId));
+    }
+
+    @DeleteMapping("/delete-category")
+    public ResponseEntity<String> deleteCategory(String categoryId){
+        return ResponseEntity.ok(productsService.deleteCategory(categoryId));
+    }
+
+
+
+    @GetMapping("/show-inventory")
+    public ResponseEntity<PagedModel<EntityModel<InventoryResponse>>> inventoryList(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            PagedResourcesAssembler<InventoryResponse> assembler,
+            InventoryStatus inventoryStatus,String categoryName, Float price1,Float price2 ){
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InventoryResponse> resp = productsService.inventoryList(inventoryStatus,
+                categoryName,price1,price2,pageable);
+        PagedModel<EntityModel<InventoryResponse>> model = assembler.toModel(resp);
+
+        return ResponseEntity.ok(model);
+
+    }
 }
