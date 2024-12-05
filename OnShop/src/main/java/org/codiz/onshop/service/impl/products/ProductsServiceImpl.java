@@ -573,10 +573,7 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-    @Override
-    public List<InventoryResponse> showInventory() {
-        return List.of();
-    }
+
 
 
     public int getAverageRating(String productId) {
@@ -680,28 +677,97 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
+    public Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus,String categoryName,
+                                                 Float price1, Float price2, Pageable pageable )
+    {
+
+        List<InventoryResponse> inventoryResponses = new ArrayList<>();
+        
+
+        if (inventoryStatus != null) {
+            Page<Inventory> inventory = inventoryRepository.findAllByStatus(inventoryStatus,pageable);
+
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (Inventory inventoryItem : inventory.getContent()) {
+                for (Products products : inventoryItem.getProducts()){
+                    for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
+                        InventoryResponse inventoryResponse = new InventoryResponse();
+                        inventoryResponse.setProductName(products.getProductName());
+                        inventoryResponse.setStatus(inventoryItem.getStatus());
+                        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+                        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+                        inventoryResponses.add(inventoryResponse);
+                    }
+                }
+            }
+            
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+            
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+        } else if (categoryName != null) {
+            Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (Products products : categories.getProducts()) {
+                for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
+                    InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
+                    inventoryResponses.add(inventoryResponse);
+                }
+            }
+
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+            
+        } else if (price1 != null && price2 != null) {
+
+            Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(price1,price2,pageable);
+
+            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
+                InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
+                inventoryResponses.add(inventoryResponse);
+            }
+        }
+        else {
+            Page<Products> products = productsRepository.findAll(pageable);
+            for (Products products1 : products){
+                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
+                    InventoryResponse inventoryResponse = getInventoryResponse(details);
+                    inventoryResponses.add(inventoryResponse);
+                }
+            }
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = (int) pageable.getOffset() + pageable.getPageSize();
+        List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+        return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private String formatOrderDate(LocalDate date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM EEE dd yyyy", Locale.ENGLISH);
-        return date.format(formatter);
     }
-    private String formatOrderTime(LocalTime time){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
-        return time.format(formatter);
+
+    private static InventoryResponse getInventoryResponse(Products products, SpecificProductDetails specificProductDetails) {
+        InventoryResponse inventoryResponse = new InventoryResponse();
+        inventoryResponse.setProductName(products.getProductName());
+        inventoryResponse.setQuantity(specificProductDetails.getCount());
+        inventoryResponse.setStatus(products.getInventory().getStatus());
+        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        return inventoryResponse;
     }
+
+    private static InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
+        InventoryResponse inventoryResponse = new InventoryResponse();
+        inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
+        inventoryResponse.setQuantity(specificProductDetails.getCount());
+        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
+        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        return inventoryResponse;
+    }
+
+
 }

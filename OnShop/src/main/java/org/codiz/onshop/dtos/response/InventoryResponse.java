@@ -11,4 +11,5 @@ public class InventoryResponse {
     private float unitPrice;
     private int quantity;
     private InventoryStatus status;
+    private String imageUrl;
 }
