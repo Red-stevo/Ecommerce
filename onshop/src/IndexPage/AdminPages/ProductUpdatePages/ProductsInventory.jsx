@@ -3,6 +3,9 @@ import {Button, Image, InputGroup} from "react-bootstrap";
 import {CiEdit} from "react-icons/ci";
 import { FiTrash2 } from "react-icons/fi";
 import {useEffect} from "react";
+import ReactPaginate from "react-paginate";
+import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import {PiArrowFatLeftThin, PiArrowFatRightThin} from "react-icons/pi";
 
 const  InventoryResponse  = [
     {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
@@ -46,7 +49,9 @@ const categories = [
 
 const ProductsInventory = () => {
 
-
+    const handlePageClick = (event) => {
+        console.log(event);
+    }
 
     return (
         <div className={"inventory-page"}>
@@ -133,7 +138,15 @@ const ProductsInventory = () => {
 
             </section>
 
-
+            <div className={"pager-component-holder"}>
+                <ReactPaginate
+                    pageCount={10} onPageChange={handlePageClick} containerClassName="pagination"
+                    activeClassName="active-page" previousClassName="prev-item" nextClassName="next-item"
+                    pageRangeDisplayed={4} marginPagesDisplayed={0}
+                    pageClassName="page-item"
+                    previousLabel={<PiArrowFatLeftThin className={"pager-arrow"} />}
+                    nextLabel={<PiArrowFatRightThin className={"pager-arrow"} />}/>
+            </div>
         </div>
     );
 };
