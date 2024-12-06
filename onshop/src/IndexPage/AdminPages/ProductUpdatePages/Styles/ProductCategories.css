@@ -1,0 +1,40 @@
+.product-categories-page {
+    width: 100%;
+    min-height: 100vh;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-categories-header {
+    width: 100%;
+    height: fit-content;
+    font-size: 32px;
+    font-family: Montserrat Montserr sans-serif;
+}
+
+.product-categories-body {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+}
+
+.product-categories-body-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(245, 245, 245, 0.73);
+    border-radius: 20px;
+}
+
+.product-categories-body-header-icon, .product-categories-body-header-category {
+    font-size: 24px;
+    font-family: Montserrat Montserr sans-serif;
+}
+
+
+
+
+
