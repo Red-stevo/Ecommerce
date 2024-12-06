@@ -13,6 +13,8 @@ import OrderDisplay from "./IndexPage/AdminPages/OrdersPages/OrderDisplay.jsx";
 import ProductsCart from "./IndexPage/Pages/UserCart/ProductsCart.jsx";
 import OrderStatus from "./IndexPage/Pages/OrderStatusPage/OrderStatus.jsx";
 import WishListPage from "./IndexPage/Pages/WishListPage/WishListPage.jsx";
+import SingleProductDisplay from "./IndexPage/AdminPages/OrdersPages/SingleProductDisplay.jsx";
+import UserProfilePage from "./IndexPage/Pages/UserProfile/UserProfilePage.jsx";
 
 const App = () => {
   return (
@@ -25,6 +27,7 @@ const App = () => {
                   <Route path={"/home/user/cart"} element={<ProductsCart />} />
                   <Route path={"/home/user/order-status"} element={ <OrderStatus /> }/>
                   <Route path={"/home/user/wish-list"} element={<WishListPage />}/>
+                  <Route path={"/home/user/profile"} element={<UserProfilePage />}/>
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />
@@ -32,7 +35,10 @@ const App = () => {
                     <Route path={"/admin/newProduct"} element={<AddProductPage />} />
                     <Route path={"/admin"} element={<AllOrdersPage />} />
                     <Route path={"/admin/orders/:orderId"} element={<OrderDisplay />} />
+                    <Route path={"/admin/orders/:orderId/:productId"} element={<SingleProductDisplay />} />
               </Route>
+
+              <Route path={"*"} element={<h1>Page Not Found.</h1>} />
           </Routes>
       </Router>
   )
