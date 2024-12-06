@@ -24,6 +24,7 @@
     flex-direction: row;
     justify-content: space-around;
     gap: 10%;
+    flex-wrap: wrap;
 }
 
 .filter-holder {
@@ -31,4 +32,127 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+
+.inventory-page-products-section {
+    margin-top: 20px;
+}
+
+.inventory-page-products-section-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #412a05;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.inventory-page-products-section-products {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 20px;
+}
+
+.inventory-page-products-section-product {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(172, 215, 215, 0.33);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+
+.product-inventory-image {
+    width: 40px;
+    height: 40px;
+}
+
+.edit-delete-inventory-buttons {
+    display: flex;
+    width: fit-content;
+    padding: 2px;
+    gap: 5px;
+}
+
+.inventory-product-image-name {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    gap: 3px;
+}
+
+.trash-product-inventory {
+    align-self: center;
+}
+
+.filter-holder {
+    width: 180px;
+}
+
+@media screen and (max-device-width: 820px) {
+
+    .inventory-product-image-name {
+        flex-direction: column;
+
+    }
+
+    .edit-product-inventory {
+        height: fit-content;
+    }
+
+    .inventory-product-unit-price, .inventory-product-quantity, .inventory-product-status, .edit-delete-inventory-buttons {
+        align-self: center;
+    }
+
+    .inventory-page-products-section-products {
+        padding-right: 0;
+    }
+
+    .inventory-page-products-section-header {
+        justify-content: space-between;
+    }
+
+    .trash-product-inventory {
+        display: none;
+    }
+
+}
+
+@media screen and (max-device-width: 442px) {
+
+    .inventory-page, .edit-product-inventory, .add-product-button {
+        font-size: 13px;
+    }
+
+    .filter-holder {
+        width: 90%;
+    }
+}
+
+@media screen and (max-device-width: 376px) {
+
+    .inventory-page, .edit-product-inventory, .add-product-button {
+        font-size: 10px;
+    }
+
+    .inventory-product-status, .Status {
+        display: none;
+    }
+
+    .red-border {
+        border: 1px red solid;
+    }
+
+    .green-border {
+        border: 1px green solid;
+    }
+
+    .inventory-page {
+        padding: 30px 5px 30px 5px;
+    }
+
 }

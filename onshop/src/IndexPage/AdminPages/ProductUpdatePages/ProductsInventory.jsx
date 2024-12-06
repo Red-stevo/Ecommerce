@@ -1,29 +1,34 @@
 import "./Styles/ProductsInventory.css";
-import {Button, InputGroup} from "react-bootstrap";
+import {Button, Image, InputGroup} from "react-bootstrap";
+import {CiEdit} from "react-icons/ci";
+import { FiTrash2 } from "react-icons/fi";
+import {useEffect} from "react";
 
 const  InventoryResponse  = [
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
-    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:0,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
+    {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:2,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
 ]
+
+
 
 const categories = [
     {categoryName:"Fashion", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120001"},
@@ -40,6 +45,9 @@ const categories = [
 
 
 const ProductsInventory = () => {
+
+
+
     return (
         <div className={"inventory-page"}>
             <div className={"inventory-page-section-a"}>
@@ -79,8 +87,53 @@ const ProductsInventory = () => {
                     </InputGroup>
                 </div>
 
+            </section>
+
+
+            <section className={"inventory-page-products-section"}>
+
+                <div className={"inventory-page-products-section-header"}>
+                    <span className={"Product-Name"}>Product Name</span>
+                    <span className={"Unit-Price"}>Unit Price</span>
+                    <span className={"Quantity"}>Quantity</span>
+                    <span className={"Status"}>Status</span>
+                    <span className={"Action"}>Action</span>
+                </div>
+
+                <div className={"inventory-page-products-section-products"}>
+                    {InventoryResponse && InventoryResponse.length > 0 && InventoryResponse.map(
+                    ({productName, unitPrice,quantity, imageUrl, status}, index) => (
+                        <div key={index}
+                            className={`inventory-page-products-section-product 
+                            ${status === 1 && " red-border "}
+                            ${status === 2 && " green-border "}`} >
+
+                            <div className={"inventory-product-image-name"}>
+                                <Image src={imageUrl} className={"product-inventory-image"} />
+                                <span className={"inventory-product-name"}>{productName}</span>
+                            </div>
+
+                            <span className={"inventory-product-unit-price"}>ksh {unitPrice}</span>
+                            <span className={"inventory-product-quantity"}>{quantity}</span>
+
+                            {status && status === 1 ?
+                                <span className={"inventory-product-status"}>Active</span>:
+                                status === 2 &&
+                                <span className={"inventory-product-status"}>Inactive</span>
+                            }
+
+                            <div className={"edit-delete-inventory-buttons"}>
+                                <Button className={"app-button edit-product-inventory"}><CiEdit /> Edit</Button>
+                                <FiTrash2 className={"trash-product-inventory"} />
+                            </div>
+
+                        </div>
+                    ))}
+                </div>
 
             </section>
+
+
         </div>
     );
 };
