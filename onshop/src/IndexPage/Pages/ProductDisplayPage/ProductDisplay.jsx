@@ -8,12 +8,14 @@ import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
 import {useNavigate} from "react-router-dom";
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
+import ShareComponent from "./Components/ShareComponent.jsx";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
         (state) => state.productReducer.product);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [shareIcon, setShareIcon] = useState(false);
 
     // State
     const [activeSize, setActiveSize] = useState(null);
@@ -98,7 +100,8 @@ const ProductDisplay = () => {
                         ADD TO CART
                     </Button>
                     <Button className={"order-button app-button"}>ORDER NOW</Button>
-                    <LuShare2 className={"share-icon"} title={"Share"}/>
+                    <LuShare2 className={"share-icon"} title={"Share"}
+                              onClick={() => setShareIcon((prevState) => !prevState)}/>
                 </div> {/*Not in medium screens*/}
 
                 <div className={"image-display-holder"}>
@@ -154,7 +157,8 @@ const ProductDisplay = () => {
 
                             <div className={"share-count-buttons"}>
 
-                                <LuShare2 className={"share-icon"} title={"Share"}/>
+                                <LuShare2 className={"share-icon"} title={"Share"}
+                                          onClick={() => setShareIcon((prevState) => !prevState)}/>
 
                                 {productOnDisplay &&
                                     <span className={"available-count2"}>
@@ -206,7 +210,8 @@ const ProductDisplay = () => {
                             ADD TO CART
                         </Button>
                         <Button className={"order-button app-button"}>ORDER NOW</Button>
-                        <LuShare2 className={"share-icon"} title={"Share"}/>
+                        <LuShare2 className={"share-icon"} title={"Share"}
+                                  onClick={() => setShareIcon((prevState) => !prevState)}/>
                     </div> {/*Not in medium screens*/}
 
 
@@ -279,6 +284,8 @@ const ProductDisplay = () => {
                     ))}
                 </div>
             </div>
+
+            <ShareComponent show={shareIcon} onHide={() => setShareIcon(false)} />
         </div>
     );
 };

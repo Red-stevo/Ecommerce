@@ -48,7 +48,7 @@ const UserProfilePage = () => {
 
     return (
         <div className={"user-profile-page"}>
-            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)}/>
+            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)} />
             <section className={"user-profile-top-section"}>
 
                 <div className={"notification-details"}>

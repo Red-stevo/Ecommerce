@@ -2,9 +2,7 @@ import "./Styles/ProductsInventory.css";
 import {Button, Image, InputGroup} from "react-bootstrap";
 import {CiEdit} from "react-icons/ci";
 import { FiTrash2 } from "react-icons/fi";
-import {useEffect} from "react";
 import ReactPaginate from "react-paginate";
-import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {PiArrowFatLeftThin, PiArrowFatRightThin} from "react-icons/pi";
 
 const  InventoryResponse  = [
