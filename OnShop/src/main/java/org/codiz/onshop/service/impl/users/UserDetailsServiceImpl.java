@@ -1,5 +1,6 @@
 package org.codiz.onshop.service.impl.users;
 
+import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username){
-        return repository.findUsersByUsername(username).orElseThrow(() -> new RuntimeException("User Does Not Exist."));
+        return repository.findUsersByUsername(username).orElseThrow(() -> new UserDoesNotExistException("User Does Not Exist."));
     }
 }
