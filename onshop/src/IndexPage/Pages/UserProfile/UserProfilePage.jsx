@@ -83,7 +83,7 @@ const UserProfilePage = () => {
 
 
             <section className={"user-personal-details"}>
-                <button className={"edit-details-button"} variant="primary" onClick={() => setModalShow(true)}>
+                <button className={"edit-details-button"}  onClick={() => setModalShow(true)}>
                     <CiEdit className={"edit-personal-details"}/>
                     <span className={"edit-personal-details-text"}>Edit</span>
                 </button>
