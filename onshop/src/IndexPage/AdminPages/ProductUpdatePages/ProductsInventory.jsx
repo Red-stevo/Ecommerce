@@ -49,9 +49,7 @@ const categories = [
 
 const ProductsInventory = () => {
 
-    const handlePageClick = (event) => {
-        console.log(event);
-    }
+    const handlePageClick = (event) => {};
 
     return (
         <div className={"inventory-page"}>
