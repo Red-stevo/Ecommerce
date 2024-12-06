@@ -181,10 +181,9 @@ const AddProductPage = () => {
                         </select>
 
                         <div className={"size-color"}>
-                    <Form.Group>
+                            <Form.Group>
                                 <input className={"form-control"} required={true}
-                                       placeholder={"Product Variety"}
-                                        id={"color"} {...register("color")} />
+                                       placeholder={"Product Variety"} id={"color"} {...register("color")} />
                             </Form.Group>
 
                             <Form.Group>

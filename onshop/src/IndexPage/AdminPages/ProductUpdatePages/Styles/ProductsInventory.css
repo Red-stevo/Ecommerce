@@ -1,0 +1,34 @@
+.inventory-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    padding: 30px 20px 30px 20px;
+    flex-direction: column;
+}
+
+.inventory-page-section-a {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-left: 10px;
+}
+
+.add-product-button {
+    height: fit-content;
+    width: fit-content;
+}
+
+.inventory-page-filters-section {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 10%;
+}
+
+.filter-holder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
