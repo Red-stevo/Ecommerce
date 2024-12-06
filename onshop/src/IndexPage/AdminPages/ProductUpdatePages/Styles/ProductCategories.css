@@ -86,7 +86,15 @@
 }
 
 
+@media screen and (max-device-width: 370px) {
+    .product-categories-body-header-icon, .product-categories-body-header-category {
+        font-size: 18px;
+    }
 
+    .product-categories-header {
+        font-size: 22px;
+    }
+}
 
 
 
