@@ -48,7 +48,7 @@ const UserProfilePage = () => {
 
     return (
         <div className={"user-profile-page"}>
-            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)}/>
+            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)} />
             <section className={"user-profile-top-section"}>
 
                 <div className={"notification-details"}>
@@ -83,7 +83,7 @@ const UserProfilePage = () => {
 
 
             <section className={"user-personal-details"}>
-                <button className={"edit-details-button"} variant="primary" onClick={() => setModalShow(true)}>
+                <button className={"edit-details-button"}  onClick={() => setModalShow(true)}>
                     <CiEdit className={"edit-personal-details"}/>
                     <span className={"edit-personal-details-text"}>Edit</span>
                 </button>
