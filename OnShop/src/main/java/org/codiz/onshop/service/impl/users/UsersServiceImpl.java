@@ -1,15 +1,14 @@
 package org.codiz.onshop.service.impl.users;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
-import org.codiz.onshop.dtos.requests.FileUploads;
-import org.codiz.onshop.dtos.requests.UserProfileUpdateRequest;
-import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
-import org.codiz.onshop.dtos.response.EntityResponse;
-import org.codiz.onshop.dtos.response.EntityDeletionResponse;
-import org.codiz.onshop.dtos.response.UserProfileResponse;
-import org.codiz.onshop.dtos.response.UserResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
+import org.codiz.onshop.dtos.requests.*;
+import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.users.Role;
 import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
@@ -21,37 +20,47 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final ModelMapper modelMapper;
     private final CloudinaryService cloudinaryService;
     private final UserProfilesRepository userProfilesRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTGenService jwtGenService;
+    private final CookieUtils cookieUtils;
+    private final HttpServletResponse response;
 
 
     public EntityResponse registerUser(UserRegistrationRequest request) {
 
         Users user = new Users();
 
-        if (!userExists(request.getUsername(),request.getUserEmail())){
+        if (userExists(request.getUserEmail()) && isPasswordStrong(request.getPassword())) {
             user.setUsername(request.getUsername());
-            final String password = request.getPassword();
+            final String password = passwordEncoder.encode(request.getPassword());
             user.setPassword(password);
             @Email
             final String email = request.getUserEmail();
             user.setUserEmail(email);
             user.setPhoneNumber(request.getPhoneNumber());
-            user.setRole(Role.valueOf(String.valueOf(request.getRole())));
+            user.setRole(Role.CUSTOMER);
 
             usersRepository.save(user);
 
@@ -59,7 +68,6 @@ public class UsersServiceImpl implements UsersService {
             response.setMessage("Successfully created admin user");
             response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             response.setStatus(HttpStatus.OK);
-
             return response;
         }
         else {
@@ -84,7 +92,7 @@ public class UsersServiceImpl implements UsersService {
     private EntityResponse createAdminUser() {
         Users user = new Users();
 
-        if (!userExists(admin_username,admin_user_email)){
+        if (userExists(admin_user_email)){
             user.setUsername(admin_username);
             user.setPassword(admin_user_password);
             user.setRole(admin_user_role);
@@ -150,8 +158,8 @@ public class UsersServiceImpl implements UsersService {
 
 
 
-    private  boolean userExists(String username,String email) {
-        return usersRepository.existsByUsernameOrUserEmail(username,email);
+    private  boolean userExists(String email) {
+        return !usersRepository.existsByUserEmail(email);
     }
 
 
@@ -235,4 +243,76 @@ public class UsersServiceImpl implements UsersService {
 
 
 
+    @Transactional
+    public ResponseEntity<AuthenticationResponse> loginUser(LoginRequests loginRequests) {
+        // Authenticate the user
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequests.getUsername(), loginRequests.getPassword()));
+
+
+        // Fetch user details
+        Users user = usersRepository.findUsersByUsername(loginRequests.getUsername()).orElseThrow(()-> {
+            return new UserDoesNotExistException("User Does Not Exist.");
+        });
+
+
+        if (user == null) {
+            log.error("User not found with email: {}", loginRequests.getUsername());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Generate access token
+        String accessToken = jwtGenService.generateAccessToken(user);
+        log.info("Access token generated successfully");
+
+
+        // Set the access token in a secure cookie
+        AuthenticationResponse authResponse = new AuthenticationResponse();
+        authResponse.setMessage("Authentication successful.");
+        authResponse.setToken(accessToken);
+        authResponse.setUserId(user.getUserId());
+        authResponse.setUserRole(user.getRole().toString());
+
+        response.setHeader("Set-Cookie", cookieUtils.responseCookie(user).toString());
+
+        // Return an AuthenticationResponse object containing both tokens
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
+
+
+    }
+
+    private static boolean isPasswordStrong(String password){
+        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$!)(}{%^&+=])(?=\\S+$).{8,}$";
+        return password.matches(passwordRegex);
+    }
+
+
+    public UserGeneralResponse resetPassword(ResetPasswordDetails resetPasswordDetails) {
+        log.info("Service to reset the password");
+
+        // Find user by email
+        Users user = usersRepository.findByUserEmail(resetPasswordDetails.getEmail()).orElseThrow(() -> new UserDoesNotExistException("User Does Not Exist."));
+
+        // Validate the old password by comparing it with the encoded password in the database
+        if (!passwordEncoder.matches(resetPasswordDetails.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid current password");
+        }
+
+        // Set the new password
+        String newPassword = resetPasswordDetails.getNewPassword();
+        if (!isPasswordStrong(resetPasswordDetails.getNewPassword())){
+            throw new IllegalArgumentException("Weak password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        // Save the updated user with the new password
+        usersRepository.save(user);
+
+        UserGeneralResponse userGeneralResponse = new UserGeneralResponse();
+        userGeneralResponse.setMessage("Password updated successfully.");
+        userGeneralResponse.setDate(new Date());
+        userGeneralResponse.setHttpStatus(HttpStatus.OK);
+
+        return userGeneralResponse;
+    }
 }

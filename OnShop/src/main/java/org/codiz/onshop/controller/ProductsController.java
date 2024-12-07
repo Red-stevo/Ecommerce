@@ -153,19 +153,11 @@ public class ProductsController {
 
     @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
     public ResponseEntity<EntityResponse> createCategory(
-            @RequestPart List<MultipartFile> files,
-            @RequestParam List<String> filenames
+            @RequestPart MultipartFile files,
+            @RequestParam String filenames
     ){
-        List<FileUploads> uploads = files.stream().map(
-                file -> {
-                    try {
-                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        ).toList();
-        return ResponseEntity.ok(productsService.createCategory(filenames,uploads));
+
+        return ResponseEntity.ok(productsService.createCategory(filenames,files));
     }
 
     @PutMapping("/update-categories")

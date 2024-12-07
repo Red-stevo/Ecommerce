@@ -56,36 +56,29 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @Transactional
-    public EntityResponse createCategory(List<String> categoryNames, List<FileUploads> uploads) {
+    public EntityResponse createCategory(String categoryNames, MultipartFile uploads) {
 
-        if (categoryNames.size() != uploads.size()) {
-            throw new IllegalArgumentException("The size of category names and file uploads must be the same.");
+        try {
+            FileUploads fileUploads = new FileUploads(
+                    uploads.getOriginalFilename(),uploads.getBytes()
+            );
+
+            Categories categories = new Categories();
+            String url = cloudinaryService.uploadImage(fileUploads);
+            categories.setCategoryName(categoryNames);
+            categories.setCategoryIcon(url);
+            categoriesRepository.save(categories);
+
+            EntityResponse entityResponse = new EntityResponse();
+            entityResponse.setMessage("Category created successfully");
+            entityResponse.setCreatedAt(Timestamp.from(Instant.now()));
+            entityResponse.setStatus(HttpStatus.OK);
+            return entityResponse;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        List<Categories> categories = new ArrayList<>();
 
-        for (int i = 0; i < categoryNames.size(); i++) {
-            String categoryName = categoryNames.get(i);
-            FileUploads fileUpload = uploads.get(i);
-
-            if (!categoriesRepository.existsCategoriesByCategoryNameContainingIgnoreCase(categoryName)) {
-                Categories category = new Categories();
-                category.setCategoryName(categoryName);
-
-                String url = cloudinaryService.uploadImage(fileUpload);
-                category.setCategoryIcon(url);
-
-                categories.add(category);
-            }
-        }
-
-
-        categoriesRepository.saveAll(categories);
-        EntityResponse entityResponse = new EntityResponse();
-        entityResponse.setMessage("Category created successfully");
-        entityResponse.setCreatedAt(Timestamp.from(Instant.now()));
-        entityResponse.setStatus(HttpStatus.OK);
-        return entityResponse;
 
     }
 
@@ -767,6 +760,11 @@ public class ProductsServiceImpl implements ProductsService {
         inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
         inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
         return inventoryResponse;
+    }
+
+    public String addToWishList(String specificProductId, String userId){
+
+        if (usersRepository.existsByUserId(userId))
     }
 
 
