@@ -1,8 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 
-const newCategoryAdapter = createEntityAdapter(
-    {selectId:categories => categories.categoryId});
+const newCategoryAdapter = createEntityAdapter();
 
 const  initialState = newCategoryAdapter.getInitialState({
     success:null,
