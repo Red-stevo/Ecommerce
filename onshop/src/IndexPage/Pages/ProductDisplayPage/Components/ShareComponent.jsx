@@ -31,9 +31,6 @@ const productUrl = window.location.href;
 
     }, [copy]);
 
-const handleCopy = () => {
-  setCopy((prevState) => !prevState);
-};
 
 return (
     <Modal{...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered >
