@@ -30,7 +30,6 @@ const PaymentPage = () => {
                 </div>
 
 
-
             </section>
 
         </div>
