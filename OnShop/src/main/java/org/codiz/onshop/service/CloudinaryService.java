@@ -55,14 +55,28 @@ public class CloudinaryService {
         }
     }
 
-    public boolean deleteImage(String publicId) throws IOException {
+    public boolean deleteImage(String url) throws IOException {
+        String publicId = extractPublicIdFromUrl(url);
         Map<String, Object> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        log.info("deleted successfully: " + result);
         return "ok".equals(result.get("status"));
     }
 
     private String extractPublicIdFromUrl(String url) {
-        return url.substring(url.lastIndexOf("/") + 1,url.lastIndexOf("."));
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("URL cannot be null or empty");
+        }
+
+        int lastSlashIndex = url.lastIndexOf("/");
+        int lastDotIndex = url.lastIndexOf(".");
+
+        if (lastSlashIndex == -1 || lastDotIndex == -1 || lastSlashIndex >= lastDotIndex) {
+            throw new IllegalArgumentException("Invalid URL format: " + url);
+        }
+
+        return url.substring(lastSlashIndex + 1, lastDotIndex);
     }
+
 
     public byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {

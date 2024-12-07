@@ -174,7 +174,7 @@ public class ProductsController {
     }
 
     @DeleteMapping("/delete-category")
-    public ResponseEntity<String> deleteCategory(String categoryId){
+    public ResponseEntity<String> deleteCategory(@RequestParam String categoryId) throws IOException {
         return ResponseEntity.ok(productsService.deleteCategory(categoryId));
     }
 

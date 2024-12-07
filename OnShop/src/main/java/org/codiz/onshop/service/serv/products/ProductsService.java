@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -29,7 +30,7 @@ public interface ProductsService {
     EntityResponse createCategory(String categoryNames, MultipartFile uploads);
     EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads);
     List<CategoryResponse> findAllCategories();
-    String deleteCategory(String categoryId);
+    String deleteCategory(String categoryId) throws IOException;
     Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus, String categoryName,Float price1, Float price2, Pageable pageable );
     String addToWishList(String specificProductId, String userId);
     String deleteWishListItem(String userId, List<String> specificProductIds);

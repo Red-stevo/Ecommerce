@@ -22,7 +22,7 @@ public class Categories {
 
     @ManyToMany(mappedBy = "categoriesList", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //@OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
+    //@JsonBackReference
     @JsonIgnore
     @ToString.Exclude
     private List<Products> products;

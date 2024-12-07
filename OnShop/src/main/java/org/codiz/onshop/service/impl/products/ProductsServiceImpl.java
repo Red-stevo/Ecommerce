@@ -122,9 +122,13 @@ public class ProductsServiceImpl implements ProductsService {
         return responses;
     }
 
-    public String deleteCategory(String categoryId) {
-
-        Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+    public String deleteCategory(String categoryId) throws IOException {
+        log.info("service to delete category");
+        Categories categories = categoriesRepository.findCategoriesByCategoryId(categoryId);
+        if (categories == null) {
+            throw new EntityNotFoundException();
+        }
+        cloudinaryService.deleteImage(categories.getCategoryIcon());
         categoriesRepository.delete(categories);
 
         return "category deleted successfully";
