@@ -1,19 +1,21 @@
 .payment-page {
     width: 100%;
     min-height: 100vh;
-    padding: 20px 20px 40px 20px;
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 30px;
     font-family: Montserrat, Montserr, "Noto Sans", sans-serif;
 }
 
-.payment-page-location-section {
+.payment-page-location-section, .payment-page-pay-method-section, .payment-page-products-section {
     width: 100%;
     margin-top: 15px;
     display: flex;
     flex-direction: column;
     background-color: rgba(234, 146, 53, 0.11);
-    padding: 7px 15% 10px;
+    padding: 20px;
     box-shadow: 2px 4px 6px rgba(239, 189, 236, 0.67);
-    border: 10px;
+    border-radius: 10px;
 }
 
 .payment-page-location-section-title {
@@ -22,7 +24,9 @@
     justify-content: space-between;
 }
 
-.payment-page-location-section-shipping {
+.payment-page-location-section-shipping,
+.payment-page-pay-method-section-title,
+.payment-page-products-section-product-title-count {
     font-weight: 600;
     font-size: 24px;
 }
@@ -72,6 +76,84 @@
     font-weight: 400;
     font-size: 16px;
 }
+
+
+.payment-page-pay-method-section-mpesa-icon {
+    width: 150px;
+    height: 90px;
+}
+
+.payment-page-pay-method-section-number-icon {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.payment-page-pay-method-section-number {
+    width: 240px;
+    height: 50px;
+}
+
+.payment-page-pay-method-section-number-input {
+    width: 240px;
+}
+
+.country-code {
+    height: 50px;
+}
+
+.payment-page-pay-method-section-icon-text {
+    font-weight: 500;
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 16px;
+}
+
+.payment-page-products-section-product-image {
+    height: 100px;
+    width: 100px;
+}
+
+.payment-page-products-section-product {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.payment-page-products-section-product-name {
+    width: 60%;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Montserr Montserrat sans-serif;
+}
+
+.payment-page-products-section-products {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 13px;
+}
+
+.payment-page-products-section-product-price-count {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-page-products-section-product-price {
+    color: #3a20b7;
+}
+
+.payment-page-products-section-product-price, .payment-page-products-section-product-count {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+
+
+
+
 
 
 
