@@ -764,7 +764,10 @@ public class ProductsServiceImpl implements ProductsService {
 
     public String addToWishList(String specificProductId, String userId){
 
-        if (usersRepository.existsByUserId(userId))
+        if (usersRepository.existsByUserId(userId)){
+
+        }
+        return null;
     }
 
 
