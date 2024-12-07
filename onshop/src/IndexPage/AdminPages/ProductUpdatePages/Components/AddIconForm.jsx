@@ -5,6 +5,8 @@ import {MdCloudUpload} from "react-icons/md";
 import FileReview from "./FileReview.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {postCategory} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
@@ -12,6 +14,7 @@ const AddIconForm= (props) => {
     const {register,
         handleSubmit,
         reset} = useForm();
+    const dispatch = useDispatch();
 
 
     useEffect(() => {
@@ -65,13 +68,12 @@ const AddIconForm= (props) => {
     }
 
     const handleCategorySubmit = (data) => {
-        const formData = new FormData();
 
-        if (!props.editdata){
-            formData.append("filenames",JSON.stringify(data));
-            formData.append("files", iconUpload);
+        if (!props.editdata) {
+            const categoryData =
+                {categoryName:data.categoryName, file:iconUpload}
 
-            console.log(formData);
+            dispatch(postCategory(categoryData));
         }
     }
 

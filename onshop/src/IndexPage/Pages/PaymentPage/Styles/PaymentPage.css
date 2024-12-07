@@ -345,6 +345,7 @@
 
     .payment-page-pay-method-section-number-input {
         width: 240px;
+        font-size: 12px;
     }
 
     .payment-page-products-section-product-price, .payment-page-products-section-product-count {
