@@ -13,6 +13,7 @@ import org.codiz.onshop.entities.products.InventoryStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface ProductsService {
     String deleteProduct(String productId);
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
-    EntityResponse createCategory(List<String> categoryNames, List<FileUploads> uploads);
+    EntityResponse createCategory(String categoryNames, MultipartFile uploads);
     EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads);
     List<Categories> findAllCategories();
     String deleteCategory(String categoryId);

@@ -2,10 +2,18 @@ package org.codiz.onshop.entities.users;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.codiz.onshop.entities.messaging.InAppNotifications;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
-public class Users {
+public class Users implements UserDetails {
 
 
     @Id
@@ -20,6 +28,10 @@ public class Users {
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private UserProfiles profile;
 
+    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "notificationId")
+    private List<InAppNotifications> notificationsList = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         profile = new UserProfiles();
@@ -32,4 +44,28 @@ public class Users {
     }
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }
