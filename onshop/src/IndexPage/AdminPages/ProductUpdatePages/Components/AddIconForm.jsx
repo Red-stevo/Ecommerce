@@ -5,8 +5,9 @@ import {MdCloudUpload} from "react-icons/md";
 import FileReview from "./FileReview.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {postCategory} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import Loader from "../../../../Loading/Loader.jsx";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
@@ -15,6 +16,7 @@ const AddIconForm= (props) => {
         handleSubmit,
         reset} = useForm();
     const dispatch = useDispatch();
+    const {errorMessage, loading, success} = useSelector(state => state. CategoriesReducer);
 
 
     useEffect(() => {
@@ -74,15 +76,18 @@ const AddIconForm= (props) => {
                 {categoryName:data.categoryName, file:iconUpload}
 
             dispatch(postCategory(categoryData));
+
+            /*Clean up states*/
+            reset({categoryName : "",});
+            setIconPreview([]);
+            setIconUpload(null)
         }
     }
 
 
 
-
-
     return (
-        <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
+        <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered  className={"modal-pop"}>
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                     Add Product Icon
@@ -122,6 +127,8 @@ const AddIconForm= (props) => {
                     </Button>
                 </div>
             </Modal.Footer>
+
+            {loading && <Loader />}
         </Modal>
     );
 }
