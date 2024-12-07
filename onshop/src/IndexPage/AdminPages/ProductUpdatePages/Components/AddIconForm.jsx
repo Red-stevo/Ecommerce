@@ -1,13 +1,30 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {Form, FormGroup} from "react-bootstrap";
+import {Form, FormGroup, Image} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
 import FileReview from "./FileReview.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
     const [iconPreview, setIconPreview] = useState([]);
+    const {register,
+        handleSubmit,
+        reset} = useForm();
+
+
+    useEffect(() => {
+
+        if (props.show === true){
+            if (props.editdata) reset({categoryName:props.editdata.categoryName});
+
+            else reset({categoryName:""});
+
+        }
+
+
+    }, [props]);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -47,6 +64,17 @@ const AddIconForm= (props) => {
         setIconPreview([]);
     }
 
+    const handleCategorySubmit = (data) => {
+        const formData = new FormData();
+
+        if (!props.editdata){
+            formData.append("filenames",JSON.stringify(data));
+            formData.append("files", iconUpload);
+
+            console.log(formData);
+        }
+    }
+
 
 
 
@@ -62,7 +90,8 @@ const AddIconForm= (props) => {
                 <Form className={"user-details-form"}>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Category Name"} type={"text"}/>
+                        <input className={"form-control"} placeholder={"Category Name"} type={"text"}
+                               {...register("categoryName")} />
                     </FormGroup>
 
                     <div className={"images-review"}>
@@ -75,14 +104,21 @@ const AddIconForm= (props) => {
                                 type="file" multiple={true} accept="image/*" id="fileUpload"
                                 className="file-input-filled"/>
                         </>
+
+
+                        {props.editdata && <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
+
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
                     </div>
-
-
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <div className={"category-form-buttons"}>
+                    {props.editdata && <Button className={"app-button"}>Delete</Button>}
+                    <Button onClick={handleSubmit(handleCategorySubmit)} className={"app-button"}>
+                        {props.editdata ? "Update" : "Add"}
+                    </Button>
+                </div>
             </Modal.Footer>
         </Modal>
     );

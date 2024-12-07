@@ -14,6 +14,18 @@ const categories = [
 
 const ProductCategories = () => {
     const [modalShow, setModalShow] = useState(false);
+    const [editData, setEditData] = useState(null);
+
+
+    const handleEditCategory = (categoryName,categoryIcon) => {
+           setEditData({categoryName, categoryIcon});
+           setModalShow(prevState => !prevState);
+    }
+
+    const  handleAddCategory = () => {
+        setEditData(null);
+        setModalShow(prevState => !prevState);
+    }
 
     return (
         <div className={"product-categories-page"}>
@@ -31,7 +43,8 @@ const ProductCategories = () => {
                         <div key={categoryId} className={"icon-content"}>
                             <Image className={"category-icon-image"} src={categoryIcon} />
                             <span className={"category-name-display"}>{categoryName}</span>
-                            <GrFormEdit className={"edit-category-icon"} onClick={() => setModalShow(true)} />
+                            <GrFormEdit className={"edit-category-icon"}
+                                        onClick = {() => handleEditCategory(categoryName,categoryIcon, categoryId)} />
                         </div>
                     ))}
 
@@ -42,7 +55,8 @@ const ProductCategories = () => {
 
             </section>
 
-            <AddIconForm show={modalShow} onHide={() => setModalShow(false)}/>
+            <AddIconForm editdata={editData} show={modalShow}
+                         onHide={handleAddCategory}/>
         </div>
     );
 };
