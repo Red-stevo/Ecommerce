@@ -2,8 +2,12 @@ import "./Styles/ProductCategories.css";
 import {Image} from "react-bootstrap";
 import {GrFormEdit} from "react-icons/gr";
 import {GoPlus} from "react-icons/go";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import AddIconForm from "./Components/AddIconForm.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {getCategories
+} from "../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 const categories = [
     {categoryId:"GF5H65",categoryName:"Electronics",categoryIcon:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn0.iconfinder.com%2Fdata%2Ficons%2Fabstract-electronics%2F64%2Fabstract_electronics-1024.png&f=1&nofb=1&ipt=cfefe1748bfabaa6ed6e7363980d9745511bd094e96a9764730bb92c9d24f101&ipo=images"},
@@ -15,7 +19,8 @@ const categories = [
 const ProductCategories = () => {
     const [modalShow, setModalShow] = useState(false);
     const [editData, setEditData] = useState(null);
-
+    const dispatch = useDispatch();
+    const {errorMessage, loading, success, categories} = useSelector(state => state.CategoriesReducer);
 
     const handleEditCategory = (categoryName,categoryIcon) => {
            setEditData({categoryName, categoryIcon});
@@ -26,6 +31,12 @@ const ProductCategories = () => {
         setEditData(null);
         setModalShow(prevState => !prevState);
     }
+
+    /*Load categories*/
+    useEffect(() => {
+        dispatch(getCategories())
+    }, []);
+
 
     return (
         <div className={"product-categories-page"}>
@@ -39,7 +50,7 @@ const ProductCategories = () => {
                 </div>
 
                 <div className={"product-categories-body-contents"} >
-                    {categories.map(({categoryIcon, categoryId, categoryName}) => (
+                    {categories && categories.length > 0 && categories.map(({categoryIcon, categoryId, categoryName}) => (
                         <div key={categoryId} className={"icon-content"}>
                             <Image className={"category-icon-image"} src={categoryIcon} />
                             <span className={"category-name-display"}>{categoryName}</span>
@@ -57,6 +68,7 @@ const ProductCategories = () => {
 
             <AddIconForm editdata={editData} show={modalShow}
                          onHide={handleAddCategory}/>
+            {loading && <Loader />}
         </div>
     );
 };
