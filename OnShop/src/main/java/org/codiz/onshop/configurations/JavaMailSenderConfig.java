@@ -1,17 +1,16 @@
 package org.codiz.onshop.configurations;
 
-import org.modelmapper.ModelMapper;
+
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class ModelMapperConf {
+@Component
+public class JavaMailSenderConfig {
 
     @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
+    public JavaMailSender javaMailSender() {
+        return new JavaMailSenderImpl();
     }
-
 }
