@@ -1,6 +1,6 @@
 import "./Styles/PaymentPage.css";
 import {CiEdit} from "react-icons/ci";
-import {FaLocationDot} from "react-icons/fa6";
+import {PiMapPinAreaFill} from "react-icons/pi";
 
 const paymentDetails = {
     username:"Bob Mirowe",
@@ -16,17 +16,22 @@ const PaymentPage = () => {
         <div className={"payment-page"}>
 
             <section className={"payment-page-location-section"}>
+
                 <div className={"payment-page-location-section-title"}>
-                    <span>Shipping Information</span>
-                    <span>Edit </span> <CiEdit/><span/>
+                    <span className={"payment-page-location-section-shipping"} >Shipping Information</span>
+
+                    <button className={"payment-page-location-section-edit"} >Edit <CiEdit/></button>
+
                 </div>
 
                 <div className={"payment-page-location-section-address"}>
-                    <FaLocationDot />
-                    <div>
-                        <span>{username} {phoneNumber}</span>
-                        <span>Location {location}</span>
+
+                    <PiMapPinAreaFill className={"payment-page-location-section-icon"} />
+                    <div className={"payment-page-location-section-phone-location"}>
+                        <span className={"payment-page-location-section-phone"}>{username} {phoneNumber}</span>
+                        <span className={"payment-page-location-section-location"}>Location {location}</span>
                     </div>
+
                 </div>
 
 

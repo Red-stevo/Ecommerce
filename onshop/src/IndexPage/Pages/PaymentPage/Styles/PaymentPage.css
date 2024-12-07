@@ -2,9 +2,76 @@
     width: 100%;
     min-height: 100vh;
     padding: 20px 20px 40px 20px;
+    font-family: Montserrat, Montserr, "Noto Sans", sans-serif;
 }
 
 .payment-page-location-section {
     width: 100%;
     margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(234, 146, 53, 0.11);
+    padding: 7px 15% 10px;
+    box-shadow: 2px 4px 6px rgba(239, 189, 236, 0.67);
+    border: 10px;
 }
+
+.payment-page-location-section-title {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-page-location-section-shipping {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.payment-page-location-section-edit {
+    font-size: 18px;
+    background-color: transparent;
+    border: solid 1px transparent;
+    padding: 6px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.payment-page-location-section-edit:hover {
+    font-size: 18px;
+    border: solid 1px #9b5505;
+}
+
+.payment-page-location-section-edit:active {
+    background-color: rgba(234, 146, 53, 0.12);
+}
+
+.payment-page-location-section-address {
+    width: 100%;
+    display: flex;
+    gap: 4px;
+}
+
+.payment-page-location-section-icon {
+    font-size: 42px;
+    align-self: center;
+}
+
+.payment-page-location-section-phone-location {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-page-location-section-phone, .payment-page-location-section-location {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.payment-page-location-section-location {
+    font-weight: 400;
+    font-size: 16px;
+}
+
+
+
