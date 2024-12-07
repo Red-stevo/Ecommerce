@@ -8,10 +8,7 @@ import org.codiz.onshop.dtos.requests.CategoryCreationRequest;
 import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
-import org.codiz.onshop.dtos.response.EntityResponse;
-import org.codiz.onshop.dtos.response.InventoryResponse;
-import org.codiz.onshop.dtos.response.ProductsPageResponse;
-import org.codiz.onshop.dtos.response.SpecificProductResponse;
+import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.Categories;
 import org.codiz.onshop.entities.products.InventoryStatus;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -147,7 +144,7 @@ public class ProductsController {
 
 
     @GetMapping("/categories")
-    public ResponseEntity<List<Categories>> findAllCategories(){
+    public ResponseEntity<List<CategoryResponse>> findAllCategories(){
         return ResponseEntity.ok(productsService.findAllCategories());
     }
 
@@ -197,5 +194,20 @@ public class ProductsController {
 
         return ResponseEntity.ok(model);
 
+    }
+
+    @DeleteMapping("/delete-wishlist")
+    public ResponseEntity<String> deleteWishListItem(@RequestParam String userId, @RequestParam List<String> specificProductIds){
+        return ResponseEntity.ok().body(productsService.deleteWishListItem(userId,specificProductIds));
+    }
+
+    @PostMapping("/add-to-wishlist")
+    public ResponseEntity<String> addToWishList(@RequestParam String specificProductId, @RequestParam String userId){
+        return ResponseEntity.ok().body(productsService.addToWishList(specificProductId,userId));
+    }
+
+    @GetMapping("/show-wishlist")
+    public ResponseEntity<List<WishListResponse>> getWishList(String userId){
+        return ResponseEntity.ok(productsService.getWishList(userId));
     }
 }
