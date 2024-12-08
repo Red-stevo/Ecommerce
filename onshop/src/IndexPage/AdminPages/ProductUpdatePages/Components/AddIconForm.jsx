@@ -8,7 +8,6 @@ import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {postCategory} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 import Loader from "../../../../Loading/Loader.jsx";
-import {IoIosClose} from "react-icons/io";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
@@ -29,6 +28,10 @@ const AddIconForm= (props) => {
         }
 
     }, [props]);
+
+    useEffect(() => {
+        if (iconPreview.length === 0)setIconUpload(null);
+    }, [iconPreview]);
 
 
     const handleFileChange = (event) => {
@@ -72,8 +75,7 @@ const AddIconForm= (props) => {
     const handleCategorySubmit = (data) => {
 
         if (!props.editdata) {
-            const categoryData =
-                {categoryName:data.categoryName, file:iconUpload}
+            const categoryData = {categoryName:data.categoryName, file:iconUpload}
 
             dispatch(postCategory(categoryData));
 
@@ -81,6 +83,16 @@ const AddIconForm= (props) => {
             reset({categoryName : "",});
             setIconPreview([]);
             setIconUpload(null)
+        }else {
+            const updateCategoryData = {categoryName: "", categoryIcon:null}
+
+            if (iconUpload){
+                updateCategoryData.categoryName = data.categoryName;
+                updateCategoryData.categoryIcon = iconUpload;
+            }else updateCategoryData.categoryName = data.categoryName;
+
+            console.log(updateCategoryData);
+
         }
     }
 
@@ -113,10 +125,14 @@ const AddIconForm= (props) => {
                         </>
 
 
-                        {props.editdata && <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
+                        {props.editdata && iconPreview.length === 0 &&
+                            <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
+
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
                     </div>
+
                 </Form>
+
             </Modal.Body>
             <Modal.Footer>
                 <div className={"category-form-buttons"}>
