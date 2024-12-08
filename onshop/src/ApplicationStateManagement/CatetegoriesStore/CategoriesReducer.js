@@ -45,6 +45,31 @@ export const getCategories = createAsyncThunk("new-category/get-categories",
     }
 );
 
+
+export const putCategories = createAsyncThunk("new-category/put-categories",
+    async (updateCategoryData = null,
+           {fulfillWithValue,
+               rejectWithValue
+           }) => {
+
+    const formData = new FormData();
+
+    formData.append("fileUploads", updateCategoryData.categoryIcon);
+
+
+        /*Axios request to save category.*/
+        try {
+            return fulfillWithValue(
+                (await RequestsConfig.put(
+`/admin/products/update-categories?categoryId=${updateCategoryData.categoryId}&categoryName=${updateCategoryData.categoryName}`
+                    , formData, {headers:{'Content-Type':'application/x-www-form-urlencoded'}})).data);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    }
+);
+
+
 export const CategoriesReducer = createSlice(
     {
         name:"new-category",
@@ -54,6 +79,7 @@ export const CategoriesReducer = createSlice(
             builder
                 .addCase(postCategory.pending, (state) => {
                     state.loading = true;
+                    state.success = null;
                 })
                 .addCase(postCategory.fulfilled, (state) => {
                     state.success = true;
@@ -66,16 +92,33 @@ export const CategoriesReducer = createSlice(
                 })
                 .addCase(getCategories.pending, (state) => {
                     state.loading = true;
+                    state.success = null;
+                    state.errorMessage = null;
                 })
                 .addCase(getCategories.fulfilled, (state, action) => {
                     state.categories = action.payload;
-                    state.success = true;
                     state.loading = false;
+                    state.errorMessage = null;
                 })
                 .addCase(getCategories.rejected, (state, action) => {
                     state.success = null;
                     state.loading = false;
-                    state.errorMessage = action.payload ? action.payload : "Error Posting Products.";
+                    state.errorMessage = action.payload ? action.payload : "Error fetching Products.";
+                })
+                .addCase(putCategories.pending, (state) => {
+                    state.loading = true;
+                    state.success = null;
+                    state.errorMessage = null;
+                })
+                .addCase(putCategories.fulfilled, (state) => {
+                    state.success = true;
+                    state.loading = false;
+                    state.errorMessage = null;
+                })
+                .addCase(putCategories.rejected, (state, action) => {
+                    state.success = null;
+                    state.loading = false;
+                    state.errorMessage = action.payload ? action.payload : "Error updating Products.";
                 });
         }
     }

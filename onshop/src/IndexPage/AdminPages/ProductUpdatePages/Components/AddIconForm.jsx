@@ -6,7 +6,10 @@ import FileReview from "./FileReview.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {postCategory} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import {
+    postCategory,
+    putCategories
+} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 import Loader from "../../../../Loading/Loader.jsx";
 
 const AddIconForm= (props) => {
@@ -17,6 +20,7 @@ const AddIconForm= (props) => {
         reset} = useForm();
     const dispatch = useDispatch();
     const {errorMessage, loading, success} = useSelector(state => state. CategoriesReducer);
+    const [hide, setHide] = useState(false);
 
     useEffect(() => {
 
@@ -75,7 +79,10 @@ const AddIconForm= (props) => {
     const handleCategorySubmit = (data) => {
 
         if (!props.editdata) {
-            const categoryData = {categoryName:data.categoryName, file:iconUpload}
+
+            const categoryData = {
+                categoryName:data.categoryName, file:iconUpload,
+            }
 
             dispatch(postCategory(categoryData));
 
@@ -84,19 +91,22 @@ const AddIconForm= (props) => {
             setIconPreview([]);
             setIconUpload(null)
         }else {
-            const updateCategoryData = {categoryName: "", categoryIcon:null}
+            const updateCategoryData = {categoryName: "", categoryIcon:null, categoryId:props.editdata.categoryId}
 
             if (iconUpload){
                 updateCategoryData.categoryName = data.categoryName;
                 updateCategoryData.categoryIcon = iconUpload;
             }else updateCategoryData.categoryName = data.categoryName;
 
-            console.log(updateCategoryData);
+            dispatch(putCategories(updateCategoryData));
 
+            /*Clean up states*/
+            reset({categoryName : "",});
+            setIconPreview([]);
+            setIconUpload(null);
+            setHide(true);
         }
     }
-
-
 
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered  className={"modal-pop"}>
@@ -125,7 +135,7 @@ const AddIconForm= (props) => {
                         </>
 
 
-                        {props.editdata && iconPreview.length === 0 &&
+                        {props.editdata && iconPreview.length === 0 && !hide &&
                             <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
 
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
