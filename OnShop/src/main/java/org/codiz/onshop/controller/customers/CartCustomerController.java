@@ -1,7 +1,6 @@
-package org.codiz.onshop.controller;
+package org.codiz.onshop.controller.customers;
 
 import lombok.RequiredArgsConstructor;
-import org.codiz.onshop.dtos.requests.CartItemsDeletion;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.requests.CartItemsUpdate;
 import org.codiz.onshop.dtos.response.CartResponse;
@@ -14,13 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/cart")
+@RequestMapping("/api/v1/customer/cart")
 @CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
-public class CartController {
+public class CartCustomerController {
 
     private final CartService cartService;
 

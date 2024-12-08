@@ -1,0 +1,48 @@
+package org.codiz.onshop.controller.open;
+
+import lombok.AllArgsConstructor;
+import org.codiz.onshop.dtos.response.CategoryResponse;
+import org.codiz.onshop.dtos.response.ProductsPageResponse;
+import org.codiz.onshop.dtos.response.SpecificProductResponse;
+import org.codiz.onshop.service.serv.products.ProductsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("api/v1/open/products")
+public class OpenProductsController {
+    private final ProductsService productsService;
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryResponse>> findAllCategories(){
+        return ResponseEntity.ok(productsService.findAllCategories());
+    }
+
+    @GetMapping("/get-products-page")
+    public ResponseEntity<PagedModel<EntityModel<ProductsPageResponse>>> getProducts(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            PagedResourcesAssembler<ProductsPageResponse> assembler) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductsPageResponse> productsPageResponse = productsService.productsPageResponseList(pageable);
+        PagedModel<EntityModel<ProductsPageResponse>> pagedModel = assembler.toModel(productsPageResponse);
+        return ResponseEntity.ok(pagedModel);
+    }
+
+    @GetMapping("/get/{productId}")
+    public ResponseEntity<SpecificProductResponse> getProductById
+            (@PathVariable String productId) {
+
+        return ResponseEntity.ok(productsService.specificProductResponse(productId));
+    }
+}
