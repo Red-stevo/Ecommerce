@@ -90,6 +90,23 @@
     height: 100vh;
 }
 
+.preview-image-holder {
+    position: relative;
+}
+
+.remove-image {
+    position: absolute;
+    cursor: pointer;
+    color: red;
+    font-size: 28px;
+    right: 0;
+    top: 0;
+    z-index: 50;
+}
+
+.hide {
+    display: none;
+}
 
 @media screen and (max-device-width: 370px) {
     .product-categories-body-header-icon, .product-categories-body-header-category {

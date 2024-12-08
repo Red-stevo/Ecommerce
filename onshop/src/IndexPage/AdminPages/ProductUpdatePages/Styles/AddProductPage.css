@@ -70,6 +70,7 @@
     margin:5px;
     width: 60px;
     height: 60px;
+    position: relative;
 }
 
 .preview-holder {
@@ -101,9 +102,12 @@
 }
 
 .cancel-categories {
+    position: absolute;
     cursor: pointer;
-    font-weight: bolder;
-    font-size: 14px;
+    font-size: 28px;
+    right: 0;
+    top: 0;
+    color: red;
 }
 
 .categories-preview-holder {
@@ -114,6 +118,7 @@
 
 .preview-image-video {
     display: flex;
+    position: relative;
 }
 
 .submit-buttons {

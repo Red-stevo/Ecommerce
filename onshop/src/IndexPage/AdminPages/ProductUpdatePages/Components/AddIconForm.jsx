@@ -8,6 +8,7 @@ import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {postCategory} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 import Loader from "../../../../Loading/Loader.jsx";
+import {IoIosClose} from "react-icons/io";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
@@ -18,7 +19,6 @@ const AddIconForm= (props) => {
     const dispatch = useDispatch();
     const {errorMessage, loading, success} = useSelector(state => state. CategoriesReducer);
 
-
     useEffect(() => {
 
         if (props.show === true){
@@ -28,8 +28,8 @@ const AddIconForm= (props) => {
 
         }
 
-
     }, [props]);
+
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -114,7 +114,6 @@ const AddIconForm= (props) => {
 
 
                         {props.editdata && <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
-
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
                     </div>
                 </Form>

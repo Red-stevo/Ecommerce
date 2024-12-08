@@ -21,7 +21,7 @@ export const postCategory = createAsyncThunk("new-category/create",
 
         /*Axios request to save category.*/
         try {
-            await RequestsConfig.post(`/products/create-category?filenames=${categoryData.categoryName}`, files,
+            await RequestsConfig.post(`/admin/products/create-category?filenames=${categoryData.categoryName}`, files,
                 {headers:{'Content-Type': 'application/x-www-form-urlencoded'}});
             return fulfillWithValue(true);
         }catch (e){
@@ -38,7 +38,7 @@ export const getCategories = createAsyncThunk("new-category/get-categories",
 
         /*Axios request to save category.*/
         try {
-            return fulfillWithValue((await RequestsConfig.get(`/products/categories`)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/admin/products/categories`)).data);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
         }
