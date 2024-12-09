@@ -63,19 +63,18 @@ const newProductReducer = createSlice(
         reducers:{},
         extraReducers: builder => {
             builder
-                .addCase(postProduct.pending, (state) => {
+            .addCase(postProduct.pending, (state) => {
                 state.loading = true;
             })
-
-                .addCase(postProduct.fulfilled, (state) => {
-                    state.success = true;
-                    state.loading = false;
-                })
-                .addCase(postProduct.rejected, (state, action) => {
-                    state.success = null;
-                    state.loading = false;
-                    state.errorMessage = action.payload ? action.payload : "Error Posting Products.";
-                });
+            .addCase(postProduct.fulfilled, (state) => {
+                state.success = true;
+                state.loading = false;
+            })
+            .addCase(postProduct.rejected, (state, action) => {
+                state.success = null;
+                state.loading = false;
+                state.errorMessage = action.payload ? action.payload : "Error Posting Products.";
+            });
         }
     }
 );

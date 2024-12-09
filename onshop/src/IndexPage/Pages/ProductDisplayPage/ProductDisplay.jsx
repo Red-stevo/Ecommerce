@@ -27,7 +27,7 @@ const ProductDisplay = () => {
     // Fetch products on component mount
     useEffect(() => {
         dispatch(getProductDetails(null));
-    }, [dispatch]);
+    }, []);
 
     // Extract unique sizes
     const sizes = useMemo(() => {

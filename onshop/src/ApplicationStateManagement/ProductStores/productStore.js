@@ -1,4 +1,5 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import {RequestsConfig} from "../RequestsConfig.js";
 
 const product = {
     productName:"J4 cactus jack sneakers",
@@ -236,7 +237,7 @@ const productStoreAdapter = createEntityAdapter();
 export const getProductDetails = createAsyncThunk("product/get-product",
     async (productId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
-            return fulfillWithValue();
+            return fulfillWithValue((await RequestsConfig.get(`open/products/get/${productId}`)).data);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
