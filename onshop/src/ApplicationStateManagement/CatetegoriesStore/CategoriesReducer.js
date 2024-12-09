@@ -70,6 +70,24 @@ export const putCategories = createAsyncThunk("new-category/put-categories",
 );
 
 
+
+export const deleteCategories = createAsyncThunk("new-category/delete-categories",
+    async (categoryId = null,
+           {fulfillWithValue,
+               rejectWithValue
+           }) => {
+
+        /*Axios request to save category.*/
+        try {
+            await RequestsConfig.delete(`/admin/products/delete-category?categoryId=${categoryId}`);
+            return fulfillWithValue(true);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    }
+);
+
+
 export const CategoriesReducer = createSlice(
     {
         name:"new-category",
@@ -119,9 +137,23 @@ export const CategoriesReducer = createSlice(
                     state.success = null;
                     state.loading = false;
                     state.errorMessage = action.payload ? action.payload : "Error updating Products.";
+                })
+                .addCase(deleteCategories.pending, (state) => {
+                    state.loading = true;
+                    state.success = null;
+                    state.errorMessage = null;
+                })
+                .addCase(deleteCategories.fulfilled, (state) => {
+                    state.success = true;
+                    state.loading = false;
+                    state.errorMessage = null;
+                })
+                .addCase(deleteCategories.rejected, (state, action) => {
+                    state.success = null;
+                    state.loading = false;
+                    state.errorMessage = action.payload ? action.payload : "Error Deleting Products.";
                 });
         }
     }
 );
-
 

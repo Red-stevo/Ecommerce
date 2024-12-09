@@ -17,7 +17,7 @@ const ProductCategories = () => {
     const {errorMessage, loading, success, categories} = useSelector(state => state.CategoriesReducer);
 
     const handleEditCategory = (categoryName,categoryIcon, categoryId) => {
-           setEditData({categoryName, categoryIcon, categoryId});
+           setEditData({categoryName, categoryIcon, categoryId,setModalShow});
            setModalShow(prevState => !prevState);
     }
 
