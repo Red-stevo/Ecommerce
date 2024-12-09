@@ -7,7 +7,7 @@ const  initialState = newProductAdapter.getInitialState({
     success:null,
     loading:false,
     errorMessage:null
-})
+});
 
 export const postProduct = createAsyncThunk("new-product/create",
     async (productData= null,
