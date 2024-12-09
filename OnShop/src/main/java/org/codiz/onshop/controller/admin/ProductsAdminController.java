@@ -105,10 +105,9 @@ public class ProductsAdminController {
     public ResponseEntity<EntityResponse> updateCategory(
             @RequestParam String categoryId,
             @RequestParam String categoryName,
-            @RequestPart  MultipartFile fileUploads) throws IOException {
-        FileUploads uploads = new FileUploads(fileUploads.getOriginalFilename(),fileUploads.getBytes());
+            @RequestPart(required = false)  MultipartFile fileUploads) throws IOException {
 
-        return ResponseEntity.ok().body(productsService.updateCategory(categoryId,categoryName,uploads));
+        return ResponseEntity.ok(productsService.updateCategory(categoryId,categoryName,fileUploads));
     }
 
 

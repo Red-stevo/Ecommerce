@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.dtos.requests.*;
@@ -78,7 +80,7 @@ public class ProductsServiceImpl implements ProductsService {
             entityResponse.setStatus(HttpStatus.OK);
             return entityResponse;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ResourceCreationFailedException("could not create category");
         }
 
 
@@ -86,52 +88,67 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Transactional
-    public EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads) {
-        Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
-        categories.setCategoryName(categoryName);
-        if (fileUploads != null) {
-            //cloudinaryService.deleteImage()
-            String url = cloudinaryService.uploadImage(fileUploads);
-            categories.setCategoryIcon(url);
+    public EntityResponse updateCategory(String categoryId,String categoryName, MultipartFile fileUploads) throws IOException {
+        try {
+            Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+            categories.setCategoryName(categoryName);
+            if (fileUploads != null) {
+                cloudinaryService.deleteImage(categories.getCategoryIcon());
+                //cloudinaryService.deleteImage()
+                FileUploads uploads = new FileUploads(fileUploads.getOriginalFilename(),fileUploads.getBytes());
+                String url = cloudinaryService.uploadImage(uploads);
+
+                categories.setCategoryIcon(url);
+            }
+            categoriesRepository.save(categories);
+            EntityResponse entityResponse = new EntityResponse();
+            entityResponse.setMessage("Category updated successfully");
+            entityResponse.setCreatedAt(Timestamp.from(Instant.now()));
+            entityResponse.setStatus(HttpStatus.OK);
+            return entityResponse;
+        }catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("could not update category");
         }
-        categoriesRepository.save(categories);
-        EntityResponse entityResponse = new EntityResponse();
-        entityResponse.setMessage("Category updated successfully");
-        entityResponse.setCreatedAt(Timestamp.from(Instant.now()));
-        entityResponse.setStatus(HttpStatus.OK);
-        return entityResponse;
     }
 
 
     public List<CategoryResponse> findAllCategories(){
-        List<CategoryResponse> responses = new ArrayList<>();
+        try {
+            List<CategoryResponse> responses = new ArrayList<>();
         /*log.info("hahaha");
         Optional<Categories> cats = categoriesRepository.findAll().stream().findAny();
         log.info("hahaha");
         System.out.println(cats);*/
 
-        for (Categories categories : categoriesRepository.findAll()) {
-            System.out.println(categories);
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setCategoryName(categories.getCategoryName());
-            categoryResponse.setCategoryId(categories.getCategoryId());
-            categoryResponse.setCategoryIcon(categories.getCategoryIcon());
-            responses.add(categoryResponse);
+            for (Categories categories : categoriesRepository.findAll()) {
+                System.out.println(categories);
+                CategoryResponse categoryResponse = new CategoryResponse();
+                categoryResponse.setCategoryName(categories.getCategoryName());
+                categoryResponse.setCategoryId(categories.getCategoryId());
+                categoryResponse.setCategoryIcon(categories.getCategoryIcon());
+                responses.add(categoryResponse);
+            }
+            System.out.println(responses);
+            return responses;
+        }catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("could not find all categories");
         }
-        System.out.println(responses);
-        return responses;
     }
 
     public String deleteCategory(String categoryId) throws IOException {
-        log.info("service to delete category");
-        Categories categories = categoriesRepository.findCategoriesByCategoryId(categoryId);
-        if (categories == null) {
-            throw new EntityNotFoundException();
-        }
-        cloudinaryService.deleteImage(categories.getCategoryIcon());
-        categoriesRepository.delete(categories);
+       try {
+           log.info("service to delete category");
+           Categories categories = categoriesRepository.findCategoriesByCategoryId(categoryId);
+           if (categories == null) {
+               throw new EntityNotFoundException();
+           }
+           cloudinaryService.deleteImage(categories.getCategoryIcon());
+           categoriesRepository.delete(categories);
 
-        return "category deleted successfully";
+           return "category deleted successfully";
+       }catch (EntityDeletionException e) {
+           throw new EntityDeletionException("could not delete the category "+e.getMessage());
+       }
     }
 
 
@@ -206,42 +223,46 @@ public class ProductsServiceImpl implements ProductsService {
 
         } catch (Exception e) {
             log.error("Error during product creation: " + e.getMessage(), e);
-            throw new RuntimeException("Error during product creation", e);
+            throw new ResourceCreationFailedException("Error during product creation "+ e.getMessage());
         }
     }
 
     @Transactional
     @Cacheable(value = "products", unless = "#result == null || #result.isEmpty()")
     public Page<ProductsPageResponse> searchProducts(String query, Pageable pageable) {
-        Page<Products> productPage = productsRepository
-                .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable);
+        try {
+            Page<Products> productPage = productsRepository
+                    .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable);
 
-        Page<Categories> categoryPage = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(query, pageable);
+            Page<Categories> categoryPage = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(query, pageable);
 
-        List<Products> categoryProducts = categoryPage.getContent().stream()
-                .flatMap(category -> category.getProducts().stream())
-                .toList();
-
-
-
-        List<Products> combinedResults = Stream.concat(
-                productPage.getContent().stream(),
-                categoryProducts.stream()
-        ).distinct().toList();
+            List<Products> categoryProducts = categoryPage.getContent().stream()
+                    .flatMap(category -> category.getProducts().stream())
+                    .toList();
 
 
 
-        List<ProductsPageResponse> responseList = combinedResults.stream()
-                .map(this::mapToProductsPageResponse)
-                .toList();
+            List<Products> combinedResults = Stream.concat(
+                    productPage.getContent().stream(),
+                    categoryProducts.stream()
+            ).distinct().toList();
 
-        // Paginate combined results
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), responseList.size());
 
-        List<ProductsPageResponse> paginatedList = responseList.subList(start, end);
 
-        return new PageImpl<>(paginatedList, pageable, responseList.size());
+            List<ProductsPageResponse> responseList = combinedResults.stream()
+                    .map(this::mapToProductsPageResponse)
+                    .toList();
+
+            // Paginate combined results
+            int start = (int) pageable.getOffset();
+            int end = Math.min(start + pageable.getPageSize(), responseList.size());
+
+            List<ProductsPageResponse> paginatedList = responseList.subList(start, end);
+
+            return new PageImpl<>(paginatedList, pageable, responseList.size());
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get the product");
+        }
     }
 
     private ProductsPageResponse mapToProductsPageResponse(Products product) {
@@ -281,25 +302,29 @@ public class ProductsServiceImpl implements ProductsService {
     @Transactional
     @CacheEvict(value = "products", allEntries = true)
     public EntityResponse addRating(RatingsRequest rating) {
-        Products product = productsRepository.findById(rating.getProductId())
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        try{
+            Products product = productsRepository.findById(rating.getProductId())
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-        Users users = usersRepository.findUsersByUserId(rating.getUserId());
+            Users users = usersRepository.findUsersByUserId(rating.getUserId());
 
-        ProductRatings productRating = new ProductRatings();
-        productRating.setProduct(product);
-        productRating.setUser(users);
-        productRating.setRating(rating.getRating());
-        productRating.setReview(rating.getComment());
+            ProductRatings productRating = new ProductRatings();
+            productRating.setProduct(product);
+            productRating.setUser(users);
+            productRating.setRating(rating.getRating());
+            productRating.setReview(rating.getComment());
 
-        ratingsRepository.save(productRating);
+            ratingsRepository.save(productRating);
 
-        EntityResponse response = new EntityResponse();
-        response.setMessage("Successfully rated the product");
-        response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        response.setStatus(HttpStatus.OK);
+            EntityResponse response = new EntityResponse();
+            response.setMessage("Successfully rated the product");
+            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            response.setStatus(HttpStatus.OK);
 
-        return response;
+            return response;
+        }catch (Exception e){
+            throw new ResourceCreationFailedException("could not add rating");
+        }
     }
 
 
@@ -313,37 +338,41 @@ public class ProductsServiceImpl implements ProductsService {
     @Transactional
     //@Cacheable(value = "products")
     public Page<ProductsPageResponse> productsPageResponseList(Pageable pageable) {
-        Page<Products> products = productsRepository.findAll(pageable);
+        try {
+            Page<Products> products = productsRepository.findAll(pageable);
 
-        List<ProductsPageResponse> productsPageResponses = new ArrayList<>();
+            List<ProductsPageResponse> productsPageResponses = new ArrayList<>();
 
-        for (Products product : products) {
-            ProductsPageResponse response = new ProductsPageResponse();
-            response.setProductName(product.getProductName());
-            response.setProductId(product.getProductId());
+            for (Products product : products) {
+                ProductsPageResponse response = new ProductsPageResponse();
+                response.setProductName(product.getProductName());
+                response.setProductId(product.getProductId());
 
-            for (SpecificProductDetails details : product.getSpecificProductDetailsList()){
-                double discount = details.getDiscount();
-                double productPrice = details.getProductPrice();
-                double price = productPrice - discount;
-                response.setDiscountedPrice(price);
+                for (SpecificProductDetails details : product.getSpecificProductDetailsList()){
+                    double discount = details.getDiscount();
+                    double productPrice = details.getProductPrice();
+                    double price = productPrice - discount;
+                    response.setDiscountedPrice(price);
 
-                if (details.getProductImagesList() != null && !details.getProductImagesList().isEmpty()) {
-                    response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
+                    if (details.getProductImagesList() != null && !details.getProductImagesList().isEmpty()) {
+                        response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
+                    }
                 }
+
+
+                response.setRatings(getAverageRating(product.getProductId()));
+                productsPageResponses.add(response);
             }
 
+            int start = (int) pageable.getOffset();
+            int end = Math.min(start + pageable.getPageSize(), productsPageResponses.size());
 
-            response.setRatings(getAverageRating(product.getProductId()));
-            productsPageResponses.add(response);
+            List<ProductsPageResponse> paginatedList = productsPageResponses.subList(start, end);
+
+            return new PageImpl<>(paginatedList, pageable, productsPageResponses.size());
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get the products");
         }
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), productsPageResponses.size());
-
-        List<ProductsPageResponse> paginatedList = productsPageResponses.subList(start, end);
-
-        return new PageImpl<>(paginatedList, pageable, productsPageResponses.size());
     }
 
 
@@ -359,86 +388,87 @@ public class ProductsServiceImpl implements ProductsService {
     @Transactional
     public SpecificProductResponse specificProductResponse(String productId) {
 
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("the product does not exist")
-        );
+        try{
+            Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                    ()->new RuntimeException("the product does not exist")
+            );
 
-        SpecificProductResponse specificProductResponse = new SpecificProductResponse();
-        specificProductResponse.setProductName(products.getProductName());
-        specificProductResponse.setProductDescription(products.getProductDescription());
-        specificProductResponse.setProductPrice(products.getSpecificProductDetailsList()
-                .get(0).getProductPrice());
+            SpecificProductResponse specificProductResponse = new SpecificProductResponse();
+            specificProductResponse.setProductName(products.getProductName());
+            specificProductResponse.setProductDescription(products.getProductDescription());
+            specificProductResponse.setProductPrice(products.getSpecificProductDetailsList()
+                    .get(0).getProductPrice());
 
-        List<SpecificProductDetailsResponse> detailsList = new ArrayList<>();
-        List<Products> productsList = productsRepository.findAllByProductNameAndProductDescriptionLike(products.getProductName(),
-                products.getProductDescription());
+            List<SpecificProductDetailsResponse> detailsList = new ArrayList<>();
+            List<Products> productsList = productsRepository.findAllByProductNameAndProductDescriptionLike(products.getProductName(),
+                    products.getProductDescription());
 
-        for (Products products1 : productsList){
-            SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
-            specs.setProductId(products1.getProductId());
-            for (SpecificProductDetails details1 : products1.getSpecificProductDetailsList()){
+            for (Products products1 : productsList){
+                SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
+                specs.setProductId(products1.getProductId());
+                for (SpecificProductDetails details1 : products1.getSpecificProductDetailsList()){
 
-                specs.setProductColor(details1.getColor());
-                specs.setProductSize(details1.getSize());
-                specs.setProductCount(details1.getCount());
-                specs.setProductOldPrice(details1.getProductPrice());
-                float price = details1.getProductPrice() - details1.getDiscount();
-                specs.setProductPrice(price);
+                    specs.setProductColor(details1.getColor());
+                    specs.setProductSize(details1.getSize());
+                    specs.setProductCount(details1.getCount());
+                    specs.setProductOldPrice(details1.getProductPrice());
+                    float price = details1.getProductPrice() - details1.getDiscount();
+                    specs.setProductPrice(price);
 
-                List<String> imageUrls = new ArrayList<>();
-                for (ProductImages productImages : details1.getProductImagesList()){
-                    imageUrls.add(productImages.getImageUrl());
+                    List<String> imageUrls = new ArrayList<>();
+                    for (ProductImages productImages : details1.getProductImagesList()){
+                        imageUrls.add(productImages.getImageUrl());
+                    }
+                    specs.setProductImages(imageUrls);
+
                 }
-                specs.setProductImages(imageUrls);
+
+                detailsList.add(specs);
 
             }
+            detailsList.sort((a,b)->{
+                if (a.getProductId().equals(products.getProductId())){
+                    return -1;
+                }
+                if (b.getProductId().equals(products.getProductId())){
+                    return 1;
+                }
+                return 0;
+            });
 
-            detailsList.add(specs);
+            specificProductResponse.setProducts(detailsList);
 
-        }
-        detailsList.sort((a,b)->{
-            if (a.getProductId().equals(products.getProductId())){
-                return -1;
+
+
+            List<RelatedProducts> relatedProductsList = new ArrayList<>();
+
+            for (Categories category : products.getCategoriesList()){
+                List<Products> relatedProducts = productsRepository.findAllByProductNameContainingIgnoreCaseOrCategoriesListContainingIgnoreCase(products.getProductName(),category);
+                for (Products relatedProduct : relatedProducts) {
+                    RelatedProducts relatedProducts1 = new RelatedProducts();
+                    relatedProducts1.setProductName(relatedProduct.getProductName());
+                    relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().get(0).getProductPrice());
+                    relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().get(0)
+                            .getProductImagesList().get(0).getImageUrl());
+                    relatedProductsList.add(relatedProducts1);
+                }
             }
-            if (b.getProductId().equals(products.getProductId())){
-                return 1;
+
+
+            specificProductResponse.setRelatedProducts(relatedProductsList);
+
+            List<ProductReviews> reviewsList = new ArrayList<>();
+
+            List<ProductRatings> ratings = ratingsRepository.findAllProductRatingsByProduct(products);
+
+            for (ProductRatings ratings1 : ratings){
+                ProductReviews productReviews = new ProductReviews();
+                productReviews.setReviewContent(ratings1.getReview());
+                productReviews.setRating(ratings1.getRating());
+                productReviews.setUsername(ratings1.getUser().getUsername());
+                reviewsList.add(productReviews);
             }
-            return 0;
-        });
-
-        specificProductResponse.setProducts(detailsList);
-
-
-
-        List<RelatedProducts> relatedProductsList = new ArrayList<>();
-
-        for (Categories category : products.getCategoriesList()){
-            List<Products> relatedProducts = productsRepository.findAllByProductNameContainingIgnoreCaseOrCategoriesListContainingIgnoreCase(products.getProductName(),category);
-            for (Products relatedProduct : relatedProducts) {
-                RelatedProducts relatedProducts1 = new RelatedProducts();
-                relatedProducts1.setProductName(relatedProduct.getProductName());
-                relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().get(0).getProductPrice());
-                relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().get(0)
-                        .getProductImagesList().get(0).getImageUrl());
-                relatedProductsList.add(relatedProducts1);
-            }
-        }
-
-
-        specificProductResponse.setRelatedProducts(relatedProductsList);
-
-        List<ProductReviews> reviewsList = new ArrayList<>();
-
-        List<ProductRatings> ratings = ratingsRepository.findAllProductRatingsByProduct(products);
-
-        for (ProductRatings ratings1 : ratings){
-            ProductReviews productReviews = new ProductReviews();
-            productReviews.setReviewContent(ratings1.getReview());
-            productReviews.setRating(ratings1.getRating());
-            productReviews.setUsername(ratings1.getUser().getUsername());
-            reviewsList.add(productReviews);
-        }
-        specificProductResponse.setReviews(reviewsList);
+            specificProductResponse.setReviews(reviewsList);
 
        /* // Add pagination metadata
         specificProductResponse.setRelatedProductsPagination(new PaginationMetadata(
@@ -448,7 +478,10 @@ public class ProductsServiceImpl implements ProductsService {
                 relatedProductsPage.getTotalElements()
         ));*/
 
-        return specificProductResponse;
+            return specificProductResponse;
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not find the product");
+        }
     }
 
 
@@ -471,6 +504,7 @@ public class ProductsServiceImpl implements ProductsService {
             existingProduct.setProductDescription(updateRequest.getProductDescription());
 
             List<Categories> updatedCategories = new ArrayList<>();
+            log.info("checking if the categories is null");
             if (updateRequest.getCategoryName() != null) {
                 //settingCategory(updateRequest);
                 for (String creationRequest : updateRequest.getCategoryName()){
@@ -506,8 +540,9 @@ public class ProductsServiceImpl implements ProductsService {
                 specificProductDetails.setProductPrice(details.getProductPrice());
                 specificProductDetails.setDiscount(details.getDiscount());
                 specificProductDetails.setColor(details.getColor());
+                log.info("checking if the images are to be updated");
                 if (uploads != null && !uploads.isEmpty()){
-
+                    log.info("images present");
                     for (SpecificProductDetails details1: existingProduct.getSpecificProductDetailsList()) {
                         for (ProductImages productImages : details1.getProductImagesList()){
                             String url = productImages.getImageUrl();
@@ -519,6 +554,7 @@ public class ProductsServiceImpl implements ProductsService {
                     }
 
                     for (FileUploads upload : uploads){
+                        log.info("updating the images");
                         String[] parts = upload.getFileName().split("\\+");
                         int idx = Integer.parseInt(parts[0]);
                         if (idx == index){
@@ -552,7 +588,7 @@ public class ProductsServiceImpl implements ProductsService {
 
         } catch (Exception e) {
             log.error("Error during product update: " + e.getMessage(), e);
-            throw new RuntimeException("Error during product update", e);
+            throw new ResourceCreationFailedException("Error during product update");
         }
     }
 
@@ -563,29 +599,33 @@ public class ProductsServiceImpl implements ProductsService {
     * */
 
     public String deleteProduct(String productId){
-        Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
-                ()->new RuntimeException("The product with ID " + productId + " does not exist")
-        );
+        try {
+            Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+                    ()->new RuntimeException("The product with ID " + productId + " does not exist")
+            );
 
-       for (SpecificProductDetails productDetails : products.getSpecificProductDetailsList()) {
+            for (SpecificProductDetails productDetails : products.getSpecificProductDetailsList()) {
 
-           List<ProductImages> images = productDetails.getProductImagesList();
+                List<ProductImages> images = productDetails.getProductImagesList();
 
-           for (ProductImages productImages : images) {
-               try {
-                   String imageUrl = productImages.getImageUrl();
-                   cloudinaryService.deleteImage(imageUrl);
-               }catch (Exception e){
-                   throw new RuntimeException("could not delete image from cloudinary");
-               }
-           }
-       }
-
-
+                for (ProductImages productImages : images) {
+                    try {
+                        String imageUrl = productImages.getImageUrl();
+                        cloudinaryService.deleteImage(imageUrl);
+                    }catch (Exception e){
+                        throw new RuntimeException("could not delete image from cloudinary");
+                    }
+                }
+            }
 
 
-        productsRepository.delete(products);
-        return "product successfully deleted";
+
+
+            productsRepository.delete(products);
+            return "product successfully deleted";
+        } catch (Exception e){
+            throw new EntityDeletionException("could not delete the product");
+        }
 
     }
 
@@ -697,70 +737,74 @@ public class ProductsServiceImpl implements ProductsService {
                                                  Float price1, Float price2, Pageable pageable )
     {
 
-        List<InventoryResponse> inventoryResponses = new ArrayList<>();
-        
+        try{
+            List<InventoryResponse> inventoryResponses = new ArrayList<>();
 
-        if (inventoryStatus != null) {
-            Page<Inventory> inventory = inventoryRepository.findAllByStatus(inventoryStatus,pageable);
 
-            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
-            for (Inventory inventoryItem : inventory.getContent()) {
-                for (Products products : inventoryItem.getProducts()){
+            if (inventoryStatus != null) {
+                Page<Inventory> inventory = inventoryRepository.findAllByStatus(inventoryStatus,pageable);
+
+                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+                for (Inventory inventoryItem : inventory.getContent()) {
+                    for (Products products : inventoryItem.getProducts()){
+                        for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
+                            InventoryResponse inventoryResponse = new InventoryResponse();
+                            inventoryResponse.setProductName(products.getProductName());
+                            inventoryResponse.setStatus(inventoryItem.getStatus());
+                            inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+                            inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+                            inventoryResponses.add(inventoryResponse);
+                        }
+                    }
+                }
+
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+            } else if (categoryName != null) {
+                Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
+                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+                for (Products products : categories.getProducts()) {
                     for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
-                        InventoryResponse inventoryResponse = new InventoryResponse();
-                        inventoryResponse.setProductName(products.getProductName());
-                        inventoryResponse.setStatus(inventoryItem.getStatus());
-                        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-                        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+                        InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
+                        inventoryResponses.add(inventoryResponse);
+                    }
+                }
+
+            /*int start = (int) pageable.getOffset();
+            int end = (int) pageable.getOffset() + pageable.getPageSize();
+            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
+
+            } else if (price1 != null && price2 != null) {
+
+                Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(price1,price2,pageable);
+
+                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+                for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
+                    InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
+                    inventoryResponses.add(inventoryResponse);
+                }
+            }
+            else {
+                Page<Products> products = productsRepository.findAll(pageable);
+                for (Products products1 : products){
+                    for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
+                        InventoryResponse inventoryResponse = getInventoryResponse(details);
                         inventoryResponses.add(inventoryResponse);
                     }
                 }
             }
-            
-            /*int start = (int) pageable.getOffset();
-            int end = (int) pageable.getOffset() + pageable.getPageSize();
-            
-            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
-        } else if (categoryName != null) {
-            Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
-            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
-            for (Products products : categories.getProducts()) {
-                for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
-                    InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
-                    inventoryResponses.add(inventoryResponse);
-                }
-            }
 
-            /*int start = (int) pageable.getOffset();
+            int start = (int) pageable.getOffset();
             int end = (int) pageable.getOffset() + pageable.getPageSize();
             List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
-            
-        } else if (price1 != null && price2 != null) {
-
-            Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(price1,price2,pageable);
-
-            //List<InventoryResponse> inventoryResponses = new ArrayList<>();
-            for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
-                InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
-                inventoryResponses.add(inventoryResponse);
-            }
+            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
+        } catch (Exception e){
+            throw new ResourceNotFoundException("could not found the inventory");
         }
-        else {
-            Page<Products> products = productsRepository.findAll(pageable);
-            for (Products products1 : products){
-                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
-                    InventoryResponse inventoryResponse = getInventoryResponse(details);
-                    inventoryResponses.add(inventoryResponse);
-                }
-            }
-        }
-
-        int start = (int) pageable.getOffset();
-        int end = (int) pageable.getOffset() + pageable.getPageSize();
-        List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-        return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
 
 
     }
@@ -786,92 +830,100 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     public String addToWishList(String specificProductId, String userId) {
-        // Check if the user exists
-        if (!usersRepository.existsByUserId(userId)) {
-            return "User not found";
+        try{
+            // Check if the user exists
+            if (!usersRepository.existsByUserId(userId)) {
+                return "User not found";
+            }
+
+            // Fetch the user and product details
+            Users user = usersRepository.findUsersByUserId(userId);
+            SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId);
+
+            if (specificProductDetails == null) {
+                return "Product not found";
+            }
+
+            // Find or create the wishlist for the user
+            WishList wishList = wishListRepository.findByUser(user);
+            if (wishList == null) {
+                wishList = new WishList();
+                wishList.setUser(user);
+                wishList.setSpecificProductDetails(new ArrayList<>());
+            }
+
+            // Check if the product is already in the wishlist
+            if (wishList.getSpecificProductDetails().contains(specificProductDetails)) {
+                return "Product already in wishlist";
+            }
+
+            // Add the product to the wishlist
+            wishList.getSpecificProductDetails().add(specificProductDetails);
+            wishListRepository.save(wishList);
+
+            return "Product added to wishlist successfully";
+        } catch (Exception e){
+            throw new ResourceCreationFailedException("could not create wishlist");
         }
-
-        // Fetch the user and product details
-        Users user = usersRepository.findUsersByUserId(userId);
-        SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId);
-
-        if (specificProductDetails == null) {
-            return "Product not found";
-        }
-
-        // Find or create the wishlist for the user
-        WishList wishList = wishListRepository.findByUser(user);
-        if (wishList == null) {
-            wishList = new WishList();
-            wishList.setUser(user);
-            wishList.setSpecificProductDetails(new ArrayList<>());
-        }
-
-        // Check if the product is already in the wishlist
-        if (wishList.getSpecificProductDetails().contains(specificProductDetails)) {
-            return "Product already in wishlist";
-        }
-
-        // Add the product to the wishlist
-        wishList.getSpecificProductDetails().add(specificProductDetails);
-        wishListRepository.save(wishList);
-
-        return "Product added to wishlist successfully";
     }
 
     public List<WishListResponse> getWishList(String userId){
-        if (!usersRepository.existsByUserId(userId)) {
-            throw new UserDoesNotExistException("User not found");
-        }
+       try{
+           if (!usersRepository.existsByUserId(userId)) {
+               throw new UserDoesNotExistException("User not found");
+           }
 
-        Users users = usersRepository.findUsersByUserId(userId);
-        WishList wishList = wishListRepository.findByUser(users);
-        List<WishListResponse> responses = new ArrayList<>();
+           Users users = usersRepository.findUsersByUserId(userId);
+           WishList wishList = wishListRepository.findByUser(users);
+           List<WishListResponse> responses = new ArrayList<>();
 
-        List<SpecificProductDetails> specificProductDetailsList = wishList.getSpecificProductDetails();
-        for (SpecificProductDetails specificProductDetails : specificProductDetailsList) {
-            WishListResponse wishListResponse = new WishListResponse();
-            wishListResponse.setProductName(specificProductDetails.getProducts().getProductName());
-            wishListResponse.setPrice(specificProductDetails.getProductPrice() - specificProductDetails.getDiscount());
-            wishListResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-            wishListResponse.setInStock(specificProductDetails.getCount() > 0);
-            responses.add(wishListResponse);
-        }
+           List<SpecificProductDetails> specificProductDetailsList = wishList.getSpecificProductDetails();
+           for (SpecificProductDetails specificProductDetails : specificProductDetailsList) {
+               WishListResponse wishListResponse = new WishListResponse();
+               wishListResponse.setProductName(specificProductDetails.getProducts().getProductName());
+               wishListResponse.setPrice(specificProductDetails.getProductPrice() - specificProductDetails.getDiscount());
+               wishListResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+               wishListResponse.setInStock(specificProductDetails.getCount() > 0);
+               responses.add(wishListResponse);
+           }
 
-        return responses;
+           return responses;
+       }catch (Exception e){
+           throw new ResourceNotFoundException("could not get wishlist");
+       }
 
     }
 
     public String deleteWishListItem(String userId, List<String> specificProductIds) {
-        // Fetch the user and their wishlist
-        Users user = usersRepository.findUsersByUserId(userId);
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found");
+        try {
+            // Fetch the user and their wishlist
+            Users user = usersRepository.findUsersByUserId(userId);
+            if (user == null) {
+                throw new ResourceNotFoundException("User not found");
+            }
+
+            WishList wishList = wishListRepository.findByUser(user);
+            if (wishList == null || wishList.getSpecificProductDetails().isEmpty()) {
+                throw new ResourceNotFoundException("No wishlist items found for the user");
+            }
+
+            // Remove the products from the wishlist
+            List<SpecificProductDetails> detailsToRemove = wishList.getSpecificProductDetails()
+                    .stream()
+                    .filter(product -> specificProductIds.contains(product.getSpecificProductId()))
+                    .toList();
+
+            if (detailsToRemove.isEmpty()) {
+                throw new ResourceNotFoundException("No matching products found in the wishlist");
+            }
+
+            wishList.getSpecificProductDetails().removeAll(detailsToRemove);
+            wishListRepository.save(wishList);
+
+            return "Products removed from wishlist successfully";
+        } catch (Exception e){
+            throw new EntityDeletionException("could not delete wishlist");
         }
-
-        WishList wishList = wishListRepository.findByUser(user);
-        if (wishList == null || wishList.getSpecificProductDetails().isEmpty()) {
-            throw new ResourceNotFoundException("No wishlist items found for the user");
-        }
-
-        // Remove the products from the wishlist
-        List<SpecificProductDetails> detailsToRemove = wishList.getSpecificProductDetails()
-                .stream()
-                .filter(product -> specificProductIds.contains(product.getSpecificProductId()))
-                .toList();
-
-        if (detailsToRemove.isEmpty()) {
-            throw new ResourceNotFoundException("No matching products found in the wishlist");
-        }
-
-        wishList.getSpecificProductDetails().removeAll(detailsToRemove);
-        wishListRepository.save(wishList);
-
-        return "Products removed from wishlist successfully";
     }
-
-
-
-
 
 }

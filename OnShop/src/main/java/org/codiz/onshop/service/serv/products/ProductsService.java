@@ -28,7 +28,7 @@ public interface ProductsService {
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
     EntityResponse createCategory(String categoryNames, MultipartFile uploads);
-    EntityResponse updateCategory(String categoryId,String categoryName, FileUploads fileUploads);
+    EntityResponse updateCategory(String categoryId,String categoryName, MultipartFile fileUploads) throws IOException;
     List<CategoryResponse> findAllCategories();
     String deleteCategory(String categoryId) throws IOException;
     Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus, String categoryName,Float price1, Float price2, Pageable pageable );

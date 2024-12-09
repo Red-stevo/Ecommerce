@@ -301,17 +301,21 @@ public class OrdersImpl implements OrdersService {
 
     public List<AllOrdersResponse> getAllOrdersForOneWeek(){
 
-        Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
-        Instant now = Instant.now();
-        List<Orders> ordersList = ordersRepository.findAllByCreatedOnBetweenOrderByCreatedOnDesc(oneWeekAgo,now);
+        try {
+            Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+            Instant now = Instant.now();
+            List<Orders> ordersList = ordersRepository.findAllByCreatedOnBetweenOrderByCreatedOnDesc(oneWeekAgo,now);
 
-        List<AllOrdersResponse> ordersResponses = new ArrayList<>();
-        for (Orders order : ordersList) {
+            List<AllOrdersResponse> ordersResponses = new ArrayList<>();
+            for (Orders order : ordersList) {
 
-            AllOrdersResponse response = getOrderResponse(order);
-            ordersResponses.add(response);
+                AllOrdersResponse response = getOrderResponse(order);
+                ordersResponses.add(response);
+            }
+            return ordersResponses;
+        }catch (Exception e) {
+            throw new ResourceNotFoundException("could not find orders");
         }
-        return ordersResponses;
     }
 
     private AllOrdersResponse getOrderResponse(Orders order) {
@@ -336,13 +340,18 @@ public class OrdersImpl implements OrdersService {
 
 
     public Page<AllOrdersResponse> getOrdersByStatus(OrderStatus status, Pageable pageable) {
-        Page<Orders> ordersPage = ordersRepository.findAllByOrderStatusOrderByCreatedOnAsc(status, pageable);
+        try {
+            Page<Orders> ordersPage = ordersRepository.findAllByOrderStatusOrderByCreatedOnAsc(status, pageable);
 
-        List<AllOrdersResponse> responses = ordersPage.getContent().stream()
-                .map(this::mapToAllOrdersResponse)
-                .toList();
+            List<AllOrdersResponse> responses = ordersPage.getContent().stream()
+                    .map(this::mapToAllOrdersResponse)
+                    .toList();
 
-        return new PageImpl<>(responses, pageable, ordersPage.getTotalElements());
+            return new PageImpl<>(responses, pageable, ordersPage.getTotalElements());
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get the orders");
+
+        }
     }
 
     public Page<AllOrdersResponse> getDeliveredOrders(Pageable pageable) {
@@ -405,30 +414,34 @@ public class OrdersImpl implements OrdersService {
     }
 
     public OrderStatusResponse getShippingStatus(String userId){
-        Users usr = usersRepository.findUsersByUserId(userId);
+        try{
+            Users usr = usersRepository.findUsersByUserId(userId);
 
-        Orders orders = ordersRepository.findByUserId(usr);
-        ShippingStatus status = orders.getShippingStatus();
-        OrderStatusResponse orderStatus = new OrderStatusResponse();
-        orderStatus.setOrderId(orders.getOrderId());
-        if (status == ShippingStatus.SIGNED){
-            orderStatus.setStatus(status.ordinal() + 1);
-        }else {
-            orderStatus.setStatus(status.ordinal());
+            Orders orders = ordersRepository.findByUserId(usr);
+            ShippingStatus status = orders.getShippingStatus();
+            OrderStatusResponse orderStatus = new OrderStatusResponse();
+            orderStatus.setOrderId(orders.getOrderId());
+            if (status == ShippingStatus.SIGNED){
+                orderStatus.setStatus(status.ordinal() + 1);
+            }else {
+                orderStatus.setStatus(status.ordinal());
+            }
+
+            List<OrderTrackingProducts> products = new ArrayList<>();
+
+            for (OrderItems items : orders.getOrderItems()){
+                OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
+                orderTrackingProducts.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+                orderTrackingProducts.setProductPrice(items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount());
+                orderTrackingProducts.setProductName(items.getProductId().getProductName());
+                products.add(orderTrackingProducts);
+
+            }
+            orderStatus.setProducts(products);
+            return orderStatus;
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not find shipping status");
         }
-
-        List<OrderTrackingProducts> products = new ArrayList<>();
-
-        for (OrderItems items : orders.getOrderItems()){
-            OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
-            orderTrackingProducts.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
-            orderTrackingProducts.setProductPrice(items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount());
-            orderTrackingProducts.setProductName(items.getProductId().getProductName());
-            products.add(orderTrackingProducts);
-
-        }
-        orderStatus.setProducts(products);
-        return orderStatus;
     }
 
 
