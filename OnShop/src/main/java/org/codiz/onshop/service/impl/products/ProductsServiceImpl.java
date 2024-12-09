@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
+import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.dtos.requests.*;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.*;
@@ -50,6 +52,7 @@ public class ProductsServiceImpl implements ProductsService {
     private final InventoryRepository inventoryRepository;
     private final SpecificProductsRepository specificProductsRepository;
     private final UserProfilesRepository userProfilesRepository;
+    private final WishListRepository wishListRepository;
 
 
     //UserProfiles userProfiles;
@@ -87,6 +90,7 @@ public class ProductsServiceImpl implements ProductsService {
         Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
         categories.setCategoryName(categoryName);
         if (fileUploads != null) {
+            //cloudinaryService.deleteImage()
             String url = cloudinaryService.uploadImage(fileUploads);
             categories.setCategoryIcon(url);
         }
@@ -99,13 +103,32 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
-    public List<Categories> findAllCategories(){
-        return categoriesRepository.findAll();
+    public List<CategoryResponse> findAllCategories(){
+        List<CategoryResponse> responses = new ArrayList<>();
+        /*log.info("hahaha");
+        Optional<Categories> cats = categoriesRepository.findAll().stream().findAny();
+        log.info("hahaha");
+        System.out.println(cats);*/
+
+        for (Categories categories : categoriesRepository.findAll()) {
+            System.out.println(categories);
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setCategoryName(categories.getCategoryName());
+            categoryResponse.setCategoryId(categories.getCategoryId());
+            categoryResponse.setCategoryIcon(categories.getCategoryIcon());
+            responses.add(categoryResponse);
+        }
+        System.out.println(responses);
+        return responses;
     }
 
-    public String deleteCategory(String categoryId) {
-
-        Categories categories = categoriesRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+    public String deleteCategory(String categoryId) throws IOException {
+        log.info("service to delete category");
+        Categories categories = categoriesRepository.findCategoriesByCategoryId(categoryId);
+        if (categories == null) {
+            throw new EntityNotFoundException();
+        }
+        cloudinaryService.deleteImage(categories.getCategoryIcon());
         categoriesRepository.delete(categories);
 
         return "category deleted successfully";
@@ -762,13 +785,93 @@ public class ProductsServiceImpl implements ProductsService {
         return inventoryResponse;
     }
 
-    public String addToWishList(String specificProductId, String userId){
-
-        if (usersRepository.existsByUserId(userId)){
-
+    public String addToWishList(String specificProductId, String userId) {
+        // Check if the user exists
+        if (!usersRepository.existsByUserId(userId)) {
+            return "User not found";
         }
-        return null;
+
+        // Fetch the user and product details
+        Users user = usersRepository.findUsersByUserId(userId);
+        SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId);
+
+        if (specificProductDetails == null) {
+            return "Product not found";
+        }
+
+        // Find or create the wishlist for the user
+        WishList wishList = wishListRepository.findByUser(user);
+        if (wishList == null) {
+            wishList = new WishList();
+            wishList.setUser(user);
+            wishList.setSpecificProductDetails(new ArrayList<>());
+        }
+
+        // Check if the product is already in the wishlist
+        if (wishList.getSpecificProductDetails().contains(specificProductDetails)) {
+            return "Product already in wishlist";
+        }
+
+        // Add the product to the wishlist
+        wishList.getSpecificProductDetails().add(specificProductDetails);
+        wishListRepository.save(wishList);
+
+        return "Product added to wishlist successfully";
     }
+
+    public List<WishListResponse> getWishList(String userId){
+        if (!usersRepository.existsByUserId(userId)) {
+            throw new UserDoesNotExistException("User not found");
+        }
+
+        Users users = usersRepository.findUsersByUserId(userId);
+        WishList wishList = wishListRepository.findByUser(users);
+        List<WishListResponse> responses = new ArrayList<>();
+
+        List<SpecificProductDetails> specificProductDetailsList = wishList.getSpecificProductDetails();
+        for (SpecificProductDetails specificProductDetails : specificProductDetailsList) {
+            WishListResponse wishListResponse = new WishListResponse();
+            wishListResponse.setProductName(specificProductDetails.getProducts().getProductName());
+            wishListResponse.setPrice(specificProductDetails.getProductPrice() - specificProductDetails.getDiscount());
+            wishListResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+            wishListResponse.setInStock(specificProductDetails.getCount() > 0);
+            responses.add(wishListResponse);
+        }
+
+        return responses;
+
+    }
+
+    public String deleteWishListItem(String userId, List<String> specificProductIds) {
+        // Fetch the user and their wishlist
+        Users user = usersRepository.findUsersByUserId(userId);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        WishList wishList = wishListRepository.findByUser(user);
+        if (wishList == null || wishList.getSpecificProductDetails().isEmpty()) {
+            throw new ResourceNotFoundException("No wishlist items found for the user");
+        }
+
+        // Remove the products from the wishlist
+        List<SpecificProductDetails> detailsToRemove = wishList.getSpecificProductDetails()
+                .stream()
+                .filter(product -> specificProductIds.contains(product.getSpecificProductId()))
+                .toList();
+
+        if (detailsToRemove.isEmpty()) {
+            throw new ResourceNotFoundException("No matching products found in the wishlist");
+        }
+
+        wishList.getSpecificProductDetails().removeAll(detailsToRemove);
+        wishListRepository.save(wishList);
+
+        return "Products removed from wishlist successfully";
+    }
+
+
+
 
 
 }

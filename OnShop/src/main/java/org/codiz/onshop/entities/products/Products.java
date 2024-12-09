@@ -31,7 +31,7 @@ public class Products implements Serializable {
     private List<SpecificProductDetails>specificProductDetailsList;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    //@JsonManagedReference
     @JoinTable(
             name = "ProductCategories", // Name of the join table
             joinColumns = @JoinColumn(name = "product_id"), // Column for Products
