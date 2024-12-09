@@ -11,4 +11,6 @@ public interface SpecificProductsRepository extends JpaRepository<SpecificProduc
     SpecificProductDetails findBySpecificProductId(String specificationId);
 
     Page<SpecificProductDetails> findAllByProductPriceBetween(float productPrice, float productPrice2, Pageable pageable);
+
+    Page<SpecificProductDetails> findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(String query, String query1, Pageable pageable);
 }

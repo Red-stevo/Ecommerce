@@ -13,7 +13,6 @@ import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.dtos.requests.*;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.*;
-import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.products.*;
 import org.codiz.onshop.repositories.users.UserProfilesRepository;
@@ -27,17 +26,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -55,6 +53,7 @@ public class ProductsServiceImpl implements ProductsService {
     private final SpecificProductsRepository specificProductsRepository;
     private final UserProfilesRepository userProfilesRepository;
     private final WishListRepository wishListRepository;
+    private final ProductImagesRepository productImagesRepository;
 
 
     //UserProfiles userProfiles;
@@ -154,7 +153,8 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Transactional
     @CacheEvict(value = "products")
-    public EntityResponse postProduct(ProductCreationRequest requests, List<FileUploads> uploads) {
+    @Async
+    public CompletableFuture<EntityResponse> postProduct(ProductCreationRequest requests, List<FileUploads> uploads) {
         try {
             Inventory inventory = new Inventory();
 
@@ -188,16 +188,19 @@ public class ProductsServiceImpl implements ProductsService {
                 details1.setDiscount(details.getDiscount());
                 details1.setSize(details.getSize());
                 details1.setProductPrice(details.getProductPrice());
-
+                List<ProductImages> imagesList = new ArrayList<>();
                 for (FileUploads upload : uploads){
                     String[] parts = upload.getFileName().split("\\+");
                     int idx = Integer.parseInt(parts[0]);
                     if (idx == index){
-                        List<ProductImages> images = setImageUrls(uploads);
-                        details1.setProductImagesList(images);
+                        ProductImages images = setImageUrls(upload);
+                        images.setSpecificProductDetails(details1);
+                        imagesList.add(images);
+                        productImagesRepository.save(images);
                         log.info("success");
                     }
                 }
+                details1.setProductImagesList(imagesList);
 
 
 
@@ -219,7 +222,7 @@ public class ProductsServiceImpl implements ProductsService {
             response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             response.setStatus(HttpStatus.OK);
 
-            return response;
+            return CompletableFuture.completedFuture(response);
 
         } catch (Exception e) {
             log.error("Error during product creation: " + e.getMessage(), e);
@@ -231,60 +234,96 @@ public class ProductsServiceImpl implements ProductsService {
     @Cacheable(value = "products", unless = "#result == null || #result.isEmpty()")
     public Page<ProductsPageResponse> searchProducts(String query, Pageable pageable) {
         try {
-            Page<Products> productPage = productsRepository
-                    .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable);
+            List<ProductsPageResponse> responseList = new ArrayList<>();
+            //check if the search requires all products then return random products
+            if (query == "All Products"){
+                List<Products> products = productsRepository.findAll();
+                responseList = products.stream().map(this::mapToProductsPageResponse).toList();
+            }else {
+                // Search products by name or description
+                List<Products> productResults = productsRepository
+                        .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable)
+                        .getContent();
 
-            Page<Categories> categoryPage = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(query, pageable);
+                // Search categories by name and retrieve associated products
+                List<Products> categoryProducts = categoriesRepository
+                        .findCategoriesByCategoryNameIgnoreCase(query, pageable)
+                        .stream()
+                        .flatMap(category -> category.getProducts().stream())
+                        .distinct()
+                        .toList();
 
-            List<Products> categoryProducts = categoryPage.getContent().stream()
-                    .flatMap(category -> category.getProducts().stream())
-                    .toList();
+                // Search specific product details and retrieve associated products
+                List<Products> specificProducts = specificProductsRepository
+                        .findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(query, query, pageable)
+                        .stream()
+                        .map(SpecificProductDetails::getProducts)
+                        .distinct()
+                        .toList();
+
+                // Combine results and remove duplicates
+                Set<Products> combinedResults = new HashSet<>();
+                combinedResults.addAll(productResults);
+                combinedResults.addAll(categoryProducts);
+                combinedResults.addAll(specificProducts);
+
+                System.out.println(combinedResults);
+                // Map to response DTO
+               responseList = combinedResults.stream()
+                        .map(this::mapToProductsPageResponse)
+                        .toList();
+            }
 
 
-
-            List<Products> combinedResults = Stream.concat(
-                    productPage.getContent().stream(),
-                    categoryProducts.stream()
-            ).distinct().toList();
-
-
-
-            List<ProductsPageResponse> responseList = combinedResults.stream()
-                    .map(this::mapToProductsPageResponse)
-                    .toList();
 
             // Paginate combined results
             int start = (int) pageable.getOffset();
             int end = Math.min(start + pageable.getPageSize(), responseList.size());
+            if (start > end) {
+                throw new IllegalArgumentException("Page request out of range");
+            }
 
             List<ProductsPageResponse> paginatedList = responseList.subList(start, end);
 
             return new PageImpl<>(paginatedList, pageable, responseList.size());
-        }catch (Exception e){
-            throw new ResourceNotFoundException("could not get the product");
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("Invalid page request: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException("An error occurred while fetching products.");
         }
     }
+
 
     private ProductsPageResponse mapToProductsPageResponse(Products product) {
         ProductsPageResponse response = new ProductsPageResponse();
 
-
-        int rating = (int) Math.round(ratingsRepository.findAverageRatingByProductId(product.getProductId()));
         response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
-        response.setRatings(rating);
-        for (SpecificProductDetails details : product.getSpecificProductDetailsList()) {
-            response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
-            float price = details.getProductPrice();
-            float discount = details.getDiscount();
-            response.setDiscountedPrice(price-discount);
+
+        if (product.getProductRatingsList() != null) {
+            Double averageRating = ratingsRepository.findAverageRatingByProductId(product.getProductId());
+            int rating = (averageRating != null) ? (int) Math.round(averageRating) : 0;
+            response.setRatings(rating);
+        } else {
+            response.setRatings(0);
         }
 
-        //response.setProductImagesUrl(getFirstImageUrl(product.getSpecificProductDetailsList()
-        //        .getFirst().getProductImagesList()));
+        /*for (SpecificProductDetails details : product.getSpecificProductDetailsList()) {
+            response.setProductImagesUrl(details.getProductImagesList().get(0).getImageUrl());
+
+
+            response.setDiscountedPrice(price - discount);
+        }*/
+        float price = product.getSpecificProductDetailsList().get(0).getProductPrice();
+        float discount = product.getSpecificProductDetailsList().get(0).getDiscount();
+
+        response.setDiscountedPrice(price - discount);
+        response.setProductImagesUrl(product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
 
         return response;
     }
+
 
     private String getFirstImageUrl(List<ProductImages> productImages) {
         return productImages != null && !productImages.isEmpty()
@@ -558,9 +597,10 @@ public class ProductsServiceImpl implements ProductsService {
                         String[] parts = upload.getFileName().split("\\+");
                         int idx = Integer.parseInt(parts[0]);
                         if (idx == index){
-                            List<ProductImages> images = setImageUrls(uploads);
-                            images.forEach(image->image.setSpecificProductDetails(specificProductDetails));
-                            specificProductDetails.getProductImagesList().addAll(images);
+                            ProductImages images = setImageUrls(upload);
+                            images.setImageUrl(images.getImageUrl());
+                            images.setSpecificProductDetails(specificProductDetails);
+                            productImagesRepository.save(images);
                             log.info("success");
                         }
                     }
@@ -640,21 +680,16 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @NotNull
-    private List<ProductImages> setImageUrls(List<FileUploads> files) {
-        List<ProductImages> productImages = new ArrayList<>();
+    private ProductImages setImageUrls(FileUploads files) {
+        ProductImages productImages = new ProductImages();
 
-        for (FileUploads file : files) {
-            try {
-                ProductImages productImage = getProductImage(file);
-                if (productImage != null) {
-                    productImages.add(productImage);
-
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Error uploading file: ");
-            }
+        try {
+            return getProductImage(files);
+        } catch (IOException e) {
+            throw new RuntimeException("Error uploading file: ");
         }
-        return productImages;
+
+
     }
 
 
@@ -925,5 +960,36 @@ public class ProductsServiceImpl implements ProductsService {
             throw new EntityDeletionException("could not delete wishlist");
         }
     }
+
+    public List<DiscountedProductsResponse> findDiscountedProducts( int size) {
+        try {
+            List<SpecificProductDetails> productDetails = specificProductsRepository.findAll();
+
+            // Filter and sort products by discount in descending order
+            // Sort by discount descending
+
+            return productDetails.stream()
+                    .filter(product -> product.getDiscount() > 0)
+                    .sorted(Comparator.comparing(SpecificProductDetails::getDiscount).reversed())
+                    .limit(size)
+                    .map(product -> {
+                        DiscountedProductsResponse response = new DiscountedProductsResponse();
+                        response.setProductName(product.getProducts().getProductName());
+                        response.setProductId(product.getSpecificProductId());
+                        response.setRatings(getAverageRating(product.getProducts().getProductId()));
+                        response.setProductImagesUrl(product.getProductImagesList().get(0).getImageUrl());
+                        response.setDiscountedPrice(product.getProductPrice() - product.getDiscount());
+                        response.setDiscount(product.getDiscount());
+                        return response;
+                    })
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Could not find discounted products");
+        }
+    }
+
+
+
 
 }
