@@ -3,6 +3,9 @@ package org.codiz.onshop.service.impl.order;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -68,149 +71,165 @@ public class OrdersImpl implements OrdersService {
 
     public EntityResponse placeOrder(OrderPlacementRequest request) {
 
-        String longitude = request.getDoorStepAddress().getLongitude();
-        String latitude = request.getDoorStepAddress().getLatitude();
-        Orders orders = new Orders();
-        Users usr = usersRepository.findUsersByUserId(request.getUserId());
-        orders.setUserId(usr);
-        orders.setCreatedOn(Instant.now());
-        orders.setOfficeAddress(request.getOfficeAddress());
-        if (longitude != null && latitude != null) {
-            orders.setLongitude(longitude);
-            orders.setLatitude(latitude);
+        try {
+            String longitude = request.getDoorStepAddress().getLongitude();
+            String latitude = request.getDoorStepAddress().getLatitude();
+            Orders orders = new Orders();
+            Users usr = usersRepository.findUsersByUserId(request.getUserId());
+            orders.setUserId(usr);
+            orders.setCreatedOn(Instant.now());
+            orders.setOfficeAddress(request.getOfficeAddress());
+            if (longitude != null && latitude != null) {
+                orders.setLongitude(longitude);
+                orders.setLatitude(latitude);
+            }
+            Orders order = ordersRepository.save(orders);
+
+            List<OrderItems> orderItems = new ArrayList<>();
+
+            double totalAmount = 0;
+            for (OrderItemsRequests itemsRequests : request.getRequestsList()) {
+
+                Products products = productsJpaRepository.findByProductId(itemsRequests.getProductId());
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getProductId());
+                OrderItems items = new OrderItems();
+                items.setOrderId(order);
+                items.setQuantity(itemsRequests.getQuantity());
+                items.setProductId(products);
+                items.setSpecificProductDetails(details);
+                items.setStatus(OrderItemStatus.PENDING);
+
+                double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
+                items.setTotalPrice(totalPrice);
+                totalAmount += totalPrice;
+                ordersItemsRepository.save(items);
+                orderItems.add(items);
+                details.setCount(details.getCount() - itemsRequests.getQuantity());
+                specificProductsRepository.save(details);
+
+
+            }
+            Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
+            newOrder.setTotalAmount(totalAmount);
+            newOrder.setOrderItems(orderItems);
+            newOrder.setOrderStatus(OrderStatus.UNDELIVERED);
+            ordersRepository.save(newOrder);
+            EntityResponse entityResponse = new EntityResponse();
+            entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            entityResponse.setMessage("Order successfully placed");
+            entityResponse.setStatus(HttpStatus.OK);
+            return entityResponse;
+        }catch (Exception e) {
+            throw new ResourceCreationFailedException("products could not be created");
         }
-        Orders order = ordersRepository.save(orders);
-
-        List<OrderItems> orderItems = new ArrayList<>();
-
-        double totalAmount = 0;
-        for (OrderItemsRequests itemsRequests : request.getRequestsList()) {
-
-            Products products = productsJpaRepository.findByProductId(itemsRequests.getProductId());
-            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getProductId());
-            OrderItems items = new OrderItems();
-            items.setOrderId(order);
-            items.setQuantity(itemsRequests.getQuantity());
-            items.setProductId(products);
-            items.setSpecificProductDetails(details);
-            items.setStatus(OrderItemStatus.PENDING);
-
-            double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
-            items.setTotalPrice(totalPrice);
-            totalAmount += totalPrice;
-            ordersItemsRepository.save(items);
-            orderItems.add(items);
-            details.setCount(details.getCount() - itemsRequests.getQuantity());
-            specificProductsRepository.save(details);
-
-
-        }
-        Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
-        newOrder.setTotalAmount(totalAmount);
-        newOrder.setOrderItems(orderItems);
-        newOrder.setOrderStatus(OrderStatus.UNDELIVERED);
-        ordersRepository.save(newOrder);
-        EntityResponse entityResponse = new EntityResponse();
-        entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        entityResponse.setMessage("Order successfully placed");
-        entityResponse.setStatus(HttpStatus.OK);
-        return entityResponse;
     }
 
     public String removeOrderItems(String orderItemId,String userId) {
-        OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).get();
-        if (!userId.equals(items.getOrderId().getUserId().getUserId())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        try {
+            OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).get();
+            if (!userId.equals(items.getOrderId().getUserId().getUserId())){
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+            productsService.addProductQuantity(items.getSpecificProductDetails().getSpecificProductId(), items.getQuantity());
+            items.setStatus(OrderItemStatus.CANCELLED);
+            ordersItemsRepository.save(items);
+            return "item successfully removed";
+        }catch (Exception e) {
+            throw new EntityDeletionException("could not remove the order item from orders");
         }
-        productsService.addProductQuantity(items.getSpecificProductDetails().getSpecificProductId(), items.getQuantity());
-        items.setStatus(OrderItemStatus.CANCELLED);
-        ordersItemsRepository.save(items);
-        return "item successfully removed";
 
     }
 
     public EntityDeletionResponse cancelOrder(String orderId, String username) {
-        Orders orders = ordersRepository.findById(orderId).orElseThrow(
-                () -> new RuntimeException("product not found")
-        );
+        try {
+            Orders orders = ordersRepository.findById(orderId).orElseThrow(
+                    () -> new RuntimeException("product not found")
+            );
 
-        if (!username.equals(orders.getUserId().getUsername())){
-            throw new RuntimeException("invalid request");
+            if (!username.equals(orders.getUserId().getUsername())){
+                throw new RuntimeException("invalid request");
+            }
+
+            orders.setOrderStatus(OrderStatus.CANCELLED);
+
+            List<OrderItems> items = new ArrayList<>();
+
+            for (OrderItems orderItem : orders.getOrderItems()) {
+                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(orderItem.getSpecificProductDetails().getSpecificProductId());
+                productDetails.setCount(productDetails.getCount() + orderItem.getQuantity());
+                specificProductsRepository.save(productDetails);
+                orderItem.setStatus(OrderItemStatus.CANCELLED);
+                items.add(orderItem);
+            }
+            ordersItemsRepository.saveAll(items);
+
+
+
+
+            EntityDeletionResponse entityDeletionResponse = new EntityDeletionResponse();
+            entityDeletionResponse.setMessage("Order successfully cancelled");
+            entityDeletionResponse.setStatus(HttpStatus.OK);
+            entityDeletionResponse.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            return entityDeletionResponse;
+        }catch (Exception e) {
+            throw new EntityDeletionException("could not cancel the order");
         }
-
-        orders.setOrderStatus(OrderStatus.CANCELLED);
-
-        List<OrderItems> items = new ArrayList<>();
-
-        for (OrderItems orderItem : orders.getOrderItems()) {
-            SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(orderItem.getSpecificProductDetails().getSpecificProductId());
-            productDetails.setCount(productDetails.getCount() + orderItem.getQuantity());
-            specificProductsRepository.save(productDetails);
-            orderItem.setStatus(OrderItemStatus.CANCELLED);
-            items.add(orderItem);
-        }
-        ordersItemsRepository.saveAll(items);
-
-
-
-
-        EntityDeletionResponse entityDeletionResponse = new EntityDeletionResponse();
-        entityDeletionResponse.setMessage("Order successfully cancelled");
-        entityDeletionResponse.setStatus(HttpStatus.OK);
-        entityDeletionResponse.setTimestamp(new Timestamp(System.currentTimeMillis()));
-        return entityDeletionResponse;
     }
 
     @Transactional
     public OrdersResponse getOrders(String orderId) {
-        Orders orders = ordersRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
 
-        OrdersResponse response = new OrdersResponse();
-        response.setOrderNumber(orders.getOrderId());
-        response.setTotalCharges(orders.getTotalAmount());
-        response.setOrderStatus(orders.getOrderStatus().toString());
+        try {
+            Orders orders = ordersRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
 
-        CustomerDetails customerDetails = new CustomerDetails();
-        customerDetails.setCustomerEmail(orders.getUserId().getUserEmail());
-        customerDetails.setCustomerPhone(orders.getUserId().getPhoneNumber());
-        customerDetails.setCustomerName(orders.getUserId().getUsername());
-        customerDetails.setOrderNumber(orders.getOrderId());
-        int itemsOrdered = orders.getOrderItems().stream()
-                        .mapToInt(OrderItems::getQuantity).sum();
-        customerDetails.setNumberOfItemsOrdered(itemsOrdered);
+            OrdersResponse response = new OrdersResponse();
+            response.setOrderNumber(orders.getOrderId());
+            response.setTotalCharges(orders.getTotalAmount());
+            response.setOrderStatus(orders.getOrderStatus().toString());
 
-        response.setCustomerDetails(customerDetails);
+            CustomerDetails customerDetails = new CustomerDetails();
+            customerDetails.setCustomerEmail(orders.getUserId().getUserEmail());
+            customerDetails.setCustomerPhone(orders.getUserId().getPhoneNumber());
+            customerDetails.setCustomerName(orders.getUserId().getUsername());
+            customerDetails.setOrderNumber(orders.getOrderId());
+            int itemsOrdered = orders.getOrderItems().stream()
+                    .mapToInt(OrderItems::getQuantity).sum();
+            customerDetails.setNumberOfItemsOrdered(itemsOrdered);
 
-        List<OrderItemsResponse> orderItemResponses = new ArrayList<>();
-        for (OrderItems items : orders.getOrderItems()){
-            OrderItemsResponse itemsResponse = getOrderItemsResponse(items);
-            orderItemResponses.add(itemsResponse);
+            response.setCustomerDetails(customerDetails);
+
+            List<OrderItemsResponse> orderItemResponses = new ArrayList<>();
+            for (OrderItems items : orders.getOrderItems()){
+                OrderItemsResponse itemsResponse = getOrderItemsResponse(items);
+                orderItemResponses.add(itemsResponse);
+            }
+
+            response.setItemsList(orderItemResponses);
+
+            ZoneId zoneId = ZoneId.systemDefault();
+            LocalDate createdDate = orders.getCreatedOn().atZone(zoneId).toLocalDate();
+            LocalTime timeOrdered = orders.getCreatedOn().atZone(zoneId).toLocalTime();
+            String dateCreated = formatOrderDate(createdDate);
+            String orderTime = formatOrderTime(timeOrdered);
+
+            OrderSummary orderSummary = new OrderSummary();
+            orderSummary.setOrderDate(dateCreated);
+            orderSummary.setOrderTime(orderTime);
+            orderSummary.setOrderTotal((float) orders.getTotalAmount());
+            orderSummary.setDeliveryFee(0);
+
+            response.setOrderSummary(orderSummary);
+
+            if (orders.getOfficeAddress() != null) {
+                response.setAddress(orders.getOfficeAddress());
+            }else {
+                response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
+            }
+
+            return response;
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not find order");
         }
-
-        response.setItemsList(orderItemResponses);
-
-        ZoneId zoneId = ZoneId.systemDefault();
-        LocalDate createdDate = orders.getCreatedOn().atZone(zoneId).toLocalDate();
-        LocalTime timeOrdered = orders.getCreatedOn().atZone(zoneId).toLocalTime();
-        String dateCreated = formatOrderDate(createdDate);
-        String orderTime = formatOrderTime(timeOrdered);
-
-        OrderSummary orderSummary = new OrderSummary();
-        orderSummary.setOrderDate(dateCreated);
-        orderSummary.setOrderTime(orderTime);
-        orderSummary.setOrderTotal((float) orders.getTotalAmount());
-        orderSummary.setDeliveryFee(0);
-
-        response.setOrderSummary(orderSummary);
-
-        if (orders.getOfficeAddress() != null) {
-            response.setAddress(orders.getOfficeAddress());
-        }else {
-            response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
-        }
-
-        return response;
-
 
 
     }
@@ -240,35 +259,43 @@ public class OrdersImpl implements OrdersService {
 
     @Transactional
     public  Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable) {
-        Page<Orders> ordersList = ordersRepository.findAllByOrderByCreatedOnDesc(pageable);
+        try {
+            Page<Orders> ordersList = ordersRepository.findAllByOrderByCreatedOnDesc(pageable);
 
-        List<AllOrdersResponse> responses = new ArrayList<>();
+            List<AllOrdersResponse> responses = new ArrayList<>();
 
-        for (Orders order : ordersList) {
-            AllOrdersResponse ordersResponse = getOrderResponse(order);
-            responses.add(ordersResponse);
+            for (Orders order : ordersList) {
+                AllOrdersResponse ordersResponse = getOrderResponse(order);
+                responses.add(ordersResponse);
 
+            }
+
+            return new PageImpl<>(responses) ;
+        }catch (Exception e) {
+            throw new EntityDeletionException("could not find");
         }
-
-        return new PageImpl<>(responses) ;
     }
 
 
     private void getOrderItemsResponse(Orders order, AllOrdersResponse ordersResponse) {
-        List<OrderItemsResponse> itemsResponses = new ArrayList<>();
+        try {
+            List<OrderItemsResponse> itemsResponses = new ArrayList<>();
 
-        for (OrderItems orderItems : order.getOrderItems()) {
-            OrderItemsResponse itemsResponse = new OrderItemsResponse();
-            itemsResponse.setProductId(orderItems.getProductId().getProductId());
-            itemsResponse.setProductName(orderItems.getProductId().getProductName());
-            itemsResponse.setQuantity(orderItems.getQuantity());
-            itemsResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
-            itemsResponse.setProductPrice((orderItems.getSpecificProductDetails().getProductPrice()-orderItems.getSpecificProductDetails().getDiscount()));
-            itemsResponse.setTotalPrice(orderItems.getTotalPrice());
-            itemsResponse.setStatus(orderItems.getStatus());
-            itemsResponses.add(itemsResponse);
+            for (OrderItems orderItems : order.getOrderItems()) {
+                OrderItemsResponse itemsResponse = new OrderItemsResponse();
+                itemsResponse.setProductId(orderItems.getProductId().getProductId());
+                itemsResponse.setProductName(orderItems.getProductId().getProductName());
+                itemsResponse.setQuantity(orderItems.getQuantity());
+                itemsResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+                itemsResponse.setProductPrice((orderItems.getSpecificProductDetails().getProductPrice()-orderItems.getSpecificProductDetails().getDiscount()));
+                itemsResponse.setTotalPrice(orderItems.getTotalPrice());
+                itemsResponse.setStatus(orderItems.getStatus());
+                itemsResponses.add(itemsResponse);
+            }
+            ordersResponse.setItems(itemsResponses);
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not find order Items");
         }
-        ordersResponse.setItems(itemsResponses);
     }
 
 

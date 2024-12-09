@@ -63,7 +63,9 @@ public class ProductsAdminController {
 
     @PutMapping(value = "/update",consumes = "multipart/form-data")
     public ResponseEntity<EntityResponse> updateProduct(
-            @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files, @RequestParam String productId) throws JsonProcessingException {
+            @RequestPart("productData") String productData,
+            @RequestPart List<MultipartFile> files,
+            @RequestParam String productId) throws JsonProcessingException {
 
         //deserializing the product images data
         ObjectMapper objectMapper = new ObjectMapper();
@@ -136,6 +138,11 @@ public class ProductsAdminController {
 
         return ResponseEntity.ok(model);
 
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryResponse>> findAllCategories(){
+        return ResponseEntity.ok(productsService.findAllCategories());
     }
 
 

@@ -278,23 +278,20 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     public ResponseEntity<AuthenticationResponse> loginUser(LoginRequests loginRequests) {
+        log.info("request to login user");
         // Authenticate the user
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequests.getUsername(), loginRequests.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequests.getEmail(), loginRequests.getPassword()));
 
 
         // Fetch user details
-        Users user = usersRepository.findUsersByUsername(loginRequests.getUsername()).orElseThrow(()-> {
-            return new UserDoesNotExistException("User Does Not Exist.");
-        });
+        log.info("finding the user");
+        Users user = usersRepository.findByUserEmail(loginRequests.getEmail()).orElseThrow(()-> new UserDoesNotExistException("User Does Not Exist."));
 
 
-        if (user == null) {
-            log.error("User not found with email: {}", loginRequests.getUsername());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        System.out.println(user);
         // Generate access token
+        log.info("generating the access token");
         String accessToken = jwtGenService.generateAccessToken(user);
         log.info("Access token generated successfully");
 
@@ -305,6 +302,7 @@ public class UsersServiceImpl implements UsersService {
         authResponse.setToken(accessToken);
         authResponse.setUserId(user.getUserId());
         authResponse.setUserRole(user.getRole().toString());
+        log.info(String.valueOf(authResponse));
 
         response.setHeader("Set-Cookie", cookieUtils.responseCookie(user).toString());
 

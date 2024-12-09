@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.entities.users.Users;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.util.function.Function;
  *  validating the authenticity of these claims
  * */
 @Service
+@Slf4j
 public class JWTGenService {
 
     @Value("${secret_key}")
@@ -53,15 +55,17 @@ public class JWTGenService {
      *  method to generate the jwt tokens
      * */
     protected  String tokenGenerator(Users users, long duration) {
+        log.info("in the token generator");
         return Jwts
                 .builder()
-                .subject(users.getUsername())
+                .subject(users.getUserEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + duration))
                 .signWith(getSignInKey())
                 .compact();
     }
     public String generateAccessToken(Users users) {
+        log.info("calling token generator");
         return tokenGenerator(users, expirationTime);
     }
     public String generateRefreshToken(Users users) {
