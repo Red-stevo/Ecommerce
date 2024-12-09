@@ -94,8 +94,11 @@ const CategoricalProductsDisplay = () => {
 
     useEffect(() => {
        const query = productsCategory.replaceAll('+', ' ');
-        console.log(query);
-    }, []);
+
+       /*Encode the query for backend use.*/
+
+
+    }, [productsCategory]);
 
 
     return (

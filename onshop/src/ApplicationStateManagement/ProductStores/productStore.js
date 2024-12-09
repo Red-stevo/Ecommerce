@@ -231,19 +231,19 @@ productReviews:[
 }
 
 
-const productStoreAdapter = createEntityAdapter({selectId:product => product.productId});
+const productStoreAdapter = createEntityAdapter();
 
 export const getProductDetails = createAsyncThunk("product/get-product",
     async (productId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
-            return fulfillWithValue([]);
+            return fulfillWithValue();
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
     });
 
 const initialState = productStoreAdapter.getInitialState({
-    product,
+    product:{...product},
     error:null,
     status:null,
 });
@@ -260,7 +260,7 @@ const productStore = createSlice({
             state.error = null;
         })
          .addCase(getProductDetails.fulfilled, (state, action) => {
-             productStoreAdapter.setAll(state, action.payload.data);
+             state.product = action.payload;
              state.status = "fulfilled";
              state.error = null;
          })
