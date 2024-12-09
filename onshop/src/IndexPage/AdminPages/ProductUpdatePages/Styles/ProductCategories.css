@@ -85,6 +85,14 @@
     margin-bottom: 20px;
 }
 
+.modal-pop {
+    width: 100%;
+    height: 100vh;
+}
+
+.hide {
+    display: none;
+}
 
 @media screen and (max-device-width: 370px) {
     .product-categories-body-header-icon, .product-categories-body-header-category {

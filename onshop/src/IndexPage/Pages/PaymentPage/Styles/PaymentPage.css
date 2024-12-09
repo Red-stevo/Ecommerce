@@ -1,0 +1,364 @@
+.payment-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 15% 40px;
+    font-family: Montserrat, Montserr, "Noto Sans", sans-serif;
+}
+
+.payment-page-location-section, .payment-page-pay-method-section,
+.payment-page-products-section, .payment-page-price-section {
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(234, 146, 53, 0.11);
+    padding: 20px;
+    box-shadow: 2px 4px 6px rgba(239, 189, 236, 0.67);
+    border-radius: 10px;
+}
+
+.payment-page-location-section-title {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-page-location-section-shipping,
+.payment-page-pay-method-section-title,
+.payment-page-products-section-product-title-count {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.payment-page-location-section-edit {
+    font-size: 18px;
+    background-color: transparent;
+    border: solid 1px transparent;
+    padding: 6px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.payment-page-location-section-edit:hover {
+    font-size: 18px;
+    border: solid 1px #9b5505;
+}
+
+.payment-page-location-section-edit:active {
+    background-color: rgba(234, 146, 53, 0.12);
+}
+
+.payment-page-location-section-address {
+    width: 100%;
+    display: flex;
+    gap: 4px;
+}
+
+.payment-page-location-section-icon {
+    font-size: 42px;
+    align-self: center;
+}
+
+.payment-page-location-section-phone-location {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-page-location-section-phone, .payment-page-location-section-location {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.payment-page-location-section-location {
+    font-weight: 400;
+    font-size: 16px;
+}
+
+
+.payment-page-pay-method-section-mpesa-icon {
+    width: 150px;
+    height: 90px;
+}
+
+.payment-page-pay-method-section-number-icon {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.payment-page-pay-method-section-number {
+    width: 240px;
+    height: 50px;
+}
+
+.payment-page-pay-method-section-number-input {
+    width: 240px;
+}
+
+.country-code {
+    height: 50px;
+}
+
+.payment-page-pay-method-section-icon-text {
+    font-weight: 500;
+    font-family: Montserrat Montserr sans-serif;
+    font-size: 16px;
+}
+
+.payment-page-products-section-product-image {
+    height: 100px;
+    width: 100px;
+}
+
+.payment-page-products-section-product {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.payment-page-products-section-product-name {
+    width: 60%;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Montserr Montserrat sans-serif;
+}
+
+.payment-page-products-section-products {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 13px;
+    gap: 5px;
+}
+
+.payment-page-products-section-product-price-count {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-page-products-section-product-price {
+    color: #3a20b7;
+}
+
+.payment-page-products-section-product-price, .payment-page-products-section-product-count {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.payment-page-price-section-title {
+    font-size:26px;
+    font-weight: 600;
+    font-family: Montserrat Montserr sans-serif;
+    width: 100%;
+    margin-bottom: 13px;
+}
+
+.payment-page-price-section-prices-summary {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-page-price-section-prices-summary-holder {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    gap: 10px;
+}
+
+.payment-page-price-section-pay-button {
+    width: fit-content;
+    height: fit-content;
+    padding: 7px;
+    border-radius: 7px;
+    border: solid 1px rgba(0, 128, 0, 0.96);
+    background-color: rgba(0, 128, 0, 0.96);
+    align-self: flex-end;
+    justify-self: flex-end;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: Montserr Montserrat sans-serif;
+    color: white;
+}
+
+.payment-page-price-section-pay-button:hover {
+    border: solid 1px rgba(0, 217, 0, 0.96);
+    background-color: rgba(0, 217, 0, 0.96);
+}
+
+.payment-page-price-section-pay-button:active {
+    color: black;
+    border: solid 1px rgba(0, 217, 0, 0.96);
+    background-color: rgba(0, 217, 0, 0.96);
+}
+
+.payment-page-price-section-money-bag {
+    font-size: 20px;
+}
+
+.payment-page-price-section-product-price,
+.payment-page-price-section-shipping-price,
+.payment-page-price-section-total-price {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Montserrat Montserr sans-serif;
+    display: flex;
+    justify-content: space-around;
+}
+
+
+@media screen and (max-device-width: 767px) {
+
+    .payment-page {
+        padding-left: 5%;
+        padding-right: 5%;
+        padding-top: 20px;
+    }
+
+}
+
+
+@media screen and (max-device-width: 590px) {
+
+    .payment-page {
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 10px;
+    }
+
+    .payment-page-location-section, .payment-page-pay-method-section,
+    .payment-page-products-section, .payment-page-price-section {
+        padding: 8px;
+    }
+
+    .payment-page-products-section-product-image {
+        height: 70px;
+        width: 70px;
+    }
+
+    .payment-page-location-section-shipping,
+    .payment-page-pay-method-section-title,
+    .payment-page-products-section-product-title-count, .payment-page-price-section-title {
+        font-size: 18px;
+    }
+
+    .payment-page-location-section-phone, .payment-page-location-section-location, .payment-page-location-section-location {
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .payment-page-pay-method-section-mpesa-icon {
+        width: 100px;
+        height: 70px;
+    }
+
+    .payment-page-pay-method-section-number {
+        width: 200px;
+        height: 50px;
+    }
+
+    .payment-page-pay-method-section-number-input {
+        width: 170px;
+    }
+
+    .country-code {
+        height: 30px;
+    }
+
+    .payment-page-products-section-product-price-count {
+        width: 82px;
+    }
+}
+
+
+@media screen and (max-device-width: 448px) {
+
+    .payment-page {
+        padding-left: 4px;
+        padding-right: 4px;
+        padding-top: 4px;
+    }
+
+    .payment-page-location-section, .payment-page-pay-method-section,
+    .payment-page-products-section, .payment-page-price-section {
+        padding: 4px;
+    }
+
+    .payment-page-location-section-shipping,
+    .payment-page-pay-method-section-title,
+    .payment-page-products-section-product-title-count, .payment-page-price-section-title {
+        font-size: 14px;
+    }
+
+    .payment-page-location-section-phone, .payment-page-location-section-location, .payment-page-location-section-location {
+        font-size: 11px;
+    }
+
+    .payment-page-pay-method-section-mpesa-icon {
+        width: 70px;
+        height: 40px;
+    }
+
+    .payment-page-pay-method-section-icon-text {
+        font-size: 11px;
+    }
+
+
+    .payment-page-products-section-product-price-count {
+        width: 120px;
+    }
+
+    .payment-page-products-section-product-name {
+        width: 60%;
+        font-size: 11px;
+    }
+
+    .payment-page-products-section-product-image {
+        height: 60px;
+        width: 60px;
+    }
+
+    .payment-page-price-section-product-price,
+    .payment-page-price-section-shipping-price,
+    .payment-page-price-section-total-price {
+        font-size: 11px;
+    }
+
+    .payment-page-price-section-money-bag {
+        font-size: 14px;
+    }
+
+    .payment-page-price-section-pay-button {
+        font-size: 11px;
+    }
+
+    .payment-page-pay-method-section-number-icon {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .payment-page-pay-method-section-number-input {
+        width: 240px;
+        font-size: 12px;
+    }
+
+    .payment-page-products-section-product-price, .payment-page-products-section-product-count {
+        font-size: 12px;
+    }
+
+
+}
+
+
+
+
+
+
+
+

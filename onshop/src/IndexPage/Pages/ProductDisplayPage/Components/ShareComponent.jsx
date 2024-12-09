@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     EmailIcon,
     EmailShareButton,
     FacebookIcon,
-    FacebookShareButton,
+    FacebookShareButton, TelegramIcon,
+    TelegramShareButton,
     TwitterIcon,
     TwitterShareButton,
     WhatsappIcon,
@@ -11,48 +12,64 @@ import {
 } from "react-share";
 import {CopyToClipboard} from "react-copy-to-clipboard/src";
 import Modal from "react-bootstrap/Modal";
-import {Button} from "react-bootstrap";
+
 
 const ShareComponent = (props) => {
 const [copy, setCopy] = useState(false);
-const productUrl = window.location.href
+const productUrl = window.location.href;
 
-const handleCopy = (props) => {
-  setCopy((prevState) => !prevState);
-};
+    useEffect(() => {
+
+        const  resentCopied = () => {
+            setTimeout(() => {
+                setCopy(() => false)
+            }, 5000)
+        }
 
 
-    return (
-        <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Share Product
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className={"user-details-modal"} >
-                <WhatsappShareButton url={productUrl} >
-                    <WhatsappIcon size={30} round />
-                </WhatsappShareButton>
+        if (copy) resentCopied();
 
-                <FacebookShareButton url={productUrl} >
-                    <FacebookIcon size={30} round />
-                </FacebookShareButton>
+    }, [copy]);
 
-                <TwitterShareButton url={productUrl} >
-                    <TwitterIcon size={30} round />
-                </TwitterShareButton>
 
-                <EmailShareButton url={productUrl}>
-                    <EmailIcon size={30} round />
-                </EmailShareButton>
+return (
+    <Modal{...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered >
+        <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter">
+                Share Product
+            </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className={"share-product-modal"} >
+            <WhatsappShareButton url={productUrl} >
+                <WhatsappIcon size={30} round />
+            </WhatsappShareButton>
 
-                <CopyToClipboard text={productUrl}>
-                    <button onClick={() => setCopy(prevState => !prevState)}>
-                        {copy ? "Copied!": "Copy Link"}
-                    </button>
-                </CopyToClipboard>
-            </Modal.Body>
-        </Modal>
+            <FacebookShareButton url={productUrl} >
+                <FacebookIcon size={30} round />
+            </FacebookShareButton>
+
+            <TwitterShareButton url={productUrl} >
+                <TwitterIcon size={30} round />
+            </TwitterShareButton>
+
+            <EmailShareButton url={productUrl}>
+                <EmailIcon size={30} round />
+            </EmailShareButton>
+
+            <TelegramShareButton url={productUrl}>
+                <TelegramIcon size={30} round />
+            </TelegramShareButton>
+
+
+            <CopyToClipboard text={productUrl}>
+                <button className={`${!copy ? " copy-button " : " copied-button "}`}
+                        onClick={() => setCopy(prevState => !prevState)}>
+                    {copy ? "Copied!": "Copy Link"}
+                </button>
+            </CopyToClipboard>
+
+        </Modal.Body>
+    </Modal>
     );
 };
 

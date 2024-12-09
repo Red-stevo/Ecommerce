@@ -1,13 +1,42 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {Form, FormGroup} from "react-bootstrap";
+import {Form, FormGroup, Image} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
 import FileReview from "./FileReview.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    postCategory,
+    putCategories
+} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import Loader from "../../../../Loading/Loader.jsx";
 
 const AddIconForm= (props) => {
     const [iconUpload, setIconUpload] = useState(null);
     const [iconPreview, setIconPreview] = useState([]);
+    const {register,
+        handleSubmit,
+        reset} = useForm();
+    const dispatch = useDispatch();
+    const {errorMessage, loading, success} = useSelector(state => state. CategoriesReducer);
+    const [hide, setHide] = useState(false);
+
+    useEffect(() => {
+
+        if (props.show === true){
+            if (props.editdata) reset({categoryName:props.editdata.categoryName});
+
+            else reset({categoryName:""});
+
+        }
+
+    }, [props]);
+
+    useEffect(() => {
+        if (iconPreview.length === 0)setIconUpload(null);
+    }, [iconPreview]);
+
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -47,12 +76,40 @@ const AddIconForm= (props) => {
         setIconPreview([]);
     }
 
+    const handleCategorySubmit = (data) => {
 
+        if (!props.editdata) {
 
+            const categoryData = {
+                categoryName:data.categoryName, file:iconUpload,
+            }
 
+            dispatch(postCategory(categoryData));
+
+            /*Clean up states*/
+            reset({categoryName : "",});
+            setIconPreview([]);
+            setIconUpload(null)
+        }else {
+            const updateCategoryData = {categoryName: "", categoryIcon:null, categoryId:props.editdata.categoryId}
+
+            if (iconUpload){
+                updateCategoryData.categoryName = data.categoryName;
+                updateCategoryData.categoryIcon = iconUpload;
+            }else updateCategoryData.categoryName = data.categoryName;
+
+            dispatch(putCategories(updateCategoryData));
+
+            /*Clean up states*/
+            reset({categoryName : "",});
+            setIconPreview([]);
+            setIconUpload(null);
+            setHide(true);
+        }
+    }
 
     return (
-        <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
+        <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered  className={"modal-pop"}>
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                     Add Product Icon
@@ -62,7 +119,8 @@ const AddIconForm= (props) => {
                 <Form className={"user-details-form"}>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Category Name"} type={"text"}/>
+                        <input className={"form-control"} placeholder={"Category Name"} type={"text"}
+                               {...register("categoryName")} />
                     </FormGroup>
 
                     <div className={"images-review"}>
@@ -75,15 +133,27 @@ const AddIconForm= (props) => {
                                 type="file" multiple={true} accept="image/*" id="fileUpload"
                                 className="file-input-filled"/>
                         </>
+
+
+                        {props.editdata && iconPreview.length === 0 && !hide &&
+                            <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
+
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
                     </div>
 
-
                 </Form>
+
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <div className={"category-form-buttons"}>
+                    {props.editdata && <Button className={"app-button"}>Delete</Button>}
+                    <Button onClick={handleSubmit(handleCategorySubmit)} className={"app-button"}>
+                        {props.editdata ? "Update" : "Add"}
+                    </Button>
+                </div>
             </Modal.Footer>
+
+            {loading && <Loader />}
         </Modal>
     );
 }

@@ -17,6 +17,7 @@ import SingleProductDisplay from "./IndexPage/AdminPages/OrdersPages/SingleProdu
 import UserProfilePage from "./IndexPage/Pages/UserProfile/UserProfilePage.jsx";
 import ProductCategories from "./IndexPage/AdminPages/ProductUpdatePages/ProductCategories.jsx";
 import ProductsInventory from "./IndexPage/AdminPages/ProductUpdatePages/ProductsInventory.jsx";
+import PaymentPage from "./IndexPage/Pages/PaymentPage/PaymentPage.jsx";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
                   <Route path={"/home/user/order-status"} element={ <OrderStatus /> }/>
                   <Route path={"/home/user/wish-list"} element={<WishListPage />}/>
                   <Route path={"/home/user/profile"} element={<UserProfilePage />}/>
+                  <Route path={"/home/user/payment"} element={<PaymentPage />} />
               </Route>
               <Route path={"/auth/login"} element={<LoginPage />} />
               <Route path={"/auth/registration"} element={<RegistrationPage />} />
