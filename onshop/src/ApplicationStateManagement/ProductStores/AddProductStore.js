@@ -44,7 +44,9 @@ export const postProduct = createAsyncThunk("new-product/create",
 
 
 
-            await RequestsConfig.post("/products/post", productCreationRequest);
+            await RequestsConfig.post("/products/post", productCreationRequest, {headers:{
+                    'Content-Type': 'multipart/form-data',
+                }});
             return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);

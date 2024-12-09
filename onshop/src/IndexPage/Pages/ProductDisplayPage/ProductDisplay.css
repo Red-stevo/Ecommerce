@@ -293,6 +293,38 @@
     margin-bottom: 10px;
 }
 
+/*Share product Modal.*/
+.share-product-modal {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+.copy-button {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid transparent 1px;
+    font-weight: 500;
+    padding: 5px;
+}
+
+.copy-button:hover {
+    border: solid #8a4906 1px;
+    font-weight: 500;
+}
+
+.copied-button {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid green 1px;
+    font-weight: 500;
+    padding: 5px;
+    color: green;
+}
+
+
 
 @media screen and (max-device-width: 899px){
     .image-display-holder {
@@ -560,5 +592,15 @@
         font-weight: 500;
         margin-bottom: 10px;
     }
+
+
+    /*Share product Modal.*/
+    .share-product-modal {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
 
 }
