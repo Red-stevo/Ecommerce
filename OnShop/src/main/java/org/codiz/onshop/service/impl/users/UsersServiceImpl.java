@@ -1,17 +1,20 @@
 package org.codiz.onshop.service.impl.users;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.ControllerAdvice.custom.InvalidTokensException;
 import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.dtos.requests.*;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.users.Role;
 import org.codiz.onshop.entities.users.UserProfiles;
 import org.codiz.onshop.entities.users.Users;
+import org.codiz.onshop.repositories.users.RefreshTokensRepository;
 import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
@@ -19,6 +22,7 @@ import org.codiz.onshop.service.serv.users.UsersService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,6 +50,7 @@ public class UsersServiceImpl implements UsersService {
     private final JWTGenService jwtGenService;
     private final CookieUtils cookieUtils;
     private final HttpServletResponse response;
+    private final RefreshTokensRepository refreshTokensRepository;
 
 
     public EntityResponse registerUser(UserRegistrationRequest request) {
@@ -61,6 +66,34 @@ public class UsersServiceImpl implements UsersService {
             user.setUserEmail(email);
             user.setPhoneNumber(request.getPhoneNumber());
             user.setRole(Role.CUSTOMER);
+
+            usersRepository.save(user);
+
+            EntityResponse response = new EntityResponse();
+            response.setMessage("Successfully created admin user");
+            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            response.setStatus(HttpStatus.OK);
+            return response;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+        }
+
+
+    }
+    public EntityResponse registerAdminUser(UserRegistrationRequest request) {
+
+        Users user = new Users();
+
+        if (userExists(request.getUserEmail()) && isPasswordStrong(request.getPassword())) {
+            user.setUsername(request.getUsername());
+            final String password = passwordEncoder.encode(request.getPassword());
+            user.setPassword(password);
+            @Email
+            final String email = request.getUserEmail();
+            user.setUserEmail(email);
+            user.setPhoneNumber(request.getPhoneNumber());
+            user.setRole(Role.ADMIN);
 
             usersRepository.save(user);
 
@@ -94,7 +127,7 @@ public class UsersServiceImpl implements UsersService {
 
         if (userExists(admin_user_email)){
             user.setUsername(admin_username);
-            user.setPassword(admin_user_password);
+            user.setPassword(passwordEncoder.encode(admin_user_password));
             user.setRole(admin_user_role);
             user.setUserEmail(admin_user_email);
             user.setPhoneNumber(admin_user_phone);
@@ -245,23 +278,20 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     public ResponseEntity<AuthenticationResponse> loginUser(LoginRequests loginRequests) {
+        log.info("request to login user");
         // Authenticate the user
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequests.getUsername(), loginRequests.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequests.getEmail(), loginRequests.getPassword()));
 
 
         // Fetch user details
-        Users user = usersRepository.findUsersByUsername(loginRequests.getUsername()).orElseThrow(()-> {
-            return new UserDoesNotExistException("User Does Not Exist.");
-        });
+        log.info("finding the user");
+        Users user = usersRepository.findByUserEmail(loginRequests.getEmail()).orElseThrow(()-> new UserDoesNotExistException("User Does Not Exist."));
 
 
-        if (user == null) {
-            log.error("User not found with email: {}", loginRequests.getUsername());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        System.out.println(user);
         // Generate access token
+        log.info("generating the access token");
         String accessToken = jwtGenService.generateAccessToken(user);
         log.info("Access token generated successfully");
 
@@ -272,6 +302,7 @@ public class UsersServiceImpl implements UsersService {
         authResponse.setToken(accessToken);
         authResponse.setUserId(user.getUserId());
         authResponse.setUserRole(user.getRole().toString());
+        log.info(String.valueOf(authResponse));
 
         response.setHeader("Set-Cookie", cookieUtils.responseCookie(user).toString());
 
@@ -314,5 +345,39 @@ public class UsersServiceImpl implements UsersService {
         userGeneralResponse.setHttpStatus(HttpStatus.OK);
 
         return userGeneralResponse;
+    }
+
+
+    public AuthenticationResponse refreshToken(HttpServletRequest request) {
+
+        String refreshToken = cookieUtils.extractJwtFromCookie(request);
+
+
+        log.warn("Extracted the refresh token.");
+        if (refreshToken == null || refreshToken.isEmpty())
+            throw new InvalidTokensException("No tokens found in request");
+
+
+        Users users = refreshTokensRepository.findByRefreshToken(refreshToken).
+                orElseThrow(() -> new InvalidTokensException("refresh token not found")).getUser();
+
+        log.warn("token found in database.");
+        if (!jwtGenService.isTokenValid(refreshToken,users)){
+            throw new InvalidTokensException("Invalid token");
+        }
+
+        log.warn("Token checked for validity.");
+        HttpCookie refresh = cookieUtils.responseCookie(users);
+        response.setHeader("Set-Cookie", refresh.toString());
+        String accessToken = jwtGenService.generateAccessToken(users);
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setToken(accessToken);
+        authenticationResponse.setMessage("access token refreshed successfully");
+        authenticationResponse.setUserRole(String.valueOf(users.getRole()));
+        authenticationResponse.setUserId(users.getUserId());
+
+        log.warn("token fully refreshed.");
+        return authenticationResponse;
     }
 }
