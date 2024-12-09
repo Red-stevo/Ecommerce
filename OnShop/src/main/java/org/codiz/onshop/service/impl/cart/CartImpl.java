@@ -2,6 +2,7 @@ package org.codiz.onshop.service.impl.cart;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
@@ -190,17 +191,25 @@ public class CartImpl implements CartService {
 
     @Transactional
     public HttpStatus removeItemFromCart(String cartItemId) {
-        CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
-        cartItemsRepository.delete(cartItems);
+        try {
+            CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
+            cartItemsRepository.delete(cartItems);
 
-        return HttpStatus.OK ;
+            return HttpStatus.OK ;
+        } catch (Exception e) {
+            throw new EntityDeletionException("could not remove item from cart");
+        }
     }
 
     @Transactional
     public HttpStatus deleteCart(String cartId){
-        Cart cart = cartRepository.findCartByCartId(cartId);
-        cartRepository.delete(cart);
-        return HttpStatus.OK ;
+        try {
+            Cart cart = cartRepository.findCartByCartId(cartId);
+            cartRepository.delete(cart);
+            return HttpStatus.OK ;
+        }catch (Exception e){
+            throw new EntityDeletionException("could not delete the cart");
+        }
     }
 
 
