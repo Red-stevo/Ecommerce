@@ -6,7 +6,7 @@ import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {postProduct} from "../../../ApplicationStateManagement/ProductStores/AddProductStore.js";
+import {postProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 import {getCategories} from "../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 

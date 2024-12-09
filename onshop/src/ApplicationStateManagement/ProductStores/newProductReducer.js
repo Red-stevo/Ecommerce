@@ -56,7 +56,7 @@ export const postProduct = createAsyncThunk("new-product/create",
 
 
 
-export const newProductReducer = createSlice(
+const newProductReducer = createSlice(
     {
         name:"new-product",
         initialState,
@@ -79,5 +79,7 @@ export const newProductReducer = createSlice(
         }
     }
 );
+
+export default newProductReducer.reducer;
 
 

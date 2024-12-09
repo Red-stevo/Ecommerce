@@ -4,6 +4,9 @@ import {Button, Image} from "react-bootstrap";
 import StarRating from "./Components/StarRating.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
+import {useDispatch} from "react-redux";
+import {queryProducts} from "../../../ApplicationStateManagement/ProductStores/SearchProducts.js";
+import data from "bootstrap/js/src/dom/data.js";
 
 
 
@@ -91,13 +94,18 @@ const products = [
 const CategoricalProductsDisplay = () => {
     const navigate = useNavigate();
     const { productsCategory} = useParams();
+    const dispatch = useDispatch();
 
     useEffect(() => {
        const query = productsCategory.replaceAll('+', ' ');
 
-       /*Encode the query for backend use.*/
+       const data = {
+           query,
+       }
 
+        console.log(data);
 
+       dispatch(queryProducts(data));
     }, [productsCategory]);
 
 

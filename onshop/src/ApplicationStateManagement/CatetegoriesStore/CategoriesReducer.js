@@ -38,7 +38,7 @@ export const getCategories = createAsyncThunk("new-category/get-categories",
 
         /*Axios request to save category.*/
         try {
-            return fulfillWithValue((await RequestsConfig.get(`/admin/products/categories`)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/open/products/categories`)).data);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
         }
@@ -88,7 +88,7 @@ export const deleteCategories = createAsyncThunk("new-category/delete-categories
 );
 
 
-export const CategoriesReducer = createSlice(
+const CategoriesReducer = createSlice(
     {
         name:"new-category",
         initialState,
@@ -157,3 +157,4 @@ export const CategoriesReducer = createSlice(
     }
 );
 
+export default CategoriesReducer.reducer;

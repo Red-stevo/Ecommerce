@@ -7,8 +7,8 @@ export const queryProducts = createAsyncThunk("products/query-products",
     async (data = null, {fulfillWithValue,rejectWithValue}) => {
 
     try {
-            return fulfillWithValue((
-                (await RequestsConfig.get(`/customer/products/search?query${data.query}&page=0&size=12`)).data));
+            return fulfillWithValue(((await RequestsConfig.get(
+                    `/open/products/search?query=${encodeURIComponent(data.query)}&page=0&size=12`)).data));
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
@@ -21,7 +21,7 @@ const initialState = productsAdapter.getInitialState({
 });
 
 
-const productStore = createSlice({
+const SearchProducts = createSlice({
     name:"products",
     initialState,
     reducers:{},
@@ -44,4 +44,4 @@ const productStore = createSlice({
 });
 
 
-export default productStore.reducer;
+export default SearchProducts.reducer;
