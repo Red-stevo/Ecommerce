@@ -31,10 +31,6 @@ const ProductCategories = () => {
         dispatch(getCategories())
     }, []);
 
-    /*Reload page on category addition and update*/
-    useEffect(() => {
-        //if (!modalShow) window.location.reload();
-    }, [modalShow]);
 
 
     /*Fetch the products again*/

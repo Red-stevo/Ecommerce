@@ -2,7 +2,8 @@ import "./Styles/CategoricalProductsDisplay.css";
 import CategoriesMenu from "./Components/CategoriesMenu.jsx";
 import {Button, Image} from "react-bootstrap";
 import StarRating from "./Components/StarRating.jsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect} from "react";
 
 
 
@@ -89,6 +90,12 @@ const products = [
 
 const CategoricalProductsDisplay = () => {
     const navigate = useNavigate();
+    const { productsCategory} = useParams();
+
+    useEffect(() => {
+       const query = productsCategory.replaceAll('+', ' ');
+        console.log(query);
+    }, []);
 
 
     return (
