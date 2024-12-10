@@ -6,7 +6,7 @@ import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
 
@@ -22,12 +22,13 @@ const ProductDisplay = () => {
     const [activeColor, setActiveColor] = useState(null);
     const [productOnDisplay, setProductOnDisplay] = useState(null);
     const [activeImage, setActiveImage] = useState('');
+    const { productId} = useParams();
 
 
     // Fetch products on component mount
     useEffect(() => {
-        dispatch(getProductDetails(null));
-    }, []);
+        dispatch(getProductDetails(productId));
+    }, [productId]);
 
     // Extract unique sizes
     const sizes = useMemo(() => {
@@ -95,7 +96,7 @@ const ProductDisplay = () => {
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
                 <div className={"conversion-buttons3"}>
-                    <Button className={"add-cart-button app-button"}>
+ {/*Add to cart button.*/}                   <Button className={"add-cart-button app-button"}>
                         <TiShoppingCart className={"add-cart-icon"}/>
                         ADD TO CART
                     </Button>
@@ -148,7 +149,7 @@ const ProductDisplay = () => {
                         <div className={"conversion-buttons2"}>
 
                             <div className={"cart-order-buttons"}>
-                                <Button className={"add-cart-button app-button"}>
+{/*Add to cart button.*/}   <Button className={"add-cart-button app-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
                                 </Button>
@@ -205,7 +206,7 @@ const ProductDisplay = () => {
 
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
-                        <Button className={"add-cart-button app-button"}>
+{/*Add to cart button.*/}    <Button className={"add-cart-button app-button"}>
                             <TiShoppingCart className={"add-cart-icon"}/>
                             ADD TO CART
                         </Button>
