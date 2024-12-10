@@ -6,11 +6,12 @@ const cartAdapter = createEntityAdapter();
 const initialState = cartAdapter.getInitialState({errorMessage:"", loading:"", success:"",});
 
 export const addToCart = createAsyncThunk("cart/addToCart",
-    async (productId,
+    async (productData = null,
            {fulfillWithValue
         ,rejectWithValue}) => {
     try {
-        await RequestsConfig.post("");
+        await RequestsConfig.post("/customer/cart/add-to-cart", productData,
+            {headers:{'Content-Type':'application/json'}});
         fulfillWithValue(true);
     }catch (error){
         return rejectWithValue(error.response ? error.response.data : error.data);

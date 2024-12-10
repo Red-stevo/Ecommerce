@@ -9,6 +9,7 @@ import {LuShare2} from "react-icons/lu";
 import {useNavigate, useParams} from "react-router-dom";
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
+import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
@@ -28,7 +29,24 @@ const ProductDisplay = () => {
     // Fetch products on component mount
     useEffect(() => {
         dispatch(getProductDetails(productId));
-    }, [productId]);
+    }, []);
+
+    const handleAddToCart = () => {
+
+        const cartData =
+            {userId: "AS32DT", specificationId: productOnDisplay, quantity: 1}
+
+        dispatch(addToCart(cartData));
+    }
+    const handleAddToWishList = () => {
+
+    }
+
+    const handleOrderNow = () => {
+
+    }
+
+
 
     // Extract unique sizes
     const sizes = useMemo(() => {
@@ -96,11 +114,11 @@ const ProductDisplay = () => {
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
                 <div className={"conversion-buttons3"}>
- {/*Add to cart button.*/}                   <Button className={"add-cart-button app-button"}>
+                    <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                         <TiShoppingCart className={"add-cart-icon"}/>
                         ADD TO CART
                     </Button>
-                    <Button className={"order-button app-button"}>ORDER NOW</Button>
+                    <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                     <LuShare2 className={"share-icon"} title={"Share"}
                               onClick={() => setShareIcon((prevState) => !prevState)}/>
                 </div> {/*Not in medium screens*/}
@@ -149,11 +167,11 @@ const ProductDisplay = () => {
                         <div className={"conversion-buttons2"}>
 
                             <div className={"cart-order-buttons"}>
-{/*Add to cart button.*/}   <Button className={"add-cart-button app-button"}>
+                               <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
                                 </Button>
-                                <Button className={"order-button app-button"}>ORDER NOW</Button>
+                                <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                             </div>
 
                             <div className={"share-count-buttons"}>
@@ -195,7 +213,9 @@ const ProductDisplay = () => {
                                 ))}
                             </Pagination>
 
-                            <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
+                            <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}>
+                                <FaRegHeart/>WISHLIST
+                            </Button>
                         </div> {/*Medium screen display*/}
 
 
@@ -206,11 +226,11 @@ const ProductDisplay = () => {
 
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
-{/*Add to cart button.*/}    <Button className={"add-cart-button app-button"}>
+                        <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                             <TiShoppingCart className={"add-cart-icon"}/>
                             ADD TO CART
                         </Button>
-                        <Button className={"order-button app-button"}>ORDER NOW</Button>
+                        <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                         <LuShare2 className={"share-icon"} title={"Share"}
                                   onClick={() => setShareIcon((prevState) => !prevState)}/>
                     </div> {/*Not in medium screens*/}
@@ -242,7 +262,7 @@ const ProductDisplay = () => {
                             ))}
                         </Pagination>
 
-                        <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
+                        <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button> {/*customer/products/add-to-wishlist*/}
                     </div> {/*Not in medium screens.*/}
 
                     {productOnDisplay &&
