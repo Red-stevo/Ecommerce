@@ -201,6 +201,8 @@ public class ProductsServiceImpl implements ProductsService {
                     }
                 }
                 details1.setProductImagesList(imagesList);
+                details1.setProducts(product);
+                /*specificProductsRepository.save(details1);*/
 
 
 
@@ -230,34 +232,50 @@ public class ProductsServiceImpl implements ProductsService {
         }
     }
 
+
+
     @Transactional
     @Cacheable(value = "products", unless = "#result == null || #result.isEmpty()")
     public Page<ProductsPageResponse> searchProducts(String query, Pageable pageable) {
         try {
-            List<ProductsPageResponse> responseList = new ArrayList<>();
-            //check if the search requires all products then return random products
-            if (query == "All Products"){
-                List<Products> products = productsRepository.findAll();
-                responseList = products.stream().map(this::mapToProductsPageResponse).toList();
-            }else {
+            List<Products> productsList;
+
+            if ("All Products".equalsIgnoreCase(query)) {
+                // Fetch all products and shuffle
+                productsList = productsRepository.findAll();
+                if (productsList == null) {
+                    productsList = Collections.emptyList(); // Avoid null
+                }
+                Collections.shuffle(productsList);
+            } else {
                 // Search products by name or description
-                List<Products> productResults = productsRepository
-                        .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable)
-                        .getContent();
+                List<Products> productResults = Optional.ofNullable(productsRepository
+                                .findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(query, query, pageable))
+                        .map(Page::getContent)
+                        .orElse(Collections.emptyList());
 
                 // Search categories by name and retrieve associated products
-                List<Products> categoryProducts = categoriesRepository
-                        .findCategoriesByCategoryNameIgnoreCase(query, pageable)
+
+                Page<Categories> categoriesList = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(query, pageable);
+                if (categoriesList == null) {
+                    productsList = Collections.emptyList();
+                }
+                List<Products> categoryProducts = categoriesList
                         .stream()
                         .flatMap(category -> category.getProducts().stream())
                         .distinct()
                         .toList();
 
-                // Search specific product details and retrieve associated products
-                List<Products> specificProducts = specificProductsRepository
-                        .findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(query, query, pageable)
+                // Search specific product details (color or size) and retrieve associated products
+                Page<SpecificProductDetails> specificProductDetails = specificProductsRepository
+                        .findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(query, query, pageable);
+
+                if (specificProductDetails == null) {
+                    productsList = Collections.emptyList();
+                }
+                List<Products> specificProducts = specificProductDetails
                         .stream()
-                        .map(SpecificProductDetails::getProducts)
+                        .flatMap(sp -> Optional.ofNullable(sp.getProducts()).stream())
                         .distinct()
                         .toList();
 
@@ -267,16 +285,26 @@ public class ProductsServiceImpl implements ProductsService {
                 combinedResults.addAll(categoryProducts);
                 combinedResults.addAll(specificProducts);
 
-                System.out.println(combinedResults);
-                // Map to response DTO
-               responseList = combinedResults.stream()
-                        .map(this::mapToProductsPageResponse)
-                        .toList();
+                productsList = new ArrayList<>(combinedResults);
+
+                // Shuffle the combined results
+                Collections.shuffle(productsList);
             }
 
+            // Map to response DTO
+            List<ProductsPageResponse> responseList = new ArrayList<>();
+            if (!productsList.isEmpty()) {
+                responseList = productsList.stream()
+                        .map(this::mapToProductsPageResponse)
+                        .filter(Objects::nonNull) // Filter out any null responses
+                        .toList();
+            } else {
+                // Handle the case where productsList is empty
+                // You can either return an empty response or throw a specific exception
+                return new PageImpl<>(Collections.emptyList(), pageable, 0);
+            }
 
-
-            // Paginate combined results
+// Paginate the results
             int start = (int) pageable.getOffset();
             int end = Math.min(start + pageable.getPageSize(), responseList.size());
             if (start > end) {
@@ -284,8 +312,8 @@ public class ProductsServiceImpl implements ProductsService {
             }
 
             List<ProductsPageResponse> paginatedList = responseList.subList(start, end);
-
             return new PageImpl<>(paginatedList, pageable, responseList.size());
+
         } catch (IllegalArgumentException e) {
             throw new ResourceNotFoundException("Invalid page request: " + e.getMessage());
         } catch (Exception e) {
@@ -295,34 +323,42 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
-    private ProductsPageResponse mapToProductsPageResponse(Products product) {
-        ProductsPageResponse response = new ProductsPageResponse();
 
+
+    private ProductsPageResponse mapToProductsPageResponse(Products product) {
+        if (product == null) {
+            return new ProductsPageResponse(); // or throw a custom exception
+        }
+
+        ProductsPageResponse response = new ProductsPageResponse();
         response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
 
-        if (product.getProductRatingsList() != null) {
-            Double averageRating = ratingsRepository.findAverageRatingByProductId(product.getProductId());
-            int rating = (averageRating != null) ? (int) Math.round(averageRating) : 0;
-            response.setRatings(rating);
-        } else {
-            response.setRatings(0);
-        }
+        // Calculate ratings
+        Double averageRating = ratingsRepository.findAverageRatingByProductId(product.getProductId());
+        int rating = (averageRating != null) ? (int) Math.round(averageRating) : 0;
+        response.setRatings(rating);
 
-        /*for (SpecificProductDetails details : product.getSpecificProductDetailsList()) {
-            response.setProductImagesUrl(details.getProductImagesList().get(0).getImageUrl());
 
+        // Check specific product details
+        if (product.getSpecificProductDetailsList() != null && !product.getSpecificProductDetailsList().isEmpty()) {
+            SpecificProductDetails details = product.getSpecificProductDetailsList().get(0);
+            float price = details.getProductPrice();
+            log.info(""+price);
+            float discount = details.getDiscount();
+            log.info(""+discount);
 
             response.setDiscountedPrice(price - discount);
-        }*/
-        float price = product.getSpecificProductDetailsList().get(0).getProductPrice();
-        float discount = product.getSpecificProductDetailsList().get(0).getDiscount();
 
-        response.setDiscountedPrice(price - discount);
-        response.setProductImagesUrl(product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
+            // Check product images
+            if (details.getProductImagesList() != null && !details.getProductImagesList().isEmpty()) {
+                response.setProductImagesUrl(details.getProductImagesList().get(0).getImageUrl());
+            }
+        }
 
         return response;
     }
+
 
 
     private String getFirstImageUrl(List<ProductImages> productImages) {
@@ -387,16 +423,13 @@ public class ProductsServiceImpl implements ProductsService {
                 response.setProductName(product.getProductName());
                 response.setProductId(product.getProductId());
 
-                for (SpecificProductDetails details : product.getSpecificProductDetailsList()){
-                    double discount = details.getDiscount();
-                    double productPrice = details.getProductPrice();
-                    double price = productPrice - discount;
-                    response.setDiscountedPrice(price);
+                response.setProductImagesUrl(product.getSpecificProductDetailsList().get(0).getProductImagesList()
+                        .get(0).getImageUrl());
 
-                    if (details.getProductImagesList() != null && !details.getProductImagesList().isEmpty()) {
-                        response.setProductImagesUrl(getFirstImageUrl(details.getProductImagesList()));
-                    }
-                }
+                float price = product.getSpecificProductDetailsList().get(0).getProductPrice();
+                float discount = product.getSpecificProductDetailsList().get(0).getDiscount();
+
+                response.setDiscountedPrice(price - discount);
 
 
                 response.setRatings(getAverageRating(product.getProductId()));

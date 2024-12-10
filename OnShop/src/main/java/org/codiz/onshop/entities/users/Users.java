@@ -28,7 +28,7 @@ public class Users implements UserDetails {
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private UserProfiles profile;
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "notificationId")
     private List<InAppNotifications> notificationsList = new ArrayList<>();
 
