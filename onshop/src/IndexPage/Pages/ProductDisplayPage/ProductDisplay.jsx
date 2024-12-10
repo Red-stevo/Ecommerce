@@ -10,6 +10,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
 import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import {addToWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
@@ -32,14 +33,12 @@ const ProductDisplay = () => {
     }, []);
 
     const handleAddToCart = () => {
-
-        const cartData =
-            {userId: "AS32DT", specificationId: productOnDisplay, quantity: 1}
-
+        const cartData = {userId: "AS32DT", specificationId: productOnDisplay, quantity: 1};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
-
+        const wishListData = {userId: "AS32DT", specificationId: productOnDisplay};
+        dispatch(addToWishList(wishListData));
     }
 
     const handleOrderNow = () => {
