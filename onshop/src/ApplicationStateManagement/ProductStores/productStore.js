@@ -245,8 +245,9 @@ export const getProductDetails = createAsyncThunk("product/get-product",
 
 const initialState = productStoreAdapter.getInitialState({
     product:{...product},
-    error:null,
-    status:null,
+    errorMessage:null,
+    loading:false,
+    success:null
 });
 
 
@@ -257,17 +258,20 @@ const productStore = createSlice({
     extraReducers:builder => {
      builder
          .addCase(getProductDetails.pending, (state) => {
-            state.status = "loading"
-            state.error = null;
+            state.loading = true;
+            state.errorMessage = null;
+            state.success = null;
         })
          .addCase(getProductDetails.fulfilled, (state, action) => {
              state.product = action.payload;
-             state.status = "fulfilled";
-             state.error = null;
+             state.errorMessage = null;
+             state.success = true;
+             state.loading = false;
          })
          .addCase(getProductDetails.rejected, (state, action) => {
-             state.error = action.payload;
-             state.status = "failed";
+             state.errorMessage = action.payload;
+             state.loading = false;
+             state.success = null;
          })
     }
 });
