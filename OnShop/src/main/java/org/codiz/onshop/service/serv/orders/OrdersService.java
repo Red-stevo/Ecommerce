@@ -8,6 +8,7 @@ import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.entities.orders.ShippingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,5 +30,5 @@ public interface OrdersService {
     String updateStatus(String orderId, OrderStatus status);
     OrderStatusResponse getShippingStatus(String userId);
     String updateShippingStatus(String orderId, ShippingStatus status);
-
+    ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
 }

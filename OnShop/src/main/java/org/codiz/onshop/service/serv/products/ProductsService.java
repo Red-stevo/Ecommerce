@@ -8,6 +8,7 @@ import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.InventoryStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +37,7 @@ public interface ProductsService {
     String deleteWishListItem(String userId, List<String> specificProductIds);
     List<WishListResponse> getWishList(String userId);
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
+
 
 
 }

@@ -39,15 +39,15 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.getOrders(orderId));
     }
 
-
-
-
-
     @GetMapping("/get-order-status")
     public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String userId){
         return ResponseEntity.ok(ordersService.getShippingStatus(userId));
     }
 
+    @PutMapping("/update-order-quantity")
+    public ResponseEntity<ResponseEntity> addOrderItemQuantity(@RequestParam String orderIteId, @RequestParam int quantity){
+        return ResponseEntity.ok(ordersService.addOrderItemQuantity(orderIteId,quantity));
+    }
 
 
 

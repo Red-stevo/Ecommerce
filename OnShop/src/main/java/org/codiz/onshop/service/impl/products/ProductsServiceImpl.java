@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -612,6 +613,7 @@ public class ProductsServiceImpl implements ProductsService {
                 specificProductDetails.setProductPrice(details.getProductPrice());
                 specificProductDetails.setDiscount(details.getDiscount());
                 specificProductDetails.setColor(details.getColor());
+                specificProductDetails.setProducts(existingProduct);
                 log.info("checking if the images are to be updated");
                 if (uploads != null && !uploads.isEmpty()){
                     log.info("images present");

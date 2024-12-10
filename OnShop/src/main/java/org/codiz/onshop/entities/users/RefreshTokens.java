@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class RefreshTokens {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int tokenId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String tokenId;
 
     private String refreshToken;
 

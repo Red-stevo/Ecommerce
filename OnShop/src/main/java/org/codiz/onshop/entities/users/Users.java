@@ -3,6 +3,8 @@ package org.codiz.onshop.entities.users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.messaging.InAppNotifications;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,8 +30,7 @@ public class Users implements UserDetails {
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private UserProfiles profile;
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(name = "notificationId")
+    @OneToMany(mappedBy = "users", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<InAppNotifications> notificationsList = new ArrayList<>();
 
     @PrePersist

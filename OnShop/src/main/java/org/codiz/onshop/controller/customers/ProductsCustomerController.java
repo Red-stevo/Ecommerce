@@ -69,4 +69,6 @@ public class ProductsCustomerController {
     public ResponseEntity<List<WishListResponse>> getWishList(String userId){
         return ResponseEntity.ok(productsService.getWishList(userId));
     }
+
+
 }
