@@ -27,7 +27,7 @@ const CategoriesMenu = () => {
 
     return (
             <div className="product-category-menu hide-scrollbar" >
-                <div className="categories" onClick={() => handleCategoryFilter("all products")}>
+                <div className="categories" onClick={() => handleCategoryFilter("All Products")}>
                     <div className="category-name">Home</div>
                     <FcHome className="category-icon" />
                 </div>

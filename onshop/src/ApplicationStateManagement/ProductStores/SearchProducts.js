@@ -15,11 +15,11 @@ export const queryProducts = createAsyncThunk("products/query-products",
     });
 
 const initialState = productsAdapter.getInitialState({
-    product:{},
+    products:[],
     error:null,
     status:null,
+    page:{},
 });
-
 
 const SearchProducts = createSlice({
     name:"products",
@@ -32,7 +32,8 @@ const SearchProducts = createSlice({
                 state.error = null;
             })
             .addCase(queryProducts.fulfilled, (state, action) => {
-                state.product = action.payload;
+                state.products = action.payload._embedded.productsPageResponseList;
+                state.page = action.payload.page;
                 state.status = "fulfilled";
                 state.error = null;
             })
