@@ -10,7 +10,8 @@ export const addToWishList = createAsyncThunk("wishList/addToCart",
 
         const {userId, specificProductId} = productData;
         try {
-            await RequestsConfig.post(`/customer/products/add-to-wishlist?specificProductId=${specificProductId}&userId=${userId}`);
+            await RequestsConfig
+                .post(`/customer/products/add-to-wishlist?specificProductId=${specificProductId}&userId=${userId}`);
             fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);

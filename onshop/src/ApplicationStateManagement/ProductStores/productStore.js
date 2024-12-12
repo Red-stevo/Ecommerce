@@ -267,6 +267,8 @@ const productStore = createSlice({
              state.errorMessage = null;
              state.success = true;
              state.loading = false;
+
+             console.log(state.product);
          })
          .addCase(getProductDetails.rejected, (state, action) => {
              state.errorMessage = action.payload;

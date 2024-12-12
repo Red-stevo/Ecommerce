@@ -241,7 +241,7 @@
 .related-product {
     display: flex;
     flex-direction: column;
-    height:260px;
+    height:fit-content;
     width: 190px;
     border: solid 1px grey;
     margin: 10px;
@@ -254,12 +254,13 @@
 
 .related-product-image {
     height: 240px;
-    width: 190px;
+    width: 100%;
 }
 
 .related-product-name, .related-product-price {
     font-family: Montserr Montserrat sans-serif;
-    font-size: 20px;
+    font-size: 18px;
+    text-align: center;
 }
 
 
@@ -353,11 +354,19 @@
     .product-display-description {
         width: 100%;
     }
+
+    .related-product-name, .related-product-price {
+        font-size: 17px;
+    }
 }
 
 @media screen and (max-device-width: 767px) and (min-device-width: 587px) {
     .product-page {
         padding: 0;
+    }
+
+    .related-product-name, .related-product-price {
+        font-size: 14px;
     }
 
     .product-details-display {
@@ -467,14 +476,14 @@
     /*Related products section.*/
 
     .related-product {
-        height:200px;
+        height:fit-content;
         width: 160px;
         margin: 5px;
     }
 
     .related-product-image {
         height: 170px;
-        width: 160px;
+        width: 100%;
     }
 
     /*Product review Section.*/
@@ -553,7 +562,7 @@
     /*Related products section.*/
 
     .related-product {
-        height:200px;
+        height:fit-content;
         width: 110px;
         margin: 5px;
         border: none;
@@ -561,7 +570,7 @@
 
     .related-product-image {
         height: 170px;
-        width: 110px;
+        width: 100%;
     }
 
     /*Product Reviews Section.*/
@@ -600,6 +609,10 @@
         gap: 10px;
         padding-right: 0;
         padding-left: 0;
+    }
+
+    .related-product-name, .related-product-price {
+        font-size: 11px;
     }
 
 

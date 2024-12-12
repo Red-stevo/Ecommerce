@@ -33,11 +33,11 @@ const ProductDisplay = () => {
     }, []);
 
     const handleAddToCart = () => {
-        const cartData = {userId: "AS32DT", specificationId: productOnDisplay, quantity: 1};
+        const cartData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId, quantity: 1};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
-        const wishListData = {userId: "AS32DT", specificationId: productOnDisplay};
+        const wishListData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay};
         dispatch(addToWishList(wishListData));
     }
 
@@ -141,12 +141,12 @@ const ProductDisplay = () => {
 
                         <div className={"product-prices-display2"}>
                                 <span className={"new-product-price-display"}>
-                                    ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                                    ksh {productOnDisplay && productOnDisplay.productPrice}
                                 </span>
-                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productPrice)
                                 &&
                                 <span className={"old-product-price-display"}>
-                                    save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                                    save ksh {(productOnDisplay.productPrice - productOnDisplay.productOldPrice)}
                                 </span>
                             }
                         </div>{/*Medium screen display.*/}
@@ -240,15 +240,15 @@ const ProductDisplay = () => {
 
                     <div className={"product-prices-display"}>
                             <span className={"new-product-price-display"}>
-                                ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                                ksh {productOnDisplay && productOnDisplay.productPrice}
                             </span>
-                        {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                        {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productPrice)
                             &&
                             <span className={"old-product-price-display"}>
-                                save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                                save ksh {(productOnDisplay.productPrice - productOnDisplay.productOldPrice)}
                             </span>
                         }
-                    </div> {/*No in medium screens.*/}
+                    </div> {/*Not in medium screens.*/}
 
 
                     <div className={"price-and-proportions"}>
@@ -261,7 +261,9 @@ const ProductDisplay = () => {
                             ))}
                         </Pagination>
 
-                        <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button> {/*customer/products/add-to-wishlist*/}
+                        <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}>
+                            <FaRegHeart/>WISHLIST
+                        </Button> {/*customer/products/add-to-wishlist*/}
                     </div> {/*Not in medium screens.*/}
 
                     {productOnDisplay &&
@@ -295,7 +297,7 @@ const ProductDisplay = () => {
             <div className={"review-section"}>
                 <span className={"product-reviews-section"}>Product Reviews</span>
                 <div className={"product-reviews-holder"}>
-                    {productReviews.length > 0 &&  productReviews.map((review, index) => (
+                    {productReviews && productReviews.length > 0 &&  productReviews.map((review, index) => (
                         <div key={index} className={"review"}>
                             <span className={"review-username"}>{review.username}</span>
                             <span className={"review-content"}>{review.reviewContent}</span>

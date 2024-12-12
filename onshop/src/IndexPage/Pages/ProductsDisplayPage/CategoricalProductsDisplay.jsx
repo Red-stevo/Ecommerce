@@ -119,13 +119,13 @@ const CategoricalProductsDisplay = () => {
             {status !== "loading" ?
             <div className={"product-display-section"}>
                 {products && products.map(
-                ({productId, productName, productPrice,productRating, productImagesUrl}, index) => (
+                ({productId, productName, discountedPrice,productRating, productImagesUrl}, index) => (
                     <div className={"product-gen-display"} key={productId} onClick={() => {navigate(`/home/product/${productId}`)}}>
                         <Image src={productImagesUrl} alt={productName} className={"product-display-image"} />
                         <div>
                             <span className={"product-display-name"}>{productName}</span>
                             <StarRating active={true} value={productRating}/>
-                            <span className={"product-display-price"}>ksh {productPrice}</span>
+                            <span className={"product-display-price"}>ksh {discountedPrice}</span>
                         </div>
 
                     </div>
