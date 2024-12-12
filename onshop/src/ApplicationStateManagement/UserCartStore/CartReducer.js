@@ -31,7 +31,7 @@ export const getCartItems = createAsyncThunk("cart/getCart",
         const {page, size, userId} = productData;
 
         try {
-            fulfillWithValue((await RequestsConfig.post(`/customer/cart/${userId}?page=${page}&size=${size}`)).data);
+            fulfillWithValue((await RequestsConfig.get(`/customer/cart/${userId}?page=${page}&size=${size}`)).data);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }

@@ -2,7 +2,6 @@ import "./Styles/ProductsCart.css";
 import {Button, Image} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
-import Cart from "../IndexPage/Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
 import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
@@ -93,7 +92,7 @@ const ProductsCart = () => {
     const [page, setPage] = useState(currentPage ? currentPage : 0);
 
     useEffect(() => {
-        const cartData = {page, size:10, userId:"AS43ER"}
+        const cartData = {page, size:10, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -124,6 +123,7 @@ const ProductsCart = () => {
     if (!cartItemsResponses || cartItemsResponses.length === 0){
         return (
             <div className={"no-cart-items"}>
+                <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
                 <Image src={noCartImage} className={"no-cart-items-image"}/>
             </div>
         );
