@@ -8,78 +8,14 @@ import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} fro
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteCartItem, getCartItems} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import {
+    deleteCartItem,
+    getCartItems,
+    removeItems
+} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import noCartImage from "./../../../assets/NoCartItems.png";
 import Loader from "../../../Loading/Loader.jsx";
 
-
-
-const cartItemsResponses = {
-    username:"Stephen Muiru",
-    cartId:"AS43DF",
-    cartItemsResponses:[
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA101", productPrice:2450.00,inStock:true, color:"grey",count:3,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA102", productPrice:2450.00,inStock:false, color:"grey",count:1,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA103", productPrice:2450.00,inStock:true, color:"grey",count:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA104", productPrice:2450.00,inStock:true, color:"grey",count:5,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA105", productPrice:2450.00,inStock:true, color:"grey",count:1,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA106", productPrice:2450.00,inStock:false, color:"grey",count:3,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA107", productPrice:2450.00,inStock:false, color:"grey",count:9,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-
-    ],
-    youMayLikes:[
-        {productId:"ASD31", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD32", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD33", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD34", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD35", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD36", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD37", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD38", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD39", productName:"LapLaptopLaptopLaptoptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD310", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD311", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-    ],
-    currentPage:0,
-    totalPages:5,
-    totalProductPrice:24500,
-}
 
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
@@ -127,13 +63,11 @@ const ProductsCart = () => {
     const handleDeleteCart = () => {
         dispatch(deleteCartItem(selectedProducts));
 
+        /*Remove the delete elements.*/
+        dispatch(removeItems(selectedProducts));
+
         /*Clear the selected cart items*/
         setSelectedProducts(() => []);
-
-        /*Remove the delete elements.*/
-        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
-        dispatch(getCartItems(cartData))
-
     }
 
 
