@@ -12,8 +12,8 @@ const initialState = cartAdapter.getInitialState(
 export const addToCart = createAsyncThunk("cart/addToCart",
     async (productData = null, {rejectWithValue,fulfillWithValue }) => {
     try {
-        await RequestsConfig.post("/customer/cart/add-to-cart", productData,
-            {headers:{'Content-Type':'application/json'}});
+        await RequestsConfig.post("/customer/cart/add-to-cart",
+            productData, {headers:{'Content-Type':'application/json'}});
         return fulfillWithValue(true);
     }catch (error){
         return rejectWithValue(error.response ? error.response.data : error.data);
@@ -37,9 +37,21 @@ export const deleteCartItem = createAsyncThunk("cart/deleteItems",
     async (itemIds = [], {fulfillWithValue,rejectWithValue}) => {
 
         try {
-            await RequestsConfig.put(`/customer/cart/remove-item`,itemIds)
+            await RequestsConfig.put(`/customer/cart/remove-item`, itemIds)
             return fulfillWithValue(true);
-        }catch (error){
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
+
+
+export const updateQuantity = createAsyncThunk("cart/updateItems",
+    async (itemData = null, {fulfillWithValue,rejectWithValue}) => {
+
+        try {
+            await RequestsConfig.put(`/customer/cart/update-cart`, itemData);
+            return fulfillWithValue(true);
+        } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
     });
@@ -49,7 +61,14 @@ export const deleteCartItem = createAsyncThunk("cart/deleteItems",
 const CartReducer = createSlice({
     name:"cart",
     initialState,
-    reducers:{},
+    reducers:{
+        removeItems : (state, action) => {
+            action.payload.map((itemId) => {
+                state.CartResponse.cartItemsResponses =
+                    state.CartResponse.cartItemsResponses.filter((product) => product.cartItemId !== itemId);
+            })
+        }
+    },
     extraReducers: builder =>
         builder
             .addCase(addToCart.pending, (state) => {
@@ -98,9 +117,24 @@ const CartReducer = createSlice({
                 state.loading = false;
                 state.success = null;
             })
+            .addCase(updateQuantity.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(updateQuantity.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(updateQuantity.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
 });
 
 export  default  CartReducer.reducer;
 
 
-
+export  const  { removeItems } = CartReducer.actions

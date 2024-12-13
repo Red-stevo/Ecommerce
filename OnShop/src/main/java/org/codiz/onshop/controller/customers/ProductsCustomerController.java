@@ -65,8 +65,8 @@ public class ProductsCustomerController {
         return ResponseEntity.ok().body(productsService.addToWishList(specificProductId,userId));
     }
 
-    @GetMapping("/show-wishlist")
-    public ResponseEntity<List<WishListResponse>> getWishList(String userId){
+    @GetMapping("/show-wishlist/{userId}")
+    public ResponseEntity<List<WishListResponse>> getWishList(@PathVariable String userId){
         return ResponseEntity.ok(productsService.getWishList(userId));
     }
 }

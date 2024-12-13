@@ -8,83 +8,18 @@ import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} fro
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteCartItem, getCartItems} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import {deleteCartItem, getCartItems, removeItems
+} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import noCartImage from "./../../../assets/NoCartItems.png";
 import Loader from "../../../Loading/Loader.jsx";
+import ErrorModal from "../../ErrorModal.jsx";
 
-
-
-const cartItemsResponses = {
-    username:"Stephen Muiru",
-    cartId:"AS43DF",
-    cartItemsResponses:[
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA101", productPrice:2450.00,inStock:true, color:"grey",count:3,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA102", productPrice:2450.00,inStock:false, color:"grey",count:1,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA103", productPrice:2450.00,inStock:true, color:"grey",count:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA104", productPrice:2450.00,inStock:true, color:"grey",count:5,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA105", productPrice:2450.00,inStock:true, color:"grey",count:1,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA106", productPrice:2450.00,inStock:false, color:"grey",count:3,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {cartItemId:"WQE34", productName:"Laptop", productId:"ASA107", productPrice:2450.00,inStock:false, color:"grey",count:9,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-
-    ],
-    youMayLikes:[
-        {productId:"ASD31", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD32", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD33", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD34", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD35", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD36", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD37", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD38", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD39", productName:"LapLaptopLaptopLaptoptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD310", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-        {productId:"ASD311", productName:"Laptop", productPrice:1850.00, rating:4,
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        },
-    ],
-    currentPage:0,
-    totalPages:5,
-    totalProductPrice:24500,
-}
 
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
-    const {username, cartId, cartItemsResponses, currentPage,
-            totalPages, hasMore, youMayLikes, totalPrice,
+    const {
+        username, cartId, cartItemsResponses, currentPage,
+        totalPages, hasMore, youMayLikes, totalPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
     const {loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
@@ -92,10 +27,11 @@ const ProductsCart = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [page, setPage] = useState(currentPage ? currentPage : 0);
-    const [reload, setReload] = useState(false);
+    const [modalShow, setModalShow] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
+        const cartData = {page, size: 1, userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -119,25 +55,44 @@ const ProductsCart = () => {
     }, [index]);
 
     const handleDeselection = () => {
+
         setCheckIcon(false);
         setSelectedProducts(() => []);
     }
 
 
     const handleDeleteCart = () => {
+
         dispatch(deleteCartItem(selectedProducts));
+
+        /*Remove the delete elements.*/
+        dispatch(removeItems(selectedProducts));
 
         /*Clear the selected cart items*/
         setSelectedProducts(() => []);
+    }
 
-        /*Remove the delete elements.*/
-        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
-        dispatch(getCartItems(cartData))
+    useEffect(() => {
+        if (error) {
+            setModalShow(true);
 
+            setTimeout(() => {
+                setModalShow(false);
+                setError(null);
+            }, 2000);
+        }
+    }, [error]);
+
+
+    const handleOrder = () => {
+        if (selectedProducts.length === 0){
+            setError("No Selected Item!");
+            return;
+        }
     }
 
 
-    if (!cartItemsResponses || cartItemsResponses.length === 0){
+    if (!cartItemsResponses || cartItemsResponses.length === 0) {
         return (
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
@@ -149,41 +104,41 @@ const ProductsCart = () => {
 
     return (
         <div className={"cart-page"}>
-        {/*Page header.*/}
-                <div className={"top-buttons"}>
-                    <div className={"select-all-holder"}>
-                        {checkIcon ?
-                            <ImCheckboxChecked className={"select-checked"} onClick={handleDeselection}/> :
-                            <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)}/>}
-                        <span>select all</span>
-                    </div>
-                    <Button disabled={selectedProducts.length === 0}
-                            className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
-                        Delete
-                    </Button>
+            {/*Page header.*/}
+            <div className={"top-buttons"}>
+                <div className={"select-all-holder"}>
+                    {checkIcon ?
+                        <ImCheckboxChecked className={"select-checked"} onClick={handleDeselection}/> :
+                        <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)}/>}
+                    <span>select all</span>
                 </div>
+                <Button disabled={selectedProducts.length === 0}
+                        className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
+                    Delete
+                </Button>
+            </div>
 
-                {/*Product Display.*/}
-                <div className={"ordered-products-display"}>
-                    {cartItemsResponses && cartItemsResponses.map(
-                        ({
-                             cartItemId, productPrice, productName, productImageUrl,
-                             color, inStock, count
-                         }, index) => (
-                            <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
-                                         setSelectedProducts={setSelectedProducts} count={count} color={color}
-                                         selectAllCheck={checkIcon} unCheckAll={selectedProducts}
-                                         id={cartItemId} productImageUrl={productImageUrl} key={index}/>
-                        ))}
+            {/*Product Display.*/}
+            <div className={"ordered-products-display"}>
+                {cartItemsResponses && cartItemsResponses.map(
+                    ({
+                         cartItemId, productPrice, productName, productImageUrl,
+                         color, inStock, count
+                     }, index) => (
+                        <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
+                                     setSelectedProducts={setSelectedProducts} count={count} color={color}
+                                     selectAllCheck={checkIcon} unCheckAll={selectedProducts} cartId={cartId}
+                                     id={cartItemId} productImageUrl={productImageUrl} key={index}/>
+                    ))}
 
 
-                    {/*Price display*/}
-                    <div className={"total-price-shop"}>
-                        <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalPrice}
-                        </div>
+                {/*Price display*/}
+                <div className={"total-price-shop"}>
+                    <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalPrice}
+                    </div>
 
-                        <div className={"button-shop"}>
-                        <span  className={"continue-shopping"} title={"Continue Shopping"}>
+                    <div className={"button-shop"}>
+                        <span className={"continue-shopping"} title={"Continue Shopping"}>
                             <PiArrowFatLeftThin title={"Continue Shopping"}
                                                 className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`}/>
                             <PiArrowFatLineLeftThin title={"Continue Shopping"}
@@ -191,46 +146,47 @@ const ProductsCart = () => {
                             <PiArrowFatLinesLeftThin title={"Continue Shopping"}
                                                      className={`${index === 2 ? "unhidden-arrow" : "hidden-arrow"}`}/>
 
-                        </span >
-                            <button className={"checkout-button"}>
-                                <FaMoneyBill1Wave className={"money-bill"}/>Check out
-                            </button>
-                        </div>
+                        </span>
+                        <button className={"checkout-button"} onClick={handleOrder}>
+                            <FaMoneyBill1Wave className={"money-bill"}/>Check out
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                {/*You may also like*/}
-                <section className={"you-may-also-like-section"}>
-                    <span className={"you-may-like-header"}>You May Also Like</span>
+            {/*You may also like*/}
+            <section className={"you-may-also-like-section"}>
+                <span className={"you-may-like-header"}>You May Also Like</span>
 
-                    <div className={"you-may-like-products"}>
-                        {youMayLikes && youMayLikes.map((
-                            {
-                                productId, productPrice, productName,
-                                productImageUrl, rating
-                            }, index) => (
-                            <div key={index} className={"you-may-like-product"}
-                                 onClick={() => navigate(`/home/product/${productId}`)}>
-                                <Image className={"you-may-like-product-image"} src={productImageUrl}/>
-                                <span title={productName}>
+                <div className={"you-may-like-products"}>
+                    {youMayLikes && youMayLikes.map((
+                        {
+                            productId, productPrice, productName,
+                            productImageUrl, rating
+                        }, index) => (
+                        <div key={index} className={"you-may-like-product"}
+                             onClick={() => navigate(`/home/product/${productId}`)}>
+                            <Image className={"you-may-like-product-image"} src={productImageUrl}/>
+                            <span title={productName}>
                                         {productName.substring(0, 12)} {productName.length > 12 && "..."}
                                     </span>
-                                <span className={"price"}>
+                            <span className={"price"}>
                                         ksh {productPrice}
                                     </span>
-                                <StarRating value={rating} active={true}/>
-                            </div>
-                        ))}
-                    </div>
-
-                </section>
-                <div className={`load-more-button-holder ${!hasMore && " hide " }`}>
-                    <Button onClick={() => setPage(prevState => prevState + 1)}
-                            className={"app-button load-more-button"}>Load More</Button>
+                            <StarRating value={rating} active={true}/>
+                        </div>
+                    ))}
                 </div>
 
-            { loading && <Loader /> }
-            </div>);
+            </section>
+            <div className={`load-more-button-holder ${!hasMore && " hide "}`}>
+                <Button onClick={() => setPage(prevState => prevState + 1)}
+                        className={"app-button load-more-button"}>Load More</Button>
+            </div>
+
+            {loading && <Loader/>}
+            <ErrorModal errormessage={error} show={modalShow} onHide={() => setModalShow(false)}/>
+        </div>);
 }
 
-    export default ProductsCart;
+export default ProductsCart;
