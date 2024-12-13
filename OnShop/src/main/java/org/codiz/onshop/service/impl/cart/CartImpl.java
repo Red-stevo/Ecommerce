@@ -165,7 +165,7 @@ public class CartImpl implements CartService {
                     .toList();
 
             Page<Products> productsPage = productsRepository.findAllByCategoriesList_CategoryIdIn(categoryIds, pageable);
-
+            log.info("got the products "+productsPage);
             List<YouMayLike> youMayLikes = productsPage.stream().map(product -> {
                 YouMayLike like = new YouMayLike();
                 like.setProductId(product.getProductId());
@@ -176,6 +176,7 @@ public class CartImpl implements CartService {
                         product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
                 return like;
             }).toList();
+            log.info("success");
 
 
 
@@ -199,8 +200,14 @@ public class CartImpl implements CartService {
 
     @Transactional
     public HttpStatus removeItemFromCart(List<String> cartItemIds) throws EntityDeletionException {
-        cartItemsRepository.deleteAllById(cartItemIds);
-        return HttpStatus.OK;
+        try {
+            cartItemsRepository.deleteAllById(cartItemIds);
+
+            return HttpStatus.OK;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new EntityDeletionException("could not delete the cart items");
+        }
     }
 
     @Transactional

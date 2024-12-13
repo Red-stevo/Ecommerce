@@ -157,7 +157,6 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Transactional
     @CacheEvict(value = "products")
-    @Async
     public CompletableFuture<EntityResponse> postProduct(ProductCreationRequest requests, List<FileUploads> uploads) {
         try {
             Inventory inventory = new Inventory();
