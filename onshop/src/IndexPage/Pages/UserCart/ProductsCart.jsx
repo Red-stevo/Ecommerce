@@ -8,7 +8,7 @@ import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} fro
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {getCartItems} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import {deleteCartItem, getCartItems} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import noCartImage from "./../../../assets/NoCartItems.png";
 
 
@@ -92,7 +92,7 @@ const ProductsCart = () => {
     const [page, setPage] = useState(currentPage ? currentPage : 0);
 
     useEffect(() => {
-        const cartData = {page, size:10, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
+        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -121,7 +121,7 @@ const ProductsCart = () => {
     }
 
 
-    if (!cartItemsResponses || cartItemsResponses.length === 0){
+    if (!cartItemsResponses && cartItemsResponses.length === 0){
         return (
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
@@ -132,8 +132,12 @@ const ProductsCart = () => {
 
 
     const handleDeleteCart = () => {
-        console.log(selectedProducts);
+        dispatch(deleteCartItem(selectedProducts));
     }
+
+
+    /*Reload the cart after deletion*/
+
 
     return (
         <div className={"cart-page"}>
@@ -157,11 +161,11 @@ const ProductsCart = () => {
                         ({
                              productId, productPrice, productName, productImageUrl,
                              color, inStock, count
-                         }) => (
+                         }, index) => (
                             <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                          setSelectedProducts={setSelectedProducts} count={count} color={color}
                                          selectAllCheck={checkIcon} unCheckAll={selectedProducts}
-                                         id={productId} productImageUrl={productImageUrl} key={productId}/>
+                                         id={productId} productImageUrl={productImageUrl} key={index}/>
                         ))}
 
 
@@ -171,17 +175,18 @@ const ProductsCart = () => {
                         </div>
 
                         <div className={"button-shop"}>
-                        <span className={"continue-shopping"} title={"Continue Shopping"}>
+                        <span  className={"continue-shopping"} title={"Continue Shopping"}>
                             <PiArrowFatLeftThin title={"Continue Shopping"}
                                                 className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`}/>
                             <PiArrowFatLineLeftThin title={"Continue Shopping"}
                                                     className={`${index === 1 ? "unhidden-arrow" : "hidden-arrow"}`}/>
                             <PiArrowFatLinesLeftThin title={"Continue Shopping"}
                                                      className={`${index === 2 ? "unhidden-arrow" : "hidden-arrow"}`}/>
-                        </span>
-                            <span className={"checkout-button"}>
-                            <FaMoneyBill1Wave className={"money-bill"}/>Check out
-                        </span>
+
+                        </span >
+                            <button className={"checkout-button"}>
+                                <FaMoneyBill1Wave className={"money-bill"}/>Check out
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -195,8 +200,8 @@ const ProductsCart = () => {
                             {
                                 productId, productPrice, productName,
                                 productImageUrl, rating
-                            }) => (
-                            <div key={productId} className={"you-may-like-product"}
+                            }, index) => (
+                            <div key={index} className={"you-may-like-product"}
                                  onClick={() => navigate(`/home/product/${productId}`)}>
                                 <Image className={"you-may-like-product-image"} src={productImageUrl}/>
                                 <span title={productName}>
