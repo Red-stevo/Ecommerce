@@ -190,15 +190,9 @@ public class CartImpl implements CartService {
     }
 
     @Transactional
-    public HttpStatus removeItemFromCart(String cartItemId) {
-        try {
-            CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
-            cartItemsRepository.delete(cartItems);
-
-            return HttpStatus.OK ;
-        } catch (Exception e) {
-            throw new EntityDeletionException("could not remove item from cart");
-        }
+    public HttpStatus removeItemFromCart(List<String> cartItemIds) throws EntityDeletionException {
+        cartItemsRepository.deleteAllById(cartItemIds);
+        return HttpStatus.OK;
     }
 
     @Transactional

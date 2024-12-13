@@ -13,7 +13,7 @@ import noCartImage from "./../../../assets/NoCartItems.png";
 
 
 
-const cartProducts = {
+const cartItemsResponse = {
     username:"Stephen Muiru",
     cartId:"AS43DF",
     cartItemsResponses:[
@@ -83,8 +83,8 @@ const cartProducts = {
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
-        totalPages, hasMore, youMayLikes,
-    totalProductPrice} = useSelector(state => state.CartReducer.CartResponse);
+            totalPages, hasMore, youMayLikes, totalProductPrice
+    } = useSelector(state => state.CartReducer.CartResponse);
     const [index, setIndex] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const navigate = useNavigate();
@@ -98,7 +98,7 @@ const ProductsCart = () => {
 
 
     useEffect(() => {
-        if (selectedProducts.length !== cartItemsResponses.length) setCheckIcon(false);
+        if (selectedProducts.length !== cartItemsResponse.cartItemsResponses.length) setCheckIcon(false);
         else setCheckIcon(true);
     }, [selectedProducts, cartItemsResponses]);
 
@@ -120,13 +120,19 @@ const ProductsCart = () => {
         setSelectedProducts(() => []);
     }
 
-    if (!cartItemsResponses || cartItemsResponses.length === 0){
+
+    if (!cartItemsResponses && cartItemsResponses.cartItemsResponses.length === 0){
         return (
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
                 <Image src={noCartImage} className={"no-cart-items-image"}/>
             </div>
         );
+    }
+
+
+    const handleDeleteCart = () => {
+
     }
 
     return (
@@ -139,12 +145,14 @@ const ProductsCart = () => {
                             <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)}/>}
                         <span>select all</span>
                     </div>
-                    <Button className={"danger-button delete-order-product"}>Delete</Button>
+                    <Button className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
+                        Delete
+                    </Button>
                 </div>
 
                 {/*Product Display.*/}
                 <div className={"ordered-products-display"}>
-                    {cartProducts && cartItemsResponses.map(
+                    {cartItemsResponse && cartItemsResponse.cartItemsResponses.map(
                         ({
                              productId, productPrice, productName, productImageUrl,
                              color, inStock, count
