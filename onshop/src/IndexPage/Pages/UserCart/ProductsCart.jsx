@@ -10,6 +10,7 @@ import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteCartItem, getCartItems} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import noCartImage from "./../../../assets/NoCartItems.png";
+import Loader from "../../../Loading/Loader.jsx";
 
 
 
@@ -83,13 +84,15 @@ const cartItemsResponses = {
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
-            totalPages, hasMore, youMayLikes, totalProductPrice
+            totalPages, hasMore, youMayLikes, totalProductPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
+    const {success, loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [page, setPage] = useState(currentPage ? currentPage : 0);
+    const [reload, setReload] = useState(false);
 
     useEffect(() => {
         const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
@@ -133,10 +136,26 @@ const ProductsCart = () => {
 
     const handleDeleteCart = () => {
         dispatch(deleteCartItem(selectedProducts));
+
+        /*Clear the selected cart items*/
+        setSelectedProducts(() => []);
+
+        /*Set the reload*/
+        setReload(true);
     }
+
+    useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
 
 
     /*Reload the cart after deletion*/
+    useEffect(() => {
+        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
+        if (selectedProducts.length === 0 && reload) dispatch(getCartItems(cartData));
+
+        setReload(false);
+    }, [selectedProducts]);
 
 
     return (
@@ -159,13 +178,13 @@ const ProductsCart = () => {
                 <div className={"ordered-products-display"}>
                     {cartItemsResponses && cartItemsResponses.map(
                         ({
-                             productId, productPrice, productName, productImageUrl,
+                             cartItemId, productPrice, productName, productImageUrl,
                              color, inStock, count
                          }, index) => (
                             <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                          setSelectedProducts={setSelectedProducts} count={count} color={color}
                                          selectAllCheck={checkIcon} unCheckAll={selectedProducts}
-                                         id={productId} productImageUrl={productImageUrl} key={index}/>
+                                         id={cartItemId} productImageUrl={productImageUrl} key={index}/>
                         ))}
 
 
@@ -220,8 +239,9 @@ const ProductsCart = () => {
                     <Button onClick={() => setPage(prevState => prevState + 1)}
                             className={"app-button load-more-button"}>Load More</Button>
                 </div>
-            </div>
-    );
+
+            { loading && <Loader /> }
+            </div>);
 }
 
     export default ProductsCart;
