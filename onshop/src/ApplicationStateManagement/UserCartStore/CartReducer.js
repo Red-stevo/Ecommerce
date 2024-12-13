@@ -1,5 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
+import data from "bootstrap/js/src/dom/data.js";
 
 const cartAdapter = createEntityAdapter();
 
@@ -32,6 +33,17 @@ export const getCartItems = createAsyncThunk("cart/getCart",
 
         try {
             fulfillWithValue((await RequestsConfig.get(`/customer/cart/${userId}?page=${page}&size=${size}`)).data);
+        }catch (error){
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
+
+export const deleteCartItem = createAsyncThunk("cart/getCart",
+    async (itemIds = [], {fulfillWithValue,rejectWithValue}) => {
+
+        try {
+            await RequestsConfig.put(`/customer/cart/remove-item`,itemIds)
+            fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
@@ -78,6 +90,21 @@ const CartReducer = createSlice({
                 state.CartResponse.hasMore=action.payload.hasMore;
             })
             .addCase(getCartItems.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
+            .addCase(deleteCartItem.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(deleteCartItem.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(deleteCartItem.rejected, (state, action) => {
                 state.errorMessage = action.payload;
                 state.loading = false;
                 state.success = null;

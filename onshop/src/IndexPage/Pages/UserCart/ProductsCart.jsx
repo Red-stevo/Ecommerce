@@ -13,7 +13,7 @@ import noCartImage from "./../../../assets/NoCartItems.png";
 
 
 
-const cartItemsResponse = {
+const cartItemsResponses = {
     username:"Stephen Muiru",
     cartId:"AS43DF",
     cartItemsResponses:[
@@ -98,7 +98,7 @@ const ProductsCart = () => {
 
 
     useEffect(() => {
-        if (selectedProducts.length !== cartItemsResponse.cartItemsResponses.length) setCheckIcon(false);
+        if (selectedProducts.length !== cartItemsResponses.length) setCheckIcon(false);
         else setCheckIcon(true);
     }, [selectedProducts, cartItemsResponses]);
 
@@ -121,7 +121,7 @@ const ProductsCart = () => {
     }
 
 
-    if (!cartItemsResponses && cartItemsResponses.cartItemsResponses.length === 0){
+    if (!cartItemsResponses || cartItemsResponses.length === 0){
         return (
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
@@ -132,7 +132,7 @@ const ProductsCart = () => {
 
 
     const handleDeleteCart = () => {
-
+        console.log(selectedProducts);
     }
 
     return (
@@ -145,14 +145,15 @@ const ProductsCart = () => {
                             <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)}/>}
                         <span>select all</span>
                     </div>
-                    <Button className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
+                    <Button disabled={selectedProducts.length === 0}
+                            className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
                         Delete
                     </Button>
                 </div>
 
                 {/*Product Display.*/}
                 <div className={"ordered-products-display"}>
-                    {cartItemsResponse && cartItemsResponse.cartItemsResponses.map(
+                    {cartItemsResponses && cartItemsResponses.map(
                         ({
                              productId, productPrice, productName, productImageUrl,
                              color, inStock, count

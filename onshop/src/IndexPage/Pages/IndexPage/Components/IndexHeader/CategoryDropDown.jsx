@@ -21,8 +21,10 @@ const CategoryDropDown = ({handleSearchProduct}) => {
             </Dropdown.Toggle>
             <Dropdown.Menu>
                 <Dropdown.Item>All Categories</Dropdown.Item>
-                {categories.map(((item, index) => (
-                    <Dropdown.Item key={index} onClick={() => handleSearchProduct(item)}>{item}</Dropdown.Item>
+                {categories && categories.map((({categoryId, categoryName}, index) => (
+                    <Dropdown.Item key={categoryId} onClick={() => handleSearchProduct(categoryName)}>
+                        {categoryName}
+                    </Dropdown.Item>
                 )))}
             </Dropdown.Menu>
         </Dropdown>
