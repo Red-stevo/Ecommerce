@@ -13,7 +13,7 @@ import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartR
 import {addToWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
 
 const ProductDisplay = () => {
-    const { products, productName, productDescription, youMayLikes, productReviews } = useSelector(
+    const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
         (state) => state.productReducer.product);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -286,7 +286,7 @@ const ProductDisplay = () => {
             <div>
                 <span className={"header-related-products"}>Related Products</span>
                 <div className={"related-products-holder"}>
-                    {youMayLikes && youMayLikes.length > 0 && youMayLikes.map((product) => (
+                    {relatedProducts && relatedProducts.length > 0 && relatedProducts.map((product) => (
                         <div key={product.productId} className={"related-product"}
                              onClick={() => navigate(`/home/product/${product.productId}`)}>
                             <Image src={product.productImage} className={"related-product-image"}/>
