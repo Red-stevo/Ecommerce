@@ -29,9 +29,9 @@ public class CartCustomerController {
     }
 
     @PutMapping("update-cart")
-    public ResponseEntity<HttpStatus> updateItemQuantity(@RequestParam String cartItemId, @RequestParam Integer quantity){
+    public ResponseEntity<HttpStatus> updateItemQuantity(@RequestBody CartItemsUpdate itemsToAdd) {
 
-        return ResponseEntity.ok( cartService.updateItemQuantity(cartItemId,quantity));
+        return ResponseEntity.ok( cartService.updateItemQuantity(itemsToAdd) );
     }
 
     @PutMapping("/remove-item")

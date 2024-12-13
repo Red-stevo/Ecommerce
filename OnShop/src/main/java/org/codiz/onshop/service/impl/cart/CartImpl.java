@@ -93,14 +93,15 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public HttpStatus updateItemQuantity(String cartItemId, Integer quantity) {
+    public HttpStatus updateItemQuantity(CartItemsUpdate update) {
         try {
 
-            CartItems cartItem = cartItemsRepository.findById(cartItemId)
+            CartItems cartItem = cartItemsRepository.findById(update.getCartItemId())
                     .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
-            cartItem.setQuantity(cartItem.getQuantity()+quantity);
+            cartItem.setQuantity(update.getQuantity());
             cartItemsRepository.save(cartItem);
 
+            log.info("success");
             return HttpStatus.OK;
         }catch (Exception e){
             throw new ResourceCreationFailedException("could not update item quantity");
@@ -111,6 +112,7 @@ public class CartImpl implements CartService {
 
     @Transactional
     public CartResponse getCartById(String userId, Pageable pageable) {
+
         try {
             Users usr = usersRepository.findUsersByUserId(userId);
             Optional<Cart> cart = cartRepository.findCartByUsers(usr);
@@ -127,9 +129,7 @@ public class CartImpl implements CartService {
             // Map cart items to response
             List<CartItemsResponse> itemsResponses = new ArrayList<>();
             for (CartItems items : cart.get().getCartItems()) {
-                log.info("setting the items");
-                System.out.println(items);
-                System.out.println(items.getProducts());
+
                 CartItemsResponse itemsResponse = new CartItemsResponse();
                 String pro = items.getProducts().getSpecificProductId();
                 log.info(""+pro);

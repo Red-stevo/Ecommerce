@@ -465,7 +465,17 @@ public class ProductsServiceImpl implements ProductsService {
     public SpecificProductResponse specificProductResponse(String productId) {
 
         try{
-            Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
+            Products products = null;
+            if (!productsRepository.existsById(productId)) {
+                log.info("the id is for specific product");
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(productId).orElseThrow(
+                        ()->new RuntimeException("the product does not exist")
+                );
+                productId = details.getProducts().getProductId();
+            }
+
+            log.info(""+productId);
+            products = productsRepository.findProductsByProductId(productId).orElseThrow(
                     ()->new RuntimeException("the product does not exist")
             );
 
@@ -501,11 +511,12 @@ public class ProductsServiceImpl implements ProductsService {
                 log.info("list found :" +specs);
 
             }
+            Products finalProducts = products;
             detailsList.sort((a, b) -> {
-                if (a.getProductId().equals(products.getProductId())) {
+                if (a.getProductId().equals(finalProducts.getProductId())) {
                     return -1;
                 }
-                if (b.getProductId().equals(products.getProductId())) {
+                if (b.getProductId().equals(finalProducts.getProductId())) {
                     return 1;
                 }
                 return 0;

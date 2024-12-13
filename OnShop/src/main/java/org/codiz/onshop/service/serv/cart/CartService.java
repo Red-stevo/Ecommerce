@@ -17,7 +17,7 @@ public interface CartService {
     HttpStatus deleteCart(String cartId);
     CartResponse getCartById(String userId, Pageable pageable);
     HttpStatus removeItemFromCart(List<String> cartItemId);
-    HttpStatus updateItemQuantity(String cartId, Integer quantity);
+    HttpStatus updateItemQuantity(CartItemsUpdate cartItemsUpdate);
     ResponseEntity addItemToCart(CartItemsToAdd items);
 
 }
