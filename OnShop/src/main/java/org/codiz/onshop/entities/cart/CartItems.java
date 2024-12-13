@@ -17,16 +17,16 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String cartItemId;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
-    //@OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @JsonIgnore
     private Cart cart;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonIgnore
+    //@OnDelete(action = OnDeleteAction.NO_ACTION)
     private SpecificProductDetails products;
 
     private Integer quantity;
@@ -36,4 +36,6 @@ public class CartItems {
     public Cart getCart() {
         return cart;
     }
+
+
 }

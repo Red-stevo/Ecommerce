@@ -13,10 +13,10 @@ public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String wishlistId;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Users user;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "wishlist_products")
     @JsonIgnore
     private List<SpecificProductDetails> specificProductDetails;

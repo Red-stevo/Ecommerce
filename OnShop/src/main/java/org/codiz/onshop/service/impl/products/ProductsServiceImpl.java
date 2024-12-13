@@ -487,6 +487,7 @@ public class ProductsServiceImpl implements ProductsService {
                 specs.setProductSize(details1.getSize());
                 specs.setProductCount(details1.getCount());
                 specs.setProductOldPrice(details1.getProductPrice());
+                specs.setProductId(details1.getSpecificProductId());
                 float price = details1.getProductPrice() - details1.getDiscount();
                 specs.setProductPrice(price);
 
@@ -525,6 +526,7 @@ public class ProductsServiceImpl implements ProductsService {
                     relatedProducts1.setProductPrice(relatedProduct.getSpecificProductDetailsList().get(0).getProductPrice());
                     relatedProducts1.setProductImage(relatedProduct.getSpecificProductDetailsList().get(0)
                             .getProductImagesList().get(0).getImageUrl());
+                    relatedProducts1.setProductId(relatedProduct.getSpecificProductDetailsList().get(0).getSpecificProductId());
                     relatedProductsList.add(relatedProducts1);
                 }
             }

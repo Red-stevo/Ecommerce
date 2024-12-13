@@ -7,4 +7,5 @@ public class RelatedProducts{
     private String productImage;
     private String productName;
     private float productPrice;
+    private String productId;
 }

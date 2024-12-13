@@ -93,22 +93,15 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public Cart updateItemQuantity(CartItemsUpdate itemsUpdate) {
+    public HttpStatus updateItemQuantity(String cartItemId, Integer quantity) {
         try {
-            Cart cart = cartRepository.findById(itemsUpdate.getCartId())
-                    .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-            CartItems cartItem = cartItemsRepository.findById(itemsUpdate.getCartItemId())
+            CartItems cartItem = cartItemsRepository.findById(cartItemId)
                     .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+            cartItem.setQuantity(cartItem.getQuantity()+quantity);
+            cartItemsRepository.save(cartItem);
 
-            if (itemsUpdate.getQuantity() > 0) {
-                cartItem.setQuantity(itemsUpdate.getQuantity());
-            } else {
-                cart.removeCartItem(cartItem);
-                cartItemsRepository.delete(cartItem);
-            }
-
-            return cartRepository.save(cart);
+            return HttpStatus.OK;
         }catch (Exception e){
             throw new ResourceCreationFailedException("could not update item quantity");
         }
@@ -150,6 +143,7 @@ public class CartImpl implements CartService {
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
                 log.info("setting specific products");
                 itemsResponse.setInStock(products.getCount() > 0);
+                itemsResponse.setColor(products.getColor());
                 log.info("done with this round");
                 itemsResponses.add(itemsResponse);
             }
@@ -201,8 +195,27 @@ public class CartImpl implements CartService {
     @Transactional
     public HttpStatus removeItemFromCart(List<String> cartItemIds) throws EntityDeletionException {
         try {
-            cartItemsRepository.deleteAllById(cartItemIds);
+            System.out.println(cartItemIds);
+            if (cartItemIds.isEmpty()) {
+                return HttpStatus.OK;
+            }
 
+            if (cartItemIds.size() == 1) {
+                cartItemsRepository.deleteById(cartItemIds.get(0));
+                log.info("deleted"+cartItemIds.get(0));
+            }else {
+                List<CartItems> items = new ArrayList<>();
+                for (String cartItemId : cartItemIds) {
+                    log.info("" + cartItemId);
+                    CartItems item = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
+                    log.info("" + item);
+                    items.add(item);
+                }
+                log.info("to be deleted :"+items);
+                cartItemsRepository.deleteAll(items);
+            }
+
+            log.info("success");
             return HttpStatus.OK;
         }catch (Exception e){
             e.printStackTrace();
