@@ -1,6 +1,7 @@
 package org.codiz.onshop.service.serv.orders;
 
 
+import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.requests.ShipmentRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -31,4 +32,5 @@ public interface OrdersService {
     OrderStatusResponse getShippingStatus(String userId);
     String updateShippingStatus(String orderId, ShippingStatus status);
     ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
+    String makeOrder(List<MakingOrderRequest> request, String userId);
 }

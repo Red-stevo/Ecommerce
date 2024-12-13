@@ -30,8 +30,8 @@ public class Users implements UserDetails {
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private UserProfiles profile;
 
-    @OneToMany(mappedBy = "users", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<InAppNotifications> notificationsList = new ArrayList<>();
+    /*@OneToMany(mappedBy = "users", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<InAppNotifications> notificationsList = new ArrayList<>();*/
 
     @PrePersist
     protected void onCreate() {

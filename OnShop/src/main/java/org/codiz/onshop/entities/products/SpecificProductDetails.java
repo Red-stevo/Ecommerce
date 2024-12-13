@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,7 @@ public class SpecificProductDetails{
     private String size;
     private String color;
     private int count;
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "specificProductDetails",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
@@ -29,4 +31,9 @@ public class SpecificProductDetails{
     @JsonIgnore
     @ToString.Exclude
     private Products products;
+
+
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private WishList wishList;
 }

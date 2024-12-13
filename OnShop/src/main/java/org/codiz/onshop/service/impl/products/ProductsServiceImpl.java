@@ -18,8 +18,10 @@ import org.codiz.onshop.repositories.products.*;
 import org.codiz.onshop.repositories.users.UserProfilesRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.CloudinaryService;
+import org.codiz.onshop.repositories.products.PopularProductsRepository;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -37,7 +39,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -55,6 +56,8 @@ public class ProductsServiceImpl implements ProductsService {
     private final UserProfilesRepository userProfilesRepository;
     private final WishListRepository wishListRepository;
     private final ProductImagesRepository productImagesRepository;
+    private final PopularProductsRepository popularProductsRepository;
+    private final ThreadPoolTaskExecutorBuilder threadPoolTaskExecutorBuilder;
 
 
     //UserProfiles userProfiles;
@@ -189,6 +192,7 @@ public class ProductsServiceImpl implements ProductsService {
                 details1.setDiscount(details.getDiscount());
                 details1.setSize(details.getSize());
                 details1.setProductPrice(details.getProductPrice());
+                details1.setCreatedAt(Instant.now());
                 List<ProductImages> imagesList = new ArrayList<>();
                 for (FileUploads upload : uploads){
                     String[] parts = upload.getFileName().split("\\+");
@@ -473,41 +477,40 @@ public class ProductsServiceImpl implements ProductsService {
                     .get(0).getProductPrice());
 
             List<SpecificProductDetailsResponse> detailsList = new ArrayList<>();
-            List<Products> productsList = productsRepository.findAllByProductNameAndProductDescriptionLike(products.getProductName(),
-                    products.getProductDescription());
+            /*List<Products> productsList = productsRepository.findAllByProductNameAndProductDescriptionLike(products.getProductName(),
+                    products.getProductDescription());*/
 
-            for (Products products1 : productsList){
+            for (SpecificProductDetails details1 : products.getSpecificProductDetailsList()){
                 SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
-                specs.setProductId(products1.getProductId());
-                for (SpecificProductDetails details1 : products1.getSpecificProductDetailsList()){
+                specs.setProductId(details1.getSpecificProductId());
 
-                    specs.setProductColor(details1.getColor());
-                    specs.setProductSize(details1.getSize());
-                    specs.setProductCount(details1.getCount());
-                    specs.setProductOldPrice(details1.getProductPrice());
-                    float price = details1.getProductPrice() - details1.getDiscount();
-                    specs.setProductPrice(price);
+                specs.setProductColor(details1.getColor());
+                specs.setProductSize(details1.getSize());
+                specs.setProductCount(details1.getCount());
+                specs.setProductOldPrice(details1.getProductPrice());
+                float price = details1.getProductPrice() - details1.getDiscount();
+                specs.setProductPrice(price);
 
-                    List<String> imageUrls = new ArrayList<>();
+                List<String> imageUrls = new ArrayList<>();
                     for (ProductImages productImages : details1.getProductImagesList()){
                         imageUrls.add(productImages.getImageUrl());
                     }
                     specs.setProductImages(imageUrls);
 
-                }
-
                 detailsList.add(specs);
+                log.info("list found :" +specs);
 
             }
-            detailsList.sort((a,b)->{
-                if (a.getProductId().equals(products.getProductId())){
+            detailsList.sort((a, b) -> {
+                if (a.getProductId().equals(products.getProductId())) {
                     return -1;
                 }
-                if (b.getProductId().equals(products.getProductId())){
+                if (b.getProductId().equals(products.getProductId())) {
                     return 1;
                 }
                 return 0;
             });
+
 
             specificProductResponse.setProducts(detailsList);
 
@@ -613,6 +616,7 @@ public class ProductsServiceImpl implements ProductsService {
                 specificProductDetails.setProductPrice(details.getProductPrice());
                 specificProductDetails.setDiscount(details.getDiscount());
                 specificProductDetails.setColor(details.getColor());
+                specificProductDetails.setCreatedAt(Instant.now());
                 specificProductDetails.setProducts(existingProduct);
                 log.info("checking if the images are to be updated");
                 if (uploads != null && !uploads.isEmpty()){
@@ -787,7 +791,7 @@ public class ProductsServiceImpl implements ProductsService {
 
     public void addProductQuantity(String specificProductId, int quantity) {
 
-        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId).orElseThrow(()->new ResourceNotFoundException("could not get the product"));
         details.setCount(details.getCount() + quantity);
         specificProductsRepository.save(details);
 
@@ -795,7 +799,7 @@ public class ProductsServiceImpl implements ProductsService {
 
     public void reduceProductQuantity(String specificProductId, int quantity) {
 
-        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId);
+        SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId).orElseThrow(()->new ResourceNotFoundException("could not get product"));
         details.setCount(details.getCount() - quantity);
         specificProductsRepository.save(details);
 
@@ -899,40 +903,43 @@ public class ProductsServiceImpl implements ProductsService {
         return inventoryResponse;
     }
 
-    public String addToWishList(String specificProductId, String userId) {
+    @Transactional
+    public ResponseEntity addToWishList(String specificProductId, String userId) {
         try{
             // Check if the user exists
             if (!usersRepository.existsByUserId(userId)) {
-                return "User not found";
+                throw new UserDoesNotExistException( "User not found");
             }
 
             // Fetch the user and product details
             Users user = usersRepository.findUsersByUserId(userId);
-            SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId);
-
-            if (specificProductDetails == null) {
-                return "Product not found";
-            }
-
+            log.info("getting specific product");
+            System.out.println(specificProductId);
+            SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId).orElseThrow(()->new ResourceNotFoundException("could not get the product"));
+            log.info("specific product found");
             // Find or create the wishlist for the user
-            WishList wishList = wishListRepository.findByUser(user);
-            if (wishList == null) {
-                wishList = new WishList();
-                wishList.setUser(user);
-                wishList.setSpecificProductDetails(new ArrayList<>());
-            }
+            WishList wishList = wishListRepository.findByUser(user).orElseGet(()->{
+                log.info("wishlist does not exist, creating one");
+                WishList newWishList = new WishList();
+                newWishList.setUser(user);
+                return wishListRepository.save(newWishList);
+            });
+            log.info("wishlist created successfully");
+
 
             // Check if the product is already in the wishlist
             if (wishList.getSpecificProductDetails().contains(specificProductDetails)) {
-                return "Product already in wishlist";
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
             // Add the product to the wishlist
-            wishList.getSpecificProductDetails().add(specificProductDetails);
+            specificProductDetails.setWishList(wishList);
+            specificProductsRepository.save(specificProductDetails);
             wishListRepository.save(wishList);
 
-            return "Product added to wishlist successfully";
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
+            e.printStackTrace();
             throw new ResourceCreationFailedException("could not create wishlist");
         }
     }
@@ -944,7 +951,7 @@ public class ProductsServiceImpl implements ProductsService {
            }
 
            Users users = usersRepository.findUsersByUserId(userId);
-           WishList wishList = wishListRepository.findByUser(users);
+           WishList wishList = wishListRepository.findByUser(users).orElseThrow(()->new ResourceNotFoundException("could not get the wishlist"));
            List<WishListResponse> responses = new ArrayList<>();
 
            List<SpecificProductDetails> specificProductDetailsList = wishList.getSpecificProductDetails();
@@ -972,7 +979,7 @@ public class ProductsServiceImpl implements ProductsService {
                 throw new ResourceNotFoundException("User not found");
             }
 
-            WishList wishList = wishListRepository.findByUser(user);
+            WishList wishList = wishListRepository.findByUser(user).orElseThrow(()->new ResourceNotFoundException("could not get the wishlist"));
             if (wishList == null || wishList.getSpecificProductDetails().isEmpty()) {
                 throw new ResourceNotFoundException("No wishlist items found for the user");
             }
@@ -1024,6 +1031,35 @@ public class ProductsServiceImpl implements ProductsService {
         }
     }
 
+
+    public List<ProductsPageResponse> popularProducts(){
+
+        return null;
+    }
+
+
+    public List<ProductsPageResponse> newProducts(){
+
+        try{
+            List<SpecificProductDetails> productDetails = specificProductsRepository.findAll();
+            return productDetails.stream()
+                    .sorted(Comparator.comparing(SpecificProductDetails::getCreatedAt).reversed())
+                    .limit(10)
+                    .map(product -> {
+                        ProductsPageResponse response = new ProductsPageResponse();
+                        response.setProductName(product.getProducts().getProductName());
+                        response.setProductId(product.getSpecificProductId());
+                        response.setRatings(getAverageRating(product.getProducts().getProductId()));
+                        response.setProductImagesUrl(product.getProductImagesList().get(0).getImageUrl());
+                        response.setDiscountedPrice(product.getProductPrice() - product.getDiscount());
+                        return response;
+                    })
+                    .toList();
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get new products");
+        }
+
+    }
 
 
 

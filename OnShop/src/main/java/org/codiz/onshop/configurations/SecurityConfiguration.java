@@ -52,10 +52,10 @@ public class SecurityConfiguration {
         return http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configure(http))
                 .csrf(AbstractHttpConfigurer::disable)
-                /*.authorizeHttpRequests(request -> request
+               /* .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/open/**").permitAll()
                         .requestMatchers("/api/v1/customer/**").hasAuthority("CUSTOMER")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())*/
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())

@@ -31,13 +31,6 @@ public class CartItems {
     private Integer quantity;
 
 
-    public void setQuantity(Integer quantity) {
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be a positive integer");
-        }
-        this.quantity = quantity;
-    }
-
     @JsonIgnore // Break the cycle
     public Cart getCart() {
         return cart;

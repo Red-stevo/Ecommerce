@@ -19,7 +19,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/customer/products")
-//@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class ProductsCustomerController {
     private final ProductsService productsService;
 
@@ -61,7 +60,7 @@ public class ProductsCustomerController {
     }
 
     @PostMapping("/add-to-wishlist")
-    public ResponseEntity<String> addToWishList(@RequestParam String specificProductId, @RequestParam String userId){
+    public ResponseEntity addToWishList(@RequestParam String specificProductId, @RequestParam String userId){
         return ResponseEntity.ok().body(productsService.addToWishList(specificProductId,userId));
     }
 

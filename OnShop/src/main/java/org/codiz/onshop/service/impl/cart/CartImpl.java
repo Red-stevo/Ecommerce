@@ -2,6 +2,7 @@ package org.codiz.onshop.service.impl.cart;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartImpl implements CartService {
 
     private final CartRepository cartRepository;
@@ -47,7 +50,7 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public Cart addItemToCart(CartItemsToAdd items) {
+    public ResponseEntity addItemToCart(CartItemsToAdd items) {
        try {
            Users users = usersRepository.findUsersByUserId(items.getUserId());
 
@@ -66,27 +69,23 @@ public class CartImpl implements CartService {
        /* Products product = productsRepository.findById(items.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));*/
 
-           SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId());
+           SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId())
+                   .orElseThrow(()->new ResourceNotFoundException("product not found"));
 
 
 
-           CartItems existingCartItem = cartItemsRepository.findByCart(cart);
-           System.out.println(existingCartItem);
+           if (cartItemsRepository.existsByProducts(productDetails)){
+               log.info("item exists");
+               return new ResponseEntity<>(HttpStatus.OK);
+            }
 
-           if (existingCartItem != null) {
-               existingCartItem.setQuantity(existingCartItem.getQuantity() + items.getQuantity());
-               cartItemsRepository.save(existingCartItem);
-           } else {
-               CartItems newCartItem = new CartItems();
-               newCartItem.setProducts(productDetails);
-               newCartItem.setQuantity(items.getQuantity());
-               newCartItem.setCart(cart);
-               cartItemsRepository.save(newCartItem);
-               cart.addCartItem(newCartItem);
-           }
+           CartItems newCartItem = new CartItems();
+           newCartItem.setProducts(productDetails);
+           newCartItem.setQuantity(items.getQuantity());
+           newCartItem.setCart(cart);
+           cartItemsRepository.save(newCartItem);
 
-
-           return cartRepository.save(cart);
+           return new ResponseEntity<>(HttpStatus.OK);
        }catch (Exception e){
            throw new ResourceCreationFailedException("could not add item to cart");
        }
@@ -130,10 +129,14 @@ public class CartImpl implements CartService {
             CartResponse cartResponse = new CartResponse();
             cartResponse.setCartId(cart.get().getCartId());
             cartResponse.setUsername(cart.get().getUsers().getUsername());
+            log.info("set the name successfully");
 
             // Map cart items to response
             List<CartItemsResponse> itemsResponses = new ArrayList<>();
             for (CartItems items : cart.get().getCartItems()) {
+                log.info("setting the items");
+                System.out.println(items);
+                System.out.println(items.getProducts());
                 CartItemsResponse itemsResponse = new CartItemsResponse();
                 Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
 
@@ -143,14 +146,19 @@ public class CartImpl implements CartService {
                 itemsResponse.setProductName(products.getProductName());
                 itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
+                log.info("setting specific products");
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId())
+                        .orElseThrow(()->new ResourceNotFoundException("could not find product"));
                 itemsResponse.setInStock(details.getCount() > 0);
-
+                log.info("done with this round");
                 itemsResponses.add(itemsResponse);
             }
             cartResponse.setCartItemsResponses(itemsResponses);
+            log.info("items set successfully");
+
 
             // Fetch "You May Like" products
+            log.info("setting the products you may like");
             List<String> categoryIds = cart.get().getCartItems().stream()
                     .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
                     .distinct()

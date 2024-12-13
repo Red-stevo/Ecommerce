@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/customer/cart")
-@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class CartCustomerController {
 
     private final CartService cartService;
 
     @PostMapping("/add-to-cart")
-    public ResponseEntity<Cart> addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
-            Cart cart = cartService.addItemToCart(itemsToAdd);
-            return ResponseEntity.ok(cart);
+    public ResponseEntity addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
+
+            return ResponseEntity.ok(cartService.addItemToCart(itemsToAdd));
     }
 
     @PutMapping("update-cart")
