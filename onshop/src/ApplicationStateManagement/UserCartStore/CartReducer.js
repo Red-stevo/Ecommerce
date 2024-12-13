@@ -1,6 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 import data from "bootstrap/js/src/dom/data.js";
+import {configs} from "@eslint/js";
 
 const cartAdapter = createEntityAdapter();
 
@@ -14,36 +15,35 @@ const initialState = cartAdapter.getInitialState(
     });
 
 export const addToCart = createAsyncThunk("cart/addToCart",
-    async (productData = null,
-           {fulfillWithValue
-        ,rejectWithValue}) => {
+    async (productData = null, {rejectWithValue,fulfillWithValue }) => {
     try {
         await RequestsConfig.post("/customer/cart/add-to-cart", productData,
             {headers:{'Content-Type':'application/json'}});
-        fulfillWithValue(true);
+        return fulfillWithValue(true);
     }catch (error){
         return rejectWithValue(error.response ? error.response.data : error.data);
     }
 });
 
 export const getCartItems = createAsyncThunk("cart/getCart",
-    async (productData = null, {fulfillWithValue,rejectWithValue}) => {
+    async (productData = null, {rejectWithValue,
+        fulfillWithValue }) => {
 
         const {page, size, userId} = productData;
 
         try {
-            fulfillWithValue((await RequestsConfig.get(`/customer/cart/${userId}?page=${page}&size=${size}`)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/customer/cart/${userId}?page=${page}&size=${size}`)).data);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
     });
 
-export const deleteCartItem = createAsyncThunk("cart/getCart",
+export const deleteCartItem = createAsyncThunk("cart/deleteItems",
     async (itemIds = [], {fulfillWithValue,rejectWithValue}) => {
 
         try {
             await RequestsConfig.put(`/customer/cart/remove-item`,itemIds)
-            fulfillWithValue(true);
+            return fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
@@ -81,13 +81,14 @@ const CartReducer = createSlice({
                 state.loading = false;
                 state.errorMessage = null;
                 state.success = true;
-                state.CartResponse.username=action.payload.username;
+                state.CartResponse = {...action.payload};
+                /*state.CartResponse.username=action.payload.username;
                 state.CartResponse.cartId=action.payload.cartId;
                 state.CartResponse.cartItemsResponses=action.payload.cartItemsResponses;
                 state.CartResponse.youMayLikes=[...state.CartResponse.youMayLikes,...action.payload.youMayLikes];
                 state.CartResponse.currentPage=action.payload.currentPage;
                 state.CartResponse.totalPages=action.payload.totalPages;
-                state.CartResponse.hasMore=action.payload.hasMore;
+                state.CartResponse.hasMore=action.payload.hasMore;*/
             })
             .addCase(getCartItems.rejected, (state, action) => {
                 state.errorMessage = action.payload;
