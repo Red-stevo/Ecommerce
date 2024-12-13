@@ -106,7 +106,7 @@ const ProductsCart = () => {
                          }, index) => (
                             <CartProduct productPrice={productPrice} productName={productName} inStock={inStock}
                                          setSelectedProducts={setSelectedProducts} count={count} color={color}
-                                         selectAllCheck={checkIcon} unCheckAll={selectedProducts}
+                                         selectAllCheck={checkIcon} unCheckAll={selectedProducts} cartId={cartId}
                                          id={cartItemId} productImageUrl={productImageUrl} key={index}/>
                         ))}
 
