@@ -55,14 +55,19 @@ public class JWTGenService {
      *  method to generate the jwt tokens
      * */
     protected  String tokenGenerator(Users users, long duration) {
-        log.info("in the token generator");
-        return Jwts
-                .builder()
-                .subject(users.getUserEmail())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + duration))
-                .signWith(getSignInKey())
-                .compact();
+        try{
+            log.info("in the token generator");
+            return Jwts
+                    .builder()
+                    .subject(users.getUserEmail())
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis() + duration))
+                    .signWith(getSignInKey())
+                    .compact();
+        }catch (Exception e){
+            log.error(e.getMessage());
+            throw new RuntimeException("Exception occurred while generating token");
+        }
     }
     public String generateAccessToken(Users users) {
         log.info("calling token generator");

@@ -2,6 +2,7 @@ package org.codiz.onshop.controller.open;
 
 import lombok.AllArgsConstructor;
 import org.codiz.onshop.dtos.response.CategoryResponse;
+import org.codiz.onshop.dtos.response.DiscountedProductsResponse;
 import org.codiz.onshop.dtos.response.ProductsPageResponse;
 import org.codiz.onshop.dtos.response.SpecificProductResponse;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -45,4 +46,31 @@ public class OpenProductsController {
 
         return ResponseEntity.ok(productsService.specificProductResponse(productId));
     }
+
+    @GetMapping("/discounted")
+    public ResponseEntity<List<DiscountedProductsResponse>> findDiscountedProducts(@RequestParam int size){
+        return ResponseEntity.ok(productsService.findDiscountedProducts(size));
+    }
+
+    /**
+     * Endpoint to search for products.
+     * @param query The search query string.
+     * @param page The page number for pagination.
+     * @param size The page size for pagination.
+     * @return A paginated list of products matching the search criteria.
+     */
+    @GetMapping("/search")
+    public ResponseEntity<PagedModel<EntityModel<ProductsPageResponse>>> searchProducts(
+            @RequestParam("query") String query,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            PagedResourcesAssembler<ProductsPageResponse> assembler
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductsPageResponse> products = productsService.searchProducts(query, pageable);
+
+        PagedModel<EntityModel<ProductsPageResponse>> pagedModel = assembler.toModel(products);
+        return ResponseEntity.ok(pagedModel);
+    }
+
 }

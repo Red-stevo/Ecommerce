@@ -13,7 +13,7 @@ public class InAppNotifications {
     private String message;
     private Boolean isRead;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "userId")
     private Users users;
 }

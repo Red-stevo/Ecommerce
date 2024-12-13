@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -34,7 +35,7 @@ public class ProductsAdminController {
     }
 
     @PostMapping(value = "/post",consumes = "multipart/form-data")
-    public ResponseEntity<EntityResponse> postProduct(
+    public ResponseEntity<CompletableFuture<EntityResponse>> postProduct(
             @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) throws JsonProcessingException {
 
         //deserializing the product images data
@@ -105,10 +106,9 @@ public class ProductsAdminController {
     public ResponseEntity<EntityResponse> updateCategory(
             @RequestParam String categoryId,
             @RequestParam String categoryName,
-            @RequestPart  MultipartFile fileUploads) throws IOException {
-        FileUploads uploads = new FileUploads(fileUploads.getOriginalFilename(),fileUploads.getBytes());
+            @RequestPart(required = false)  MultipartFile fileUploads) throws IOException {
 
-        return ResponseEntity.ok().body(productsService.updateCategory(categoryId,categoryName,uploads));
+        return ResponseEntity.ok(productsService.updateCategory(categoryId,categoryName,fileUploads));
     }
 
 
@@ -140,10 +140,7 @@ public class ProductsAdminController {
 
     }
 
-    @GetMapping("/categories")
-    public ResponseEntity<List<CategoryResponse>> findAllCategories(){
-        return ResponseEntity.ok(productsService.findAllCategories());
-    }
+
 
 
 }

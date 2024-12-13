@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1//customer/products")
+@RequestMapping("/api/v1/customer/products")
 //@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class ProductsCustomerController {
     private final ProductsService productsService;
@@ -35,26 +35,7 @@ public class ProductsCustomerController {
     }
 
 
-    /**
-     * Endpoint to search for products.
-     * @param query The search query string.
-     * @param page The page number for pagination.
-     * @param size The page size for pagination.
-     * @return A paginated list of products matching the search criteria.
-     */
-    @GetMapping("/search")
-    public ResponseEntity<PagedModel<EntityModel<ProductsPageResponse>>> searchProducts(
-            @RequestParam("query") String query,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            PagedResourcesAssembler<ProductsPageResponse> assembler
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductsPageResponse> products = productsService.searchProducts(query, pageable);
 
-        PagedModel<EntityModel<ProductsPageResponse>> pagedModel = assembler.toModel(products);
-        return ResponseEntity.ok(pagedModel);
-    }
 
 
     //SpecificProductResponse specificProductResponse(String productId,Pageable pageable)
