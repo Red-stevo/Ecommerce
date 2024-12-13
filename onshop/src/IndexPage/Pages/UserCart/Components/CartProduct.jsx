@@ -33,6 +33,7 @@ const CartProduct = (
         if (unCheckAll.length === 0) setSelect(false);
     }, [unCheckAll]);
 
+
     return (
         <div className={"cart-product-details"}>
             <div onClick={() => setSelect(!select)} className={"select-icon"}>{

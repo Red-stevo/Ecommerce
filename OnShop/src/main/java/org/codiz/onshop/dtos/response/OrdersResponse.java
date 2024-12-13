@@ -11,6 +11,7 @@ import java.util.List;
 public class OrdersResponse {
 
     private String orderNumber;
+
     private String orderStatus;
 
     private OrderSummary orderSummary;

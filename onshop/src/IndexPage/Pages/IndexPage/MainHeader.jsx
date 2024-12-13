@@ -33,7 +33,7 @@ const MainHeader = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className={"toggle-icon"}/>
                 <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>
                     <InputGroup className="mx-2 mb-2 search-and-buttons">
-                        <CategoryDropDown />    {/*Categories drop-down*/}
+                        <CategoryDropDown handleSearchProduct={handleSearchProduct} />    {/*Categories drop-down*/}
 
                         <input className={"form-control search-bar"} placeholder={"Search"} required={true}
                                value={searchContents} aria-label="Product Search" aria-describedby="basic-addon2"

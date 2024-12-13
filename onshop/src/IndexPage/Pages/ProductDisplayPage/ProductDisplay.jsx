@@ -37,7 +37,9 @@ const ProductDisplay = () => {
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
-        const wishListData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay};
+        const wishListData =
+            {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId};
+
         dispatch(addToWishList(wishListData));
     }
 
@@ -284,7 +286,7 @@ const ProductDisplay = () => {
             <div>
                 <span className={"header-related-products"}>Related Products</span>
                 <div className={"related-products-holder"}>
-                    {relatedProducts.length > 0 && relatedProducts.map((product) => (
+                    {relatedProducts && relatedProducts.length > 0 && relatedProducts.map((product) => (
                         <div key={product.productId} className={"related-product"}
                              onClick={() => navigate(`/home/product/${product.productId}`)}>
                             <Image src={product.productImage} className={"related-product-image"}/>

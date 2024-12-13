@@ -8,10 +8,12 @@ const initialState = wishListAdapter.getInitialState({errorMessage:"", loading:"
 export const addToWishList = createAsyncThunk("wishList/addToCart",
     async (productData = null, {fulfillWithValue,rejectWithValue}) => {
 
-        const {userId, specificProductId} = productData;
+        const {userId, specificationId} = productData;
+
+
         try {
             await RequestsConfig
-                .post(`/customer/products/add-to-wishlist?specificProductId=${specificProductId}&userId=${userId}`);
+                .post(`/customer/products/add-to-wishlist?specificProductId=${specificationId}&userId=${userId}`);
             fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);

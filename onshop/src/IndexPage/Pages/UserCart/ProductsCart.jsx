@@ -2,7 +2,6 @@ import "./Styles/ProductsCart.css";
 import {Button, Image} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {ImCheckboxChecked, ImCheckboxUnchecked} from "react-icons/im";
-import Cart from "../IndexPage/Components/IndexHeader/Cart.jsx";
 import CartProduct from "./Components/CartProduct.jsx";
 import {FaMoneyBill1Wave} from "react-icons/fa6";
 import {PiArrowFatLeftThin, PiArrowFatLineLeftThin, PiArrowFatLinesLeftThin} from "react-icons/pi";
@@ -14,7 +13,7 @@ import noCartImage from "./../../../assets/NoCartItems.png";
 
 
 
-const cartProducts = {
+const cartItemsResponses = {
     username:"Stephen Muiru",
     cartId:"AS43DF",
     cartItemsResponses:[
@@ -84,8 +83,8 @@ const cartProducts = {
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
-        totalPages, hasMore, youMayLikes,
-    totalProductPrice} = useSelector(state => state.CartReducer.CartResponse);
+            totalPages, hasMore, youMayLikes, totalProductPrice
+    } = useSelector(state => state.CartReducer.CartResponse);
     const [index, setIndex] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const navigate = useNavigate();
@@ -93,7 +92,7 @@ const ProductsCart = () => {
     const [page, setPage] = useState(currentPage ? currentPage : 0);
 
     useEffect(() => {
-        const cartData = {page, size:10, userId:"AS43ER"}
+        const cartData = {page, size:10, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -121,12 +120,19 @@ const ProductsCart = () => {
         setSelectedProducts(() => []);
     }
 
+
     if (!cartItemsResponses || cartItemsResponses.length === 0){
         return (
             <div className={"no-cart-items"}>
+                <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
                 <Image src={noCartImage} className={"no-cart-items-image"}/>
             </div>
         );
+    }
+
+
+    const handleDeleteCart = () => {
+        console.log(selectedProducts);
     }
 
     return (
@@ -139,12 +145,15 @@ const ProductsCart = () => {
                             <ImCheckboxUnchecked className={"select-unchecked"} onClick={() => setCheckIcon(true)}/>}
                         <span>select all</span>
                     </div>
-                    <Button className={"danger-button delete-order-product"}>Delete</Button>
+                    <Button disabled={selectedProducts.length === 0}
+                            className={"danger-button delete-order-product"} onClick={handleDeleteCart}>
+                        Delete
+                    </Button>
                 </div>
 
                 {/*Product Display.*/}
                 <div className={"ordered-products-display"}>
-                    {cartProducts && cartItemsResponses.map(
+                    {cartItemsResponses && cartItemsResponses.map(
                         ({
                              productId, productPrice, productName, productImageUrl,
                              color, inStock, count

@@ -1,7 +1,18 @@
 import {Dropdown} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {useEffect} from "react";
+import {getCategories} from "../../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 
-const CategoryDropDown = () => {
-    const categoryList = ["Men","Women","Shoes", "Clothes", "Phones","Bags"];
+const CategoryDropDown = ({handleSearchProduct}) => {
+    const dispatch = useDispatch();
+    const {errorMessage,categories} = useSelector(state => state.CategoriesReducer);
+
+
+    /*Load categories*/
+    useEffect(() => {
+        dispatch(getCategories())
+    }, []);
+
 
     return (
         <Dropdown className={"category-dropdown"}>
@@ -9,9 +20,11 @@ const CategoryDropDown = () => {
                 Category
             </Dropdown.Toggle>
             <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1" >All Categories</Dropdown.Item>
-                {categoryList.map(((item, index) => (
-                    <Dropdown.Item key={index} href="#/action-1" >{item}</Dropdown.Item>
+                <Dropdown.Item>All Categories</Dropdown.Item>
+                {categories && categories.map((({categoryId, categoryName}, index) => (
+                    <Dropdown.Item key={categoryId} onClick={() => handleSearchProduct(categoryName)}>
+                        {categoryName}
+                    </Dropdown.Item>
                 )))}
             </Dropdown.Menu>
         </Dropdown>
