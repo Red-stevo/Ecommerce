@@ -57,6 +57,4 @@ public class CartCustomerController {
         return ResponseEntity.ok(cartService.deleteCart(cartId));
     }
 
-
-
 }

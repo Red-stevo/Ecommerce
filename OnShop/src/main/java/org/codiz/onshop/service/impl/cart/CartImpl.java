@@ -119,21 +119,21 @@ public class CartImpl implements CartService {
 
     @Transactional
     public CartResponse getCartById(String userId, Pageable pageable) {
+        Double totalPrice = 0.00;
+
         try {
             Users usr = usersRepository.findUsersByUserId(userId);
-            Optional<Cart> cart = cartRepository.findCartByUsers(usr);
-
-            if (cart.isEmpty()) {
-                throw new IllegalArgumentException("Cart not found");
-            }
+            Cart cart = cartRepository.findCartByUsers(usr).orElseThrow(
+                    () -> new IllegalArgumentException("Cart not found"));
 
             CartResponse cartResponse = new CartResponse();
-            cartResponse.setCartId(cart.get().getCartId());
-            cartResponse.setUsername(cart.get().getUsers().getUsername());
+            cartResponse.setCartId(cart.getCartId());
+            cartResponse.setUsername(cart.getUsers().getUsername());
 
             // Map cart items to response
             List<CartItemsResponse> itemsResponses = new ArrayList<>();
-            for (CartItems items : cart.get().getCartItems()) {
+
+            for (CartItems items : cart.getCartItems()) {
                 CartItemsResponse itemsResponse = new CartItemsResponse();
                 Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
 
@@ -145,13 +145,16 @@ public class CartImpl implements CartService {
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
                 SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
                 itemsResponse.setInStock(details.getCount() > 0);
+                totalPrice = totalPrice + itemsResponse.getProductPrice();
 
                 itemsResponses.add(itemsResponse);
             }
+
+            cartResponse.setTotalPrice(totalPrice);
             cartResponse.setCartItemsResponses(itemsResponses);
 
             // Fetch "You May Like" products
-            List<String> categoryIds = cart.get().getCartItems().stream()
+            List<String> categoryIds = cart.getCartItems().stream()
                     .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
                     .distinct()
                     .toList();

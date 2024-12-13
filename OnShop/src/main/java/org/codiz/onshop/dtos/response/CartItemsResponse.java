@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class CartItemsResponse {
     private String cartItemId;
-
     private String productImageUrl;
 
     private String productName;
