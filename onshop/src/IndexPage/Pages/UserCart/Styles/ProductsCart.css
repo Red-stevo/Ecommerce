@@ -174,7 +174,7 @@
 .you-may-like-product {
     display: flex;
     width: 200px;
-    height: 250px;
+    height: fit-content;
     flex-direction: column;
     margin: 7px;
 }
@@ -186,9 +186,8 @@
 }
 
 .you-may-like-product-image {
-    width: 190px;
+    width: 100%;
     height: 200px;
-    margin-left: 5px;
 }
 
 .you-may-like-products {
@@ -258,12 +257,12 @@
 
     .you-may-like-product {
         width: 110px;
-        height: 160px;
+        height: fit-content;
         margin: 5px;
     }
 
     .you-may-like-product-image {
-        width: 100px;
+        width: 100%;
         height: 100px;
     }
 

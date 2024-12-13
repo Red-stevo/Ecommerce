@@ -35,11 +35,9 @@ public class CartCustomerController {
         return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("/remove-item")
-    public ResponseEntity<HttpStatus> removeItemFromCart(
-            @RequestBody List<String> cartItemIds){
-        HttpStatus st= cartService.removeItemFromCart(cartItemIds);
-        return ResponseEntity.ok(st);
+    @PutMapping("/remove-item")
+    public ResponseEntity<HttpStatus> removeItemFromCart(@RequestBody List<String> cartItemIds){
+        return ResponseEntity.ok(cartService.removeItemFromCart(cartItemIds));
     }
 
     @GetMapping("/{userId}")
