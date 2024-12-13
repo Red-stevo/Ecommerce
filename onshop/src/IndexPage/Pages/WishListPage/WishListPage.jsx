@@ -1,47 +1,20 @@
 import "./Styles/WishListPage.css";
 import {Button, Image} from "react-bootstrap";
 import {FaTrash} from "react-icons/fa";
-
-
-const wishListProducts = [
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:true, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:false, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:true, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:true, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:false, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:true, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    },
-    {
-        productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-        productPrice:2100, inStock:true, productColor:"brown", productName:"J4 Classic Jordan, tough, durable and comfortable"
-    }
-]
+import {useSelector} from "react-redux";
+import Loader from "../../../Loading/Loader.jsx";
 
 
 const WishListPage = () => {
+    const {loading, success, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
+
+
     return (
         <div className={"wish-list-page"}>
             <div className={"wish-list-page-header"}>
-                <span className={"wish-list-header product"} >Product</span>
-                <span className={"wish-list-header price"} >Price</span>
-                <span className={"wish-list-header status"} >Status</span>
+                <span className={"wish-list-header product"}>Product</span>
+                <span className={"wish-list-header price"}>Price</span>
+                <span className={"wish-list-header status"}>Status</span>
             </div>
 
             <section className={"wish-list-products"}>
@@ -81,7 +54,7 @@ const WishListPage = () => {
                 <Button className={"app-button add-all "}>Add All to Cart</Button>
             </section>
 
-
+            {loading && <Loader />}
         </div>
     );
 };

@@ -113,13 +113,12 @@ public class CartImpl implements CartService {
     @Transactional
     public CartResponse getCartById(String userId, Pageable pageable) {
 
+        Double totalPrice = 0.00;
+
         try {
             Users usr = usersRepository.findUsersByUserId(userId);
-            Optional<Cart> cart = cartRepository.findCartByUsers(usr);
-
-            if (cart.isEmpty()) {
-                throw new IllegalArgumentException("Cart not found");
-            }
+            Cart cart = cartRepository.findCartByUsers(usr).orElseThrow(
+                    () -> new IllegalArgumentException("Cart not found"));
 
             CartResponse cartResponse = new CartResponse();
             cartResponse.setCartId(cart.get().getCartId());
@@ -129,6 +128,15 @@ public class CartImpl implements CartService {
             // Map cart items to response
             List<CartItemsResponse> itemsResponses = new ArrayList<>();
             for (CartItems items : cart.get().getCartItems()) {
+            cartResponse.setCartId(cart.getCartId());
+            cartResponse.setUsername(cart.getUsers().getUsername());
+
+            // Map cart items to response
+            List<CartItemsResponse> itemsResponses = new ArrayList<>();
+
+            for (CartItems items : cart.getCartItems()) {
+                CartItemsResponse itemsResponse = new CartItemsResponse();
+                Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
 
                 CartItemsResponse itemsResponse = new CartItemsResponse();
                 String pro = items.getProducts().getSpecificProductId();
@@ -141,20 +149,34 @@ public class CartImpl implements CartService {
                 itemsResponse.setProductName(products.getProducts().getProductName());
                 itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
+
                 log.info("setting specific products");
                 itemsResponse.setInStock(products.getCount() > 0);
                 itemsResponse.setColor(products.getColor());
                 log.info("done with this round");
+
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
+                itemsResponse.setInStock(details.getCount() > 0);
+                totalPrice = totalPrice + itemsResponse.getProductPrice();
                 itemsResponses.add(itemsResponse);
             }
+
+            cartResponse.setTotalPrice(totalPrice);
             cartResponse.setCartItemsResponses(itemsResponses);
             log.info("items set successfully");
 
 
             // Fetch "You May Like" products
+
             log.info("setting the products you may like");
-            List<String> categoryIds = cart.get().getCartItems().stream()
-                    .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
+            List<String> categoryIds = cart.getCartItems().stream()
+                    .flatMap(item -> item
+                             .getProducts()
+                             .getProducts()
+                             .getCategoriesList()
+                             .stream()
+                             .map(Categories
+                                  ::getCategoryId))
                     .distinct()
                     .toList();
 
