@@ -14,5 +14,5 @@ public class CartItemsResponse {
 
     private float productPrice;
     private int count;
-
+    private String color;
 }

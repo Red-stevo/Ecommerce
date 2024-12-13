@@ -6,12 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
+import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.*;
-import org.codiz.onshop.entities.products.Inventory;
-import org.codiz.onshop.entities.products.Products;
+import org.codiz.onshop.entities.products.PopularProducts;
 import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.codiz.onshop.entities.users.Users;
 import org.codiz.onshop.repositories.order.OrdersItemsRepository;
@@ -21,12 +21,14 @@ import org.codiz.onshop.repositories.products.ProductsJpaRepository;
 import org.codiz.onshop.repositories.products.SpecificProductsRepository;
 import org.codiz.onshop.repositories.users.UsersRepository;
 import org.codiz.onshop.service.serv.orders.OrdersService;
+import org.codiz.onshop.repositories.products.PopularProductsRepository;
 import org.codiz.onshop.service.serv.products.ProductsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,6 +43,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +57,8 @@ public class OrdersImpl implements OrdersService {
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
     private final SpecificProductsRepository specificProductsRepository;
+    private final PopularProductsRepository popularProductsRepository;
+
 
     public String generateShipmentTracingId() {
 
@@ -69,6 +74,51 @@ public class OrdersImpl implements OrdersService {
         return builder.toString();
     }
 
+    @Transactional
+    public String makeOrder(List<MakingOrderRequest> request, String userId) {
+        try {
+
+            Users usr = usersRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceCreationFailedException("User not found"));
+
+            // Find or create an order for the user
+            Orders orders = ordersRepository.findByUserId(usr);
+            if (orders == null) {
+                orders = new Orders();
+                orders.setUserId(usr);
+                orders = ordersRepository.save(orders);
+            }
+
+            // Create and save order items
+            List<OrderItems> orderItemsList = new ArrayList<>();
+            /*int count = 1;*/
+            for (MakingOrderRequest orderRequest : request) {
+                OrderItems orderItems = new OrderItems();
+                PopularProducts popularProducts = new PopularProducts();
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(orderRequest.getSpecificProductId())
+                        .orElseThrow(()->new ResourceNotFoundException("could not get the products"));
+                orderItems.setSpecificProductDetails(details);
+                orderItems.setQuantity(orderRequest.getQuantity());
+                orderItems.setOrderId(orders);
+                /*popularProducts.setSpecificProductDetails(details);
+                popularProducts.setCount(count);*/
+                popularProductsRepository.save(popularProducts);
+                orderItemsList.add(orderItems);
+            }
+            ordersItemsRepository.saveAll(orderItemsList);
+
+            return "Order placed successfully";
+        } catch (NoSuchElementException e) {
+            throw new ResourceCreationFailedException("User not found");
+        } catch (ResourceCreationFailedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResourceCreationFailedException("Could not make the order");
+        }
+    }
+
+
+    @Transactional
     public EntityResponse placeOrder(OrderPlacementRequest request) {
 
         try {
@@ -90,12 +140,12 @@ public class OrdersImpl implements OrdersService {
             double totalAmount = 0;
             for (OrderItemsRequests itemsRequests : request.getRequestsList()) {
 
-                Products products = productsJpaRepository.findByProductId(itemsRequests.getProductId());
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getProductId());
+
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getSpecificationId())
+                        .orElseThrow(()-> new ResourceCreationFailedException("Product not found"));
                 OrderItems items = new OrderItems();
                 items.setOrderId(order);
                 items.setQuantity(itemsRequests.getQuantity());
-                items.setProductId(products);
                 items.setSpecificProductDetails(details);
                 items.setStatus(OrderItemStatus.PENDING);
 
@@ -140,6 +190,7 @@ public class OrdersImpl implements OrdersService {
 
     }
 
+    @Transactional
     public EntityDeletionResponse cancelOrder(String orderId, String username) {
         try {
             Orders orders = ordersRepository.findById(orderId).orElseThrow(
@@ -155,7 +206,8 @@ public class OrdersImpl implements OrdersService {
             List<OrderItems> items = new ArrayList<>();
 
             for (OrderItems orderItem : orders.getOrderItems()) {
-                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(orderItem.getSpecificProductDetails().getSpecificProductId());
+                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(orderItem.getSpecificProductDetails().getSpecificProductId())
+                        .orElseThrow(()->new ResourceCreationFailedException("Product not found"));
                 productDetails.setCount(productDetails.getCount() + orderItem.getQuantity());
                 specificProductsRepository.save(productDetails);
                 orderItem.setStatus(OrderItemStatus.CANCELLED);
@@ -237,7 +289,7 @@ public class OrdersImpl implements OrdersService {
     private static OrderItemsResponse getOrderItemsResponse(OrderItems items) {
         OrderItemsResponse itemsResponse = new OrderItemsResponse();
         itemsResponse.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
-        itemsResponse.setProductName(items.getProductId().getProductName());
+        itemsResponse.setProductName(items.getSpecificProductDetails().getProducts().getProductName());
         itemsResponse.setProductPrice(items.getSpecificProductDetails().getProductPrice());
         itemsResponse.setQuantity(items.getQuantity());
         itemsResponse.setTotalPrice(items.getTotalPrice());
@@ -283,8 +335,8 @@ public class OrdersImpl implements OrdersService {
 
             for (OrderItems orderItems : order.getOrderItems()) {
                 OrderItemsResponse itemsResponse = new OrderItemsResponse();
-                itemsResponse.setProductId(orderItems.getProductId().getProductId());
-                itemsResponse.setProductName(orderItems.getProductId().getProductName());
+                itemsResponse.setProductId(orderItems.getOrderItemId());
+                itemsResponse.setProductName(orderItems.getSpecificProductDetails().getProducts().getProductName());
                 itemsResponse.setQuantity(orderItems.getQuantity());
                 itemsResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
                 itemsResponse.setProductPrice((orderItems.getSpecificProductDetails().getProductPrice()-orderItems.getSpecificProductDetails().getDiscount()));
@@ -400,7 +452,7 @@ public class OrdersImpl implements OrdersService {
                         : orderItem.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl()
         );
         response.setProductPrice(orderItem.getSpecificProductDetails().getProductPrice());
-        response.setProductName(orderItem.getProductId().getProductName());
+        response.setProductName(orderItem.getSpecificProductDetails().getProducts().getProductName());
         response.setQuantity(orderItem.getQuantity());
         return response;
     }
@@ -433,9 +485,8 @@ public class OrdersImpl implements OrdersService {
                 OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
                 orderTrackingProducts.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
                 orderTrackingProducts.setProductPrice(items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount());
-                orderTrackingProducts.setProductName(items.getProductId().getProductName());
+                orderTrackingProducts.setProductName(items.getSpecificProductDetails().getProducts().getProductName());
                 products.add(orderTrackingProducts);
-
             }
             orderStatus.setProducts(products);
             return orderStatus;
@@ -450,6 +501,22 @@ public class OrdersImpl implements OrdersService {
         orders.setShippingStatus(status);
         ordersRepository.save(orders);
         return "shipping status updated successfully";
+    }
+
+    public ResponseEntity addOrderItemQuantity(String orderIteId, int quantity){
+        try {
+            OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderIteId).get();
+            int newQuantity = items.getQuantity() + quantity;
+            items.setQuantity(newQuantity);
+            items.setStatus(items.getStatus());
+            items.setOrderId(items.getOrderId());
+            float totalPrice = (items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount()) * newQuantity;
+            items.setTotalPrice(totalPrice);
+            items.setSpecificProductDetails(items.getSpecificProductDetails());
+            return ResponseEntity.status(200).body("added successfully");
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("could not add order item quantity");
+        }
     }
 
 }

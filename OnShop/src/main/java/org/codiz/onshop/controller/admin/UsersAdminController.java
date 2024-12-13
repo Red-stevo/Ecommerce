@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/admin/auth")
 @RequiredArgsConstructor
-@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class UsersAdminController {
 
     private final UsersService usersService;

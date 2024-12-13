@@ -6,6 +6,7 @@ import org.codiz.onshop.dtos.response.CartResponse;
 import org.codiz.onshop.entities.cart.Cart;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface CartService {
     HttpStatus deleteCart(String cartId);
     CartResponse getCartById(String userId, Pageable pageable);
     HttpStatus removeItemFromCart(List<String> cartItemId);
-    Cart updateItemQuantity(CartItemsUpdate itemsUpdate);
-    Cart addItemToCart(CartItemsToAdd items);
+    HttpStatus updateItemQuantity(CartItemsUpdate cartItemsUpdate);
+    ResponseEntity addItemToCart(CartItemsToAdd items);
 
 }

@@ -18,21 +18,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/customer/cart")
-@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class CartCustomerController {
 
     private final CartService cartService;
 
     @PostMapping("/add-to-cart")
-    public ResponseEntity<Cart> addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
-            Cart cart = cartService.addItemToCart(itemsToAdd);
-            return ResponseEntity.ok(cart);
+    public ResponseEntity addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
+
+            return ResponseEntity.ok(cartService.addItemToCart(itemsToAdd));
     }
 
     @PutMapping("update-cart")
-    public ResponseEntity<Cart> updateItemQuantity(@RequestBody CartItemsUpdate itemsUpdate){
-        Cart cart = cartService.updateItemQuantity(itemsUpdate);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<HttpStatus> updateItemQuantity(@RequestBody CartItemsUpdate itemsToAdd) {
+
+        return ResponseEntity.ok( cartService.updateItemQuantity(itemsToAdd) );
     }
 
     @PutMapping("/remove-item")

@@ -26,7 +26,6 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/admin/products")
-//@CrossOrigin( origins = "http://127.0.0.1:5173/", allowCredentials = "true")
 public class ProductsAdminController {
     private final ProductsService productsService;
 

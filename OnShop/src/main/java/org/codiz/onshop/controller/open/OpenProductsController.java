@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/open/products")
+@CrossOrigin(origins = "http://192.168.100.27:5173/", allowCredentials = "true")
 public class OpenProductsController {
     private final ProductsService productsService;
 

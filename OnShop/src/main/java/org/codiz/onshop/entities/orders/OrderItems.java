@@ -19,11 +19,6 @@ public class OrderItems {
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private Orders orderId;
     @ManyToOne
-    @JoinColumn(name = "product_id",referencedColumnName = "productId")
-    //@OnDelete(action = OnDeleteAction.CASCADE)
-    private Products productId;
-
-    @ManyToOne
     @JoinColumn(name = "specific_product_id",referencedColumnName = "specificProductId")
     private SpecificProductDetails specificProductDetails;
 
