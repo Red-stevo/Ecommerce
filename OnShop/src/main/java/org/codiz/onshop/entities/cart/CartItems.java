@@ -26,6 +26,7 @@ public class CartItems {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @JsonIgnore
     private SpecificProductDetails products;
 
     private Integer quantity;

@@ -35,5 +35,6 @@ public class SpecificProductDetails{
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private WishList wishList;
 }

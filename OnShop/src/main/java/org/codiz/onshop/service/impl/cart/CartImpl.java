@@ -138,18 +138,18 @@ public class CartImpl implements CartService {
                 System.out.println(items);
                 System.out.println(items.getProducts());
                 CartItemsResponse itemsResponse = new CartItemsResponse();
-                Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
-
+                String pro = items.getProducts().getSpecificProductId();
+                log.info(""+pro);
+                SpecificProductDetails products = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId()).orElseThrow();
+                log.info(""+products);
                 itemsResponse.setCartItemId(items.getCartItemId());
                 itemsResponse.setCount(items.getQuantity());
-                itemsResponse.setProductId(products.getProductId());
-                itemsResponse.setProductName(products.getProductName());
+                itemsResponse.setProductId(products.getSpecificProductId());
+                itemsResponse.setProductName(products.getProducts().getProductName());
                 itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
                 log.info("setting specific products");
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId())
-                        .orElseThrow(()->new ResourceNotFoundException("could not find product"));
-                itemsResponse.setInStock(details.getCount() > 0);
+                itemsResponse.setInStock(products.getCount() > 0);
                 log.info("done with this round");
                 itemsResponses.add(itemsResponse);
             }

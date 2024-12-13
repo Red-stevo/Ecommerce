@@ -18,6 +18,7 @@ public class WishList {
     private Users user;
     @OneToMany
     @JoinColumn(name = "wishlist_products")
+    @JsonIgnore
     private List<SpecificProductDetails> specificProductDetails;
 
 }
