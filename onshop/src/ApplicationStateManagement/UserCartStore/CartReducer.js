@@ -6,13 +6,8 @@ import {configs} from "@eslint/js";
 const cartAdapter = createEntityAdapter();
 
 const initialState = cartAdapter.getInitialState(
-    {
-        errorMessage:"",
-        loading:"",
-        success:"",
-        CartResponse:{username:"", cartId:"", cartItemsResponses:[], youMayLikes:[], currentPage:0, totalPages:0,
-            hasMore:true}
-    });
+    {errorMessage:null, loading:false, success:null,
+        CartResponse:{username:"", cartId:"", totalPrice:0.00,cartItemsResponses:[], youMayLikes:[], currentPage:0, totalPages:0, hasMore:true}});
 
 export const addToCart = createAsyncThunk("cart/addToCart",
     async (productData = null, {rejectWithValue,fulfillWithValue }) => {
@@ -81,14 +76,7 @@ const CartReducer = createSlice({
                 state.loading = false;
                 state.errorMessage = null;
                 state.success = true;
-                state.CartResponse = {...action.payload};
-                /*state.CartResponse.username=action.payload.username;
-                state.CartResponse.cartId=action.payload.cartId;
-                state.CartResponse.cartItemsResponses=action.payload.cartItemsResponses;
-                state.CartResponse.youMayLikes=[...state.CartResponse.youMayLikes,...action.payload.youMayLikes];
-                state.CartResponse.currentPage=action.payload.currentPage;
-                state.CartResponse.totalPages=action.payload.totalPages;
-                state.CartResponse.hasMore=action.payload.hasMore;*/
+                state.CartResponse = action.payload;
             })
             .addCase(getCartItems.rejected, (state, action) => {
                 state.errorMessage = action.payload;
