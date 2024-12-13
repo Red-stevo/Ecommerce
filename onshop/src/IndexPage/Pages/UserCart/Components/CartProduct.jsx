@@ -4,6 +4,7 @@ import {Image} from "react-bootstrap";
 import {FaMinus, FaPlus} from "react-icons/fa";
 import {useDispatch} from "react-redux";
 import {updateQuantity} from "../../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import ErrorModal from "../../../ErrorModal.jsx";
 
 const CartProduct = (
     {productPrice, productName, productImageUrl, inStock, color, count, id, setSelectedProducts, selectAllCheck,
@@ -11,6 +12,7 @@ const CartProduct = (
     const [select, setSelect] = useState(false);
     const [productCount, setProductCount] = useState(count ? count : 0);
     const dispatch = useDispatch();
+
 
 
     useEffect(() => {
@@ -40,6 +42,7 @@ const CartProduct = (
         if(productCount > count || productCount < count) dispatch(updateQuantity(data));
 
     }, [productCount]);
+
 
     return (
         <div className={"cart-product-details"}>
