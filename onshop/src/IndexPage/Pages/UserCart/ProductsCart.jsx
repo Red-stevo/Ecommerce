@@ -86,7 +86,7 @@ const ProductsCart = () => {
     const {username, cartId, cartItemsResponses, currentPage,
             totalPages, hasMore, youMayLikes, totalProductPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
-    const {success, loading} = useSelector(state => state.CartReducer);
+    const {loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const navigate = useNavigate();
@@ -124,16 +124,6 @@ const ProductsCart = () => {
     }
 
 
-    if (!cartItemsResponses && cartItemsResponses.length === 0){
-        return (
-            <div className={"no-cart-items"}>
-                <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
-                <Image src={noCartImage} className={"no-cart-items-image"}/>
-            </div>
-        );
-    }
-
-
     const handleDeleteCart = () => {
         dispatch(deleteCartItem(selectedProducts));
 
@@ -144,11 +134,6 @@ const ProductsCart = () => {
         setReload(true);
     }
 
-    useEffect(() => {
-        console.log(selectedProducts);
-    }, [selectedProducts]);
-
-
     /*Reload the cart after deletion*/
     useEffect(() => {
         const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
@@ -156,6 +141,15 @@ const ProductsCart = () => {
 
         setReload(false);
     }, [selectedProducts]);
+
+    if (!cartItemsResponses || cartItemsResponses.length === 0){
+        return (
+            <div className={"no-cart-items"}>
+                <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
+                <Image src={noCartImage} className={"no-cart-items-image"}/>
+            </div>
+        );
+    }
 
 
     return (

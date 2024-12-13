@@ -5,13 +5,20 @@ const productsAdapter = createEntityAdapter();
 
 export const queryProducts = createAsyncThunk("products/query-products",
     async (data = null, {fulfillWithValue,rejectWithValue}) => {
-
+        const {query, currentPage} = data;
     try {
-            return fulfillWithValue(((await RequestsConfig.get(
-                    `/open/products/search?query=${encodeURIComponent(data.query)}&page=0&size=12`)).data));
-        }catch (error){
-            return rejectWithValue(error.response ? error.response.data : error.data);
+        const response = (await RequestsConfig
+            .get(`/open/products/search?query=${encodeURIComponent(query)}&page=${currentPage}&size=12`)).data;
+
+        const responseData = {
+            products:response._embedded.productsPageResponseList,
+            page:response.page
         }
+
+        return fulfillWithValue(responseData);
+    }catch (error){
+            return rejectWithValue(error.response ? error.response.data : error.data);
+    }
     });
 
 const initialState = productsAdapter.getInitialState({
@@ -32,7 +39,7 @@ const SearchProducts = createSlice({
                 state.error = null;
             })
             .addCase(queryProducts.fulfilled, (state, action) => {
-                state.products = action.payload._embedded.productsPageResponseList;
+                state.products = [...state.products, ...action.payload.products];
                 state.page = action.payload.page;
                 state.status = "fulfilled";
                 state.error = null;

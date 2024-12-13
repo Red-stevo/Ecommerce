@@ -3,11 +3,12 @@ import CategoriesMenu from "./Components/CategoriesMenu.jsx";
 import {Button, Image} from "react-bootstrap";
 import StarRating from "./Components/StarRating.jsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {queryProducts} from "../../../ApplicationStateManagement/ProductStores/SearchProducts.js";
 import data from "bootstrap/js/src/dom/data.js";
 import Loader from "../../../Loading/Loader.jsx";
+import log from "eslint-plugin-react/lib/util/log.js";
 
 
 
@@ -97,19 +98,13 @@ const CategoricalProductsDisplay = () => {
     const { productsCategory} = useParams();
     const dispatch = useDispatch();
     const {products, page, status} = useSelector(state => state.SearchProducts);
+    const [currentPage, setCurrentPage] = useState( 0);
 
     useEffect(() => {
        const query = productsCategory.replaceAll('+', ' ');
-
-       const data = {
-           query,
-       }
-
-        console.log(data);
-
+       const data = {query,currentPage};
        dispatch(queryProducts(data));
-    }, [productsCategory]);
-
+    }, [productsCategory, currentPage]);
 
 
     return (
@@ -120,7 +115,7 @@ const CategoricalProductsDisplay = () => {
             <div className={"product-display-section"}>
                 {products && products.map(
                 ({productId, productName, discountedPrice,productRating, productImagesUrl}, index) => (
-                    <div className={"product-gen-display"} key={productId} onClick={() => {navigate(`/home/product/${productId}`)}}>
+                    <div className={"product-gen-display"} key={index} onClick={() => {navigate(`/home/product/${productId}`)}}>
                         <Image src={productImagesUrl} alt={productName} className={"product-display-image"} />
                         <div>
                             <span className={"product-display-name"}>{productName}</span>
@@ -131,8 +126,10 @@ const CategoricalProductsDisplay = () => {
                     </div>
                 ))}
 
-                <div className={"load-more-button-holder"}>
-                    <Button className={"load-more-button app-button"}>Load More</Button>
+
+                <div className={`load-more-button-holder ${currentPage + 1 >= page.totalPages && " hide "}`}>
+                    <Button onClick={() => setCurrentPage(page.number + 1)}
+                            className={"load-more-button app-button"}>Load More</Button>
                 </div>
             </div>:
                 <Loader />
