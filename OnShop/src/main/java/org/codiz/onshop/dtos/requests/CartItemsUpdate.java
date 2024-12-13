@@ -8,7 +8,10 @@ import java.util.List;
 
 @Data
 public class CartItemsUpdate {
+
     private String cartId;
+
     private String cartItemId;
+
     private int quantity;
 }

@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/customer/cart")
@@ -32,9 +34,10 @@ public class CartCustomerController {
         return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("/remove-item/{cartItemId}")
-    public ResponseEntity<HttpStatus> removeItemFromCart(@PathVariable String cartItemId){
-        HttpStatus st= cartService.removeItemFromCart(cartItemId);
+    @DeleteMapping("/remove-item")
+    public ResponseEntity<HttpStatus> removeItemFromCart(
+            @RequestBody List<String> cartItemIds){
+        HttpStatus st= cartService.removeItemFromCart(cartItemIds);
         return ResponseEntity.ok(st);
     }
 

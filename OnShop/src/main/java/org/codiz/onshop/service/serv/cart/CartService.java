@@ -1,6 +1,5 @@
 package org.codiz.onshop.service.serv.cart;
 
-import org.codiz.onshop.dtos.requests.CartItemsDeletion;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.requests.CartItemsUpdate;
 import org.codiz.onshop.dtos.response.CartResponse;
@@ -10,14 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public interface CartService {
 
     HttpStatus deleteCart(String cartId);
     CartResponse getCartById(String userId, Pageable pageable);
-    HttpStatus removeItemFromCart(String cartItemId);
+    HttpStatus removeItemFromCart(List<String> cartItemId);
     Cart updateItemQuantity(CartItemsUpdate itemsUpdate);
     ResponseEntity addItemToCart(CartItemsToAdd items);
 

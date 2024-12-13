@@ -11,11 +11,15 @@ const MainHeader = () => {
     const [searchContents, setSearchContents] = useState("");
     const navigate = useNavigate();
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event) => {if (event.key === "Enter" && searchContents) handleSearchProduct();}
 
-        console.log(event.key);
-        if (event.key === "Enter" && searchContents) {
-            navigate(`/home/products/${searchContents}`)
+
+    const handleSearchProduct = () => {
+
+        if (searchContents.trim().length > 2) {
+            const formattedUrl =
+                encodeURIComponent((searchContents.trim()).toLowerCase().replaceAll(' ', '+'));
+            navigate(`/home/products/${formattedUrl}`);
             setSearchContents("");
         }
     }
@@ -29,7 +33,7 @@ const MainHeader = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className={"toggle-icon"}/>
                 <Navbar.Collapse id="basic-navbar-nav" className={"main-header-content-holder"}>
                     <InputGroup className="mx-2 mb-2 search-and-buttons">
-                        <CategoryDropDown />    {/*Categories drop-down*/}
+                        <CategoryDropDown handleSearchProduct={handleSearchProduct} />    {/*Categories drop-down*/}
 
                         <input className={"form-control search-bar"} placeholder={"Search"} required={true}
                                value={searchContents} aria-label="Product Search" aria-describedby="basic-addon2"
@@ -37,7 +41,7 @@ const MainHeader = () => {
                                onKeyDown={handleKeyDown}
 
                         /> {/*Search bar*/}
-                        <Button variant="outline-secondary" href={searchContents && `/home/products/${searchContents}`}
+                        <Button variant="outline-secondary" onClick={handleSearchProduct}
                                  id="search-button" className={"search-buttons-right"}>
                             <FaSearch className={"search-icon"}/>
                         </Button> {/*Search Button(icon)*/}

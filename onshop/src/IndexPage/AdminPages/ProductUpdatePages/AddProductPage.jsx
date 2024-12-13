@@ -1,32 +1,14 @@
 import "./Styles/AddProductPage.css";
 import {Button, FloatingLabel, Form, InputGroup} from "react-bootstrap";
 import {MdCloudUpload} from "react-icons/md";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {postProduct} from "../../../ApplicationStateManagement/ProductStores/AddProductStore.js";
+import {postProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
-
-
-
-const categories = [
-    {categoryName:"Fashion", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120001"},
-    {categoryName:"books", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120002"},
-    {categoryName:"home-appliances", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120003"},
-    {categoryName:"toys", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120004"},
-    {categoryName:"sports", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120005"},
-    {categoryName:"groceries", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120006"},
-    {categoryName:"furniture", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120007"},
-    {categoryName:"automobiles", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120008"},
-    {categoryName:"health", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac120009"},
-    {categoryName:"beauty", categoryId:"4211f3dd-a7f6-11ef-ad26-0242ac1200010"},
-]
-
-
-
-
+import {getCategories} from "../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
 
 const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);
@@ -38,6 +20,7 @@ const AddProductPage = () => {
     const [productDetailsList, setProductDetailsList] = useState([]);
     const dispatch = useDispatch();
     const {loading,errorMessage} = useSelector(state => state.newProductReducer);
+    const {categories} = useSelector(state => state.CategoriesReducer);
 
 
     const removeCategory=(category)=>{setSelectedCategories(selectedCategories.filter((item) => item !== category));}
@@ -129,6 +112,10 @@ const AddProductPage = () => {
         dispatch(postProduct(data));
     }
 
+    useEffect(() => {
+        dispatch(getCategories());
+    }, []);
+
 
     return (
         <>
@@ -163,8 +150,9 @@ const AddProductPage = () => {
                             {/*Pre view selected categories*/}
                             {selectedCategories.length > 0 && selectedCategories.map((category, index) => (
                                 <div key={index} className={"categories-preview"}>
-                                    {category} <IoIosClose className={"cancel-categories"}
-                                                           onClick={() => removeCategory(category)}/>
+                                    {category}
+                                    <IoIosClose className={"cancel-categories"}
+                                                onClick={() => removeCategory(category)} />
                                 </div>))
                             }
                         </div>
