@@ -84,7 +84,7 @@ const cartItemsResponses = {
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
     const {username, cartId, cartItemsResponses, currentPage,
-            totalPages, hasMore, youMayLikes, totalProductPrice,
+            totalPages, hasMore, youMayLikes, totalPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
     const {loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
@@ -130,17 +130,12 @@ const ProductsCart = () => {
         /*Clear the selected cart items*/
         setSelectedProducts(() => []);
 
-        /*Set the reload*/
-        setReload(true);
+        /*Remove the delete elements.*/
+        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
+        dispatch(getCartItems(cartData))
+
     }
 
-    /*Reload the cart after deletion*/
-    useEffect(() => {
-        const cartData = {page, size:1, userId:"b69eb7ae-d567-45b8-a6a0-92c7f243874f"};
-        if (selectedProducts.length === 0 && reload) dispatch(getCartItems(cartData));
-
-        setReload(false);
-    }, [selectedProducts]);
 
     if (!cartItemsResponses || cartItemsResponses.length === 0){
         return (
@@ -184,7 +179,7 @@ const ProductsCart = () => {
 
                     {/*Price display*/}
                     <div className={"total-price-shop"}>
-                        <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalProductPrice}
+                        <div className={"total-price"}><span className={"total"}>Total</span>ksh {totalPrice}
                         </div>
 
                         <div className={"button-shop"}>
@@ -229,7 +224,7 @@ const ProductsCart = () => {
                     </div>
 
                 </section>
-                <div className={"load-more-button-holder"}>
+                <div className={`load-more-button-holder ${!hasMore && " hide " }`}>
                     <Button onClick={() => setPage(prevState => prevState + 1)}
                             className={"app-button load-more-button"}>Load More</Button>
                 </div>

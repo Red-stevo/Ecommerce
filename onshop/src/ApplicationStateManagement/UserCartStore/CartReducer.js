@@ -7,7 +7,7 @@ const cartAdapter = createEntityAdapter();
 
 const initialState = cartAdapter.getInitialState(
     {errorMessage:null, loading:false, success:null,
-        CartResponse:{username:"", cartId:"", cartItemsResponses:[], youMayLikes:[], currentPage:0, totalPages:0, hasMore:true}});
+        CartResponse:{username:"", cartId:"", totalPrice:0.00,cartItemsResponses:[], youMayLikes:[], currentPage:0, totalPages:0, hasMore:true}});
 
 export const addToCart = createAsyncThunk("cart/addToCart",
     async (productData = null, {rejectWithValue,fulfillWithValue }) => {
