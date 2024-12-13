@@ -38,7 +38,7 @@ export const getCategories = createAsyncThunk("new-category/get-categories",
 
         /*Axios request to save category.*/
         try {
-            return fulfillWithValue((await RequestsConfig.get(`/admin/products/categories`)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/open/products/categories`)).data);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
         }
@@ -70,7 +70,25 @@ export const putCategories = createAsyncThunk("new-category/put-categories",
 );
 
 
-export const CategoriesReducer = createSlice(
+
+export const deleteCategories = createAsyncThunk("new-category/delete-categories",
+    async (categoryId = null,
+           {fulfillWithValue,
+               rejectWithValue
+           }) => {
+
+        /*Axios request to save category.*/
+        try {
+            await RequestsConfig.delete(`/admin/products/delete-category?categoryId=${categoryId}`);
+            return fulfillWithValue(true);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    }
+);
+
+
+const CategoriesReducer = createSlice(
     {
         name:"new-category",
         initialState,
@@ -119,9 +137,24 @@ export const CategoriesReducer = createSlice(
                     state.success = null;
                     state.loading = false;
                     state.errorMessage = action.payload ? action.payload : "Error updating Products.";
+                })
+                .addCase(deleteCategories.pending, (state) => {
+                    state.loading = true;
+                    state.success = null;
+                    state.errorMessage = null;
+                })
+                .addCase(deleteCategories.fulfilled, (state) => {
+                    state.success = true;
+                    state.loading = false;
+                    state.errorMessage = null;
+                })
+                .addCase(deleteCategories.rejected, (state, action) => {
+                    state.success = null;
+                    state.loading = false;
+                    state.errorMessage = action.payload ? action.payload : "Error Deleting Products.";
                 });
         }
     }
 );
 
-
+export default CategoriesReducer.reducer;

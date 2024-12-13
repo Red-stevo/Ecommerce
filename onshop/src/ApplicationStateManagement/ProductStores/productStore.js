@@ -1,4 +1,5 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import {RequestsConfig} from "../RequestsConfig.js";
 
 const product = {
     productName:"J4 cactus jack sneakers",
@@ -231,21 +232,22 @@ productReviews:[
 }
 
 
-const productStoreAdapter = createEntityAdapter({selectId:product => product.productId});
+const productStoreAdapter = createEntityAdapter();
 
 export const getProductDetails = createAsyncThunk("product/get-product",
     async (productId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
-            return fulfillWithValue([]);
+            return fulfillWithValue((await RequestsConfig.get(`open/products/get/${productId}`)).data);
         }catch (error){
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
     });
 
 const initialState = productStoreAdapter.getInitialState({
-    product,
-    error:null,
-    status:null,
+    product:{...product},
+    errorMessage:null,
+    loading:false,
+    success:null
 });
 
 
@@ -256,17 +258,22 @@ const productStore = createSlice({
     extraReducers:builder => {
      builder
          .addCase(getProductDetails.pending, (state) => {
-            state.status = "loading"
-            state.error = null;
+            state.loading = true;
+            state.errorMessage = null;
+            state.success = null;
         })
          .addCase(getProductDetails.fulfilled, (state, action) => {
-             productStoreAdapter.setAll(state, action.payload.data);
-             state.status = "fulfilled";
-             state.error = null;
+             state.product = action.payload;
+             state.errorMessage = null;
+             state.success = true;
+             state.loading = false;
+
+             console.log(state.product);
          })
          .addCase(getProductDetails.rejected, (state, action) => {
-             state.error = action.payload;
-             state.status = "failed";
+             state.errorMessage = action.payload;
+             state.loading = false;
+             state.success = null;
          })
     }
 });

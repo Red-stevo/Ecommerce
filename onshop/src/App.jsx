@@ -24,7 +24,7 @@ const App = () => {
       <Router>
           <Routes>
               <Route path={"/"} element={<MainHeader />}>
-                 <Route path={"/"} element={<IndexBody />}/>
+                  <Route path={"/"} element={<IndexBody />}/>
                   <Route path={"/home/products/:productsCategory"} element={<CategoricalProductsDisplay />}/>
                   <Route path={"/home/product/:productId"} element={<ProductDisplay />} />
                   <Route path={"/home/user/cart"} element={<ProductsCart />} />

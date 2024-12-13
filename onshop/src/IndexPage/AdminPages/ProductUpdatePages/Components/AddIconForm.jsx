@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {
+    deleteCategories,
     postCategory,
     putCategories
 } from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
@@ -20,7 +21,7 @@ const AddIconForm= (props) => {
         reset} = useForm();
     const dispatch = useDispatch();
     const {errorMessage, loading, success} = useSelector(state => state. CategoriesReducer);
-    const [hide, setHide] = useState(false);
+
 
     useEffect(() => {
 
@@ -34,7 +35,7 @@ const AddIconForm= (props) => {
     }, [props]);
 
     useEffect(() => {
-        if (iconPreview.length === 0)setIconUpload(null);
+        if (iconPreview.length === 0) setIconUpload(null);
     }, [iconPreview]);
 
 
@@ -101,12 +102,20 @@ const AddIconForm= (props) => {
             dispatch(putCategories(updateCategoryData));
 
             /*Clean up states*/
-            reset({categoryName : "",});
             setIconPreview([]);
             setIconUpload(null);
-            setHide(true);
+            props.editdata.setModalShow(false);
         }
     }
+
+
+
+    const deleteCategory = () => {
+        dispatch(deleteCategories(props.editdata.categoryId));
+        props.editdata.setModalShow(false);
+    }
+
+
 
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered  className={"modal-pop"}>
@@ -135,7 +144,7 @@ const AddIconForm= (props) => {
                         </>
 
 
-                        {props.editdata && iconPreview.length === 0 && !hide &&
+                        {props.editdata && iconPreview.length === 0 &&
                             <Image className={"preview-icon-url"} src={props.editdata.categoryIcon} />}
 
                         <FileReview handleRemove={handleIconDelete} previewImages={iconPreview} />
@@ -146,7 +155,7 @@ const AddIconForm= (props) => {
             </Modal.Body>
             <Modal.Footer>
                 <div className={"category-form-buttons"}>
-                    {props.editdata && <Button className={"app-button"}>Delete</Button>}
+                    {props.editdata && <Button onClick={deleteCategory} className={"app-button"}>Delete</Button>}
                     <Button onClick={handleSubmit(handleCategorySubmit)} className={"app-button"}>
                         {props.editdata ? "Update" : "Add"}
                     </Button>

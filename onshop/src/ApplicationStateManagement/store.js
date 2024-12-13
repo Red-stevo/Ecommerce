@@ -1,13 +1,19 @@
 import {configureStore} from "@reduxjs/toolkit";
 import productStore from "./ProductStores/productStore.js";
-import {newProductReducer} from "./ProductStores/AddProductStore.js";
-import {CategoriesReducer} from "./CatetegoriesStore/CategoriesReducer.js";
+import SearchProducts from "./ProductStores/SearchProducts.js";
+import CategoriesReducer from "./CatetegoriesStore/CategoriesReducer.js";
+import newProductReducer from "./ProductStores/newProductReducer.js";
+import CartReducer from "./UserCartStore/CartReducer.js";
+import WishListReducer from "./UserWishListStore/WishListReducer.js";
 
 
 export const store = configureStore({
     reducer:{
         productReducer:productStore,
-        newProductReducer:newProductReducer.reducer,
-        CategoriesReducer:CategoriesReducer.reducer,
+        newProductReducer:newProductReducer,
+        CategoriesReducer:CategoriesReducer,
+        SearchProducts:SearchProducts,
+        CartReducer:CartReducer,
+        WishListReducer:WishListReducer,
     }
 })

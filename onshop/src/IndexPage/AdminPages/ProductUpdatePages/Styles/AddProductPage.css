@@ -105,8 +105,8 @@
     position: absolute;
     cursor: pointer;
     font-size: 28px;
-    right: 0;
-    top: 0;
+    right: -10px;
+    top: -10px;
     color: red;
 }
 

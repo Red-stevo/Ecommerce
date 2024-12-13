@@ -2,7 +2,12 @@ import "./Styles/CategoricalProductsDisplay.css";
 import CategoriesMenu from "./Components/CategoriesMenu.jsx";
 import {Button, Image} from "react-bootstrap";
 import StarRating from "./Components/StarRating.jsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {queryProducts} from "../../../ApplicationStateManagement/ProductStores/SearchProducts.js";
+import data from "bootstrap/js/src/dom/data.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 
 
@@ -89,22 +94,38 @@ const products = [
 
 const CategoricalProductsDisplay = () => {
     const navigate = useNavigate();
+    const { productsCategory} = useParams();
+    const dispatch = useDispatch();
+    const {products, page, status} = useSelector(state => state.SearchProducts);
+
+    useEffect(() => {
+       const query = productsCategory.replaceAll('+', ' ');
+
+       const data = {
+           query,
+       }
+
+        console.log(data);
+
+       dispatch(queryProducts(data));
+    }, [productsCategory]);
+
 
 
     return (
         <div className={"product-menu-holder"}>
             <CategoriesMenu />
+
+            {status !== "loading" ?
             <div className={"product-display-section"}>
-                {products.map(
-                ({productId, productName,
-                     productPrice,productRating,
-                     productUrl}, index) => (
-                    <div className={"product-gen-display"} key={index} onClick={() => {navigate(`/home/product/${productId}`)}}>
-                        <Image src={productUrl} alt={productName} className={"product-display-image"} />
+                {products && products.map(
+                ({productId, productName, discountedPrice,productRating, productImagesUrl}, index) => (
+                    <div className={"product-gen-display"} key={productId} onClick={() => {navigate(`/home/product/${productId}`)}}>
+                        <Image src={productImagesUrl} alt={productName} className={"product-display-image"} />
                         <div>
                             <span className={"product-display-name"}>{productName}</span>
                             <StarRating active={true} value={productRating}/>
-                            <span className={"product-display-price"}>ksh {productPrice}</span>
+                            <span className={"product-display-price"}>ksh {discountedPrice}</span>
                         </div>
 
                     </div>
@@ -113,8 +134,9 @@ const CategoricalProductsDisplay = () => {
                 <div className={"load-more-button-holder"}>
                     <Button className={"load-more-button app-button"}>Load More</Button>
                 </div>
-            </div>
-
+            </div>:
+                <Loader />
+            }
         </div>
     );
 };

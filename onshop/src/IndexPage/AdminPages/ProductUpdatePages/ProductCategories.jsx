@@ -17,7 +17,7 @@ const ProductCategories = () => {
     const {errorMessage, loading, success, categories} = useSelector(state => state.CategoriesReducer);
 
     const handleEditCategory = (categoryName,categoryIcon, categoryId) => {
-           setEditData({categoryName, categoryIcon, categoryId});
+           setEditData({categoryName, categoryIcon, categoryId,setModalShow});
            setModalShow(prevState => !prevState);
     }
 
@@ -31,10 +31,6 @@ const ProductCategories = () => {
         dispatch(getCategories())
     }, []);
 
-    /*Reload page on category addition and update*/
-    useEffect(() => {
-        //if (!modalShow) window.location.reload();
-    }, [modalShow]);
 
 
     /*Fetch the products again*/

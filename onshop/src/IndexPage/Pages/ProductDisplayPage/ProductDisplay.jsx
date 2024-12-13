@@ -6,9 +6,11 @@ import "./ProductDisplay.css";
 import {FaRegHeart} from "react-icons/fa";
 import {TiShoppingCart} from "react-icons/ti";
 import {LuShare2} from "react-icons/lu";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
+import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
+import {addToWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
@@ -22,12 +24,28 @@ const ProductDisplay = () => {
     const [activeColor, setActiveColor] = useState(null);
     const [productOnDisplay, setProductOnDisplay] = useState(null);
     const [activeImage, setActiveImage] = useState('');
+    const { productId} = useParams();
 
 
     // Fetch products on component mount
     useEffect(() => {
-        dispatch(getProductDetails(null));
-    }, [dispatch]);
+        dispatch(getProductDetails(productId));
+    }, []);
+
+    const handleAddToCart = () => {
+        const cartData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId, quantity: 1};
+        dispatch(addToCart(cartData));
+    }
+    const handleAddToWishList = () => {
+        const wishListData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay};
+        dispatch(addToWishList(wishListData));
+    }
+
+    const handleOrderNow = () => {
+
+    }
+
+
 
     // Extract unique sizes
     const sizes = useMemo(() => {
@@ -95,11 +113,11 @@ const ProductDisplay = () => {
                 <span className={"product-display-name2"}>{productName}</span> {/*medium screen display*/}
 
                 <div className={"conversion-buttons3"}>
-                    <Button className={"add-cart-button app-button"}>
+                    <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                         <TiShoppingCart className={"add-cart-icon"}/>
                         ADD TO CART
                     </Button>
-                    <Button className={"order-button app-button"}>ORDER NOW</Button>
+                    <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                     <LuShare2 className={"share-icon"} title={"Share"}
                               onClick={() => setShareIcon((prevState) => !prevState)}/>
                 </div> {/*Not in medium screens*/}
@@ -123,12 +141,12 @@ const ProductDisplay = () => {
 
                         <div className={"product-prices-display2"}>
                                 <span className={"new-product-price-display"}>
-                                    ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                                    ksh {productOnDisplay && productOnDisplay.productPrice}
                                 </span>
-                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                            {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productPrice)
                                 &&
                                 <span className={"old-product-price-display"}>
-                                    save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                                    save ksh {(productOnDisplay.productPrice - productOnDisplay.productOldPrice)}
                                 </span>
                             }
                         </div>{/*Medium screen display.*/}
@@ -148,11 +166,11 @@ const ProductDisplay = () => {
                         <div className={"conversion-buttons2"}>
 
                             <div className={"cart-order-buttons"}>
-                                <Button className={"add-cart-button app-button"}>
+                               <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                                     <TiShoppingCart className={"add-cart-icon"}/>
                                     ADD TO CART
                                 </Button>
-                                <Button className={"order-button app-button"}>ORDER NOW</Button>
+                                <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                             </div>
 
                             <div className={"share-count-buttons"}>
@@ -194,7 +212,9 @@ const ProductDisplay = () => {
                                 ))}
                             </Pagination>
 
-                            <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
+                            <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}>
+                                <FaRegHeart/>WISHLIST
+                            </Button>
                         </div> {/*Medium screen display*/}
 
 
@@ -205,11 +225,11 @@ const ProductDisplay = () => {
 
                 <div className={"product-details-display-holder"}>
                     <div className={"conversion-buttons"}>
-                        <Button className={"add-cart-button app-button"}>
+                        <Button onClick={handleAddToCart} className={"add-cart-button app-button"}>
                             <TiShoppingCart className={"add-cart-icon"}/>
                             ADD TO CART
                         </Button>
-                        <Button className={"order-button app-button"}>ORDER NOW</Button>
+                        <Button onClick={handleOrderNow} className={"order-button app-button"}>ORDER NOW</Button>
                         <LuShare2 className={"share-icon"} title={"Share"}
                                   onClick={() => setShareIcon((prevState) => !prevState)}/>
                     </div> {/*Not in medium screens*/}
@@ -220,15 +240,15 @@ const ProductDisplay = () => {
 
                     <div className={"product-prices-display"}>
                             <span className={"new-product-price-display"}>
-                                ksh {productOnDisplay && productOnDisplay.productNewPrice}
+                                ksh {productOnDisplay && productOnDisplay.productPrice}
                             </span>
-                        {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productNewPrice)
+                        {(productOnDisplay && productOnDisplay.productOldPrice < productOnDisplay.productPrice)
                             &&
                             <span className={"old-product-price-display"}>
-                                save ksh {(productOnDisplay.productNewPrice - productOnDisplay.productOldPrice)}
+                                save ksh {(productOnDisplay.productPrice - productOnDisplay.productOldPrice)}
                             </span>
                         }
-                    </div> {/*No in medium screens.*/}
+                    </div> {/*Not in medium screens.*/}
 
 
                     <div className={"price-and-proportions"}>
@@ -241,7 +261,9 @@ const ProductDisplay = () => {
                             ))}
                         </Pagination>
 
-                        <Button className={"wish-list-button app-button"}><FaRegHeart/>WISHLIST</Button>
+                        <Button onClick={handleAddToWishList} className={"wish-list-button app-button"}>
+                            <FaRegHeart/>WISHLIST
+                        </Button> {/*customer/products/add-to-wishlist*/}
                     </div> {/*Not in medium screens.*/}
 
                     {productOnDisplay &&
@@ -275,7 +297,7 @@ const ProductDisplay = () => {
             <div className={"review-section"}>
                 <span className={"product-reviews-section"}>Product Reviews</span>
                 <div className={"product-reviews-holder"}>
-                    {productReviews.length > 0 &&  productReviews.map((review, index) => (
+                    {productReviews && productReviews.length > 0 &&  productReviews.map((review, index) => (
                         <div key={index} className={"review"}>
                             <span className={"review-username"}>{review.username}</span>
                             <span className={"review-content"}>{review.reviewContent}</span>
