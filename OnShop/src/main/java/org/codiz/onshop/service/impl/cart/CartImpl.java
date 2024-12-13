@@ -2,6 +2,9 @@ package org.codiz.onshop.service.impl.cart;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.dtos.requests.CartItemsToAdd;
 import org.codiz.onshop.dtos.requests.CartItemsUpdate;
 import org.codiz.onshop.dtos.response.CartItemsResponse;
@@ -45,148 +48,168 @@ public class CartImpl implements CartService {
 
     @Transactional
     public Cart addItemToCart(CartItemsToAdd items) {
-        Users users = usersRepository.findUsersByUserId(items.getUserId());
+       try {
+           Users users = usersRepository.findUsersByUserId(items.getUserId());
 
 
-        if (users == null) {
-            throw new IllegalArgumentException("User not found");
-        }
+           if (users == null) {
+               throw new IllegalArgumentException("User not found");
+           }
 
-        Cart cart = cartRepository.findCartByUsers(users)
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUsers(users);
-                    return cartRepository.save(newCart);
-                });
+           Cart cart = cartRepository.findCartByUsers(users)
+                   .orElseGet(() -> {
+                       Cart newCart = new Cart();
+                       newCart.setUsers(users);
+                       return cartRepository.save(newCart);
+                   });
 
        /* Products product = productsRepository.findById(items.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));*/
 
-        SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId());
+           SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId());
 
 
 
-        CartItems existingCartItem = cartItemsRepository.findByCart(cart);
-        System.out.println(existingCartItem);
+           CartItems existingCartItem = cartItemsRepository.findByCart(cart);
+           System.out.println(existingCartItem);
 
-        if (existingCartItem != null) {
-            existingCartItem.setQuantity(existingCartItem.getQuantity() + items.getQuantity());
-            cartItemsRepository.save(existingCartItem);
-        } else {
-            CartItems newCartItem = new CartItems();
-            newCartItem.setProducts(productDetails);
-            newCartItem.setQuantity(items.getQuantity());
-            newCartItem.setCart(cart);
-            cartItemsRepository.save(newCartItem);
-            cart.addCartItem(newCartItem);
-        }
+           if (existingCartItem != null) {
+               existingCartItem.setQuantity(existingCartItem.getQuantity() + items.getQuantity());
+               cartItemsRepository.save(existingCartItem);
+           } else {
+               CartItems newCartItem = new CartItems();
+               newCartItem.setProducts(productDetails);
+               newCartItem.setQuantity(items.getQuantity());
+               newCartItem.setCart(cart);
+               cartItemsRepository.save(newCartItem);
+               cart.addCartItem(newCartItem);
+           }
 
 
-        return cartRepository.save(cart);
+           return cartRepository.save(cart);
+       }catch (Exception e){
+           throw new ResourceCreationFailedException("could not add item to cart");
+       }
     }
 
 
     @Transactional
     public Cart updateItemQuantity(CartItemsUpdate itemsUpdate) {
-        Cart cart = cartRepository.findById(itemsUpdate.getCartId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        try {
+            Cart cart = cartRepository.findById(itemsUpdate.getCartId())
+                    .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        CartItems cartItem = cartItemsRepository.findById(itemsUpdate.getCartItemId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+            CartItems cartItem = cartItemsRepository.findById(itemsUpdate.getCartItemId())
+                    .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
 
-        if (itemsUpdate.getQuantity() > 0) {
-            cartItem.setQuantity(itemsUpdate.getQuantity());
-        } else {
-            cart.removeCartItem(cartItem);
-            cartItemsRepository.delete(cartItem);
+            if (itemsUpdate.getQuantity() > 0) {
+                cartItem.setQuantity(itemsUpdate.getQuantity());
+            } else {
+                cart.removeCartItem(cartItem);
+                cartItemsRepository.delete(cartItem);
+            }
+
+            return cartRepository.save(cart);
+        }catch (Exception e){
+            throw new ResourceCreationFailedException("could not update item quantity");
         }
-
-        return cartRepository.save(cart);
     }
 
 
 
     @Transactional
     public CartResponse getCartById(String userId, Pageable pageable) {
-        Users usr = usersRepository.findUsersByUserId(userId);
-        Optional<Cart> cart = cartRepository.findCartByUsers(usr);
+        try {
+            Users usr = usersRepository.findUsersByUserId(userId);
+            Optional<Cart> cart = cartRepository.findCartByUsers(usr);
 
-        if (cart.isEmpty()) {
-            throw new IllegalArgumentException("Cart not found");
+            if (cart.isEmpty()) {
+                throw new IllegalArgumentException("Cart not found");
+            }
+
+            CartResponse cartResponse = new CartResponse();
+            cartResponse.setCartId(cart.get().getCartId());
+            cartResponse.setUsername(cart.get().getUsers().getUsername());
+
+            // Map cart items to response
+            List<CartItemsResponse> itemsResponses = new ArrayList<>();
+            for (CartItems items : cart.get().getCartItems()) {
+                CartItemsResponse itemsResponse = new CartItemsResponse();
+                Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
+
+                itemsResponse.setCartItemId(items.getCartItemId());
+                itemsResponse.setCount(items.getQuantity());
+                itemsResponse.setProductId(products.getProductId());
+                itemsResponse.setProductName(products.getProductName());
+                itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
+                itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
+                itemsResponse.setInStock(details.getCount() > 0);
+
+                itemsResponses.add(itemsResponse);
+            }
+            cartResponse.setCartItemsResponses(itemsResponses);
+
+            // Fetch "You May Like" products
+            List<String> categoryIds = cart.get().getCartItems().stream()
+                    .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
+                    .distinct()
+                    .toList();
+
+            Page<Products> productsPage = productsRepository.findAllByCategoriesList_CategoryIdIn(categoryIds, pageable);
+
+            List<YouMayLike> youMayLikes = productsPage.stream().map(product -> {
+                YouMayLike like = new YouMayLike();
+                like.setProductId(product.getProductId());
+                like.setProductName(product.getProductName());
+                like.setProductPrice(product.getSpecificProductDetailsList().get(0).getProductPrice());
+                like.setProductImageUrl(product.getSpecificProductDetailsList()
+                        .get(0).getProductImagesList().isEmpty() ? null :
+                        product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
+                return like;
+            }).toList();
+
+
+
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), youMayLikes.size());
+            List<YouMayLike> pagedYouMayLikes = youMayLikes.subList(start, end);
+
+            Page<YouMayLike> youMayLikePage = new PageImpl<>(pagedYouMayLikes, pageable, youMayLikes.size());
+
+            // Add Pagination Metadata
+            cartResponse.setYouMayLikes(youMayLikePage.getContent());
+            cartResponse.setCurrentPage(youMayLikePage.getNumber());
+            cartResponse.setTotalPages(youMayLikePage.getTotalPages());
+            cartResponse.setHasMore(youMayLikePage.hasNext());
+
+            return cartResponse;
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get the cart items");
         }
-
-        CartResponse cartResponse = new CartResponse();
-        cartResponse.setCartId(cart.get().getCartId());
-        cartResponse.setUsername(cart.get().getUsers().getUsername());
-
-        // Map cart items to response
-        List<CartItemsResponse> itemsResponses = new ArrayList<>();
-        for (CartItems items : cart.get().getCartItems()) {
-            CartItemsResponse itemsResponse = new CartItemsResponse();
-            Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
-
-            itemsResponse.setCartItemId(items.getCartItemId());
-            itemsResponse.setCount(items.getQuantity());
-            itemsResponse.setProductId(products.getProductId());
-            itemsResponse.setProductName(products.getProductName());
-            itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
-            itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
-            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
-            itemsResponse.setInStock(details.getCount() > 0);
-
-            itemsResponses.add(itemsResponse);
-        }
-        cartResponse.setCartItemsResponses(itemsResponses);
-
-        // Fetch "You May Like" products
-        List<String> categoryIds = cart.get().getCartItems().stream()
-                .flatMap(item -> item.getProducts().getProducts().getCategoriesList().stream().map(Categories::getCategoryId))
-                .distinct()
-                .toList();
-
-        Page<Products> productsPage = productsRepository.findAllByCategoriesList_CategoryIdIn(categoryIds, pageable);
-
-        List<YouMayLike> youMayLikes = productsPage.stream().map(product -> {
-            YouMayLike like = new YouMayLike();
-            like.setProductId(product.getProductId());
-            like.setProductName(product.getProductName());
-            like.setProductPrice(product.getSpecificProductDetailsList().get(0).getProductPrice());
-            like.setProductImageUrl(product.getSpecificProductDetailsList()
-                    .get(0).getProductImagesList().isEmpty() ? null :
-                    product.getSpecificProductDetailsList().get(0).getProductImagesList().get(0).getImageUrl());
-            return like;
-        }).toList();
-
-
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), youMayLikes.size());
-        List<YouMayLike> pagedYouMayLikes = youMayLikes.subList(start, end);
-
-        Page<YouMayLike> youMayLikePage = new PageImpl<>(pagedYouMayLikes, pageable, youMayLikes.size());
-
-        // Add Pagination Metadata
-        cartResponse.setYouMayLikes(youMayLikePage.getContent());
-        cartResponse.setCurrentPage(youMayLikePage.getNumber());
-        cartResponse.setTotalPages(youMayLikePage.getTotalPages());
-        cartResponse.setHasMore(youMayLikePage.hasNext());
-
-        return cartResponse;
     }
 
     @Transactional
     public HttpStatus removeItemFromCart(String cartItemId) {
-        CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
-        cartItemsRepository.delete(cartItems);
+        try {
+            CartItems cartItems = cartItemsRepository.findCartItemsByCartItemId(cartItemId);
+            cartItemsRepository.delete(cartItems);
 
-        return HttpStatus.OK ;
+            return HttpStatus.OK ;
+        } catch (Exception e) {
+            throw new EntityDeletionException("could not remove item from cart");
+        }
     }
 
     @Transactional
     public HttpStatus deleteCart(String cartId){
-        Cart cart = cartRepository.findCartByCartId(cartId);
-        cartRepository.delete(cart);
-        return HttpStatus.OK ;
+        try {
+            Cart cart = cartRepository.findCartByCartId(cartId);
+            cartRepository.delete(cart);
+            return HttpStatus.OK ;
+        }catch (Exception e){
+            throw new EntityDeletionException("could not delete the cart");
+        }
     }
 
 

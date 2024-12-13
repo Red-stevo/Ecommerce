@@ -26,8 +26,6 @@ public class UsersOpenController {
     public ResponseEntity<AuthenticationResponse> refreshTokens(HttpServletRequest request) {
         // Refresh the token
         AuthenticationResponse authenticationResponse = usersService.refreshToken(request);
-
-        // Return the new access token with a 200 OK status
         return ResponseEntity.ok(authenticationResponse);
 
     }

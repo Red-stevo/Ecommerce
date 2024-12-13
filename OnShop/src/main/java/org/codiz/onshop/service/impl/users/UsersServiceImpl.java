@@ -286,10 +286,12 @@ public class UsersServiceImpl implements UsersService {
 
         // Fetch user details
         log.info("finding the user");
-        Users user = usersRepository.findByUserEmail(loginRequests.getEmail()).orElseThrow(()-> new UserDoesNotExistException("User Does Not Exist."));
+        Users user = usersRepository.findByUserEmail(loginRequests.getEmail());
+        if (user == null){
+            throw new UserDoesNotExistException("user with that email does not exist");
+        }
 
-
-        System.out.println(user);
+        log.info("found the user");
         // Generate access token
         log.info("generating the access token");
         String accessToken = jwtGenService.generateAccessToken(user);
@@ -322,7 +324,10 @@ public class UsersServiceImpl implements UsersService {
         log.info("Service to reset the password");
 
         // Find user by email
-        Users user = usersRepository.findByUserEmail(resetPasswordDetails.getEmail()).orElseThrow(() -> new UserDoesNotExistException("User Does Not Exist."));
+        Users user = usersRepository.findByUserEmail(resetPasswordDetails.getEmail());
+        if (user == null){
+            throw new UserDoesNotExistException("user with that email does not exist");
+        }
 
         // Validate the old password by comparing it with the encoded password in the database
         if (!passwordEncoder.matches(resetPasswordDetails.getOldPassword(), user.getPassword())) {

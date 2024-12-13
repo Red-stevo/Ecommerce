@@ -22,6 +22,7 @@ public class Products implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String productId;
     private String productName;
+    @Column(length = 1000)
     private String productDescription;
 
 

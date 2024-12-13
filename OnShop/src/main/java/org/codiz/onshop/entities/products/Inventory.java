@@ -29,7 +29,7 @@ public class Inventory {
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = InventoryStatus.INACTIVE;
+            this.status = InventoryStatus.ACTIVE;
         }
     }
 }

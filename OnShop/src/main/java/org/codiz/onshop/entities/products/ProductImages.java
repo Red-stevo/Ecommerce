@@ -22,6 +22,5 @@ public class ProductImages {
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JsonIgnore
-    @ToString.Exclude
     private SpecificProductDetails specificProductDetails;
 }
