@@ -149,6 +149,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.androidstudy</groupId>
+            <artifactId>daraja</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
 
 
     </dependencies>
