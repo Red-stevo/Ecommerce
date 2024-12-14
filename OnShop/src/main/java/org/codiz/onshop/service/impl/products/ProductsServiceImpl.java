@@ -937,14 +937,18 @@ public class ProductsServiceImpl implements ProductsService {
             });
             log.info("wishlist fetched/created successfully");
 
-            if (wishList.getSpecificProductDetails().contains(specificProductDetails)) {
+            if (wishList.getSpecificProductDetails() != null &&wishList.getSpecificProductDetails().contains(specificProductDetails)) {
                 log.info("Product already in the wishlist");
                 return new ResponseEntity<>(HttpStatus.OK);
             }
 
+            if (wishList.getSpecificProductDetails() == null) {
+                wishList.setSpecificProductDetails( new ArrayList<>());
+            }
+
             wishList.getSpecificProductDetails().add(specificProductDetails);
             specificProductDetails.setWishList(wishList);
-
+            specificProductsRepository.save(specificProductDetails);
             wishListRepository.save(wishList);
             //specificProductsRepository.save(specificProductDetails);
 
@@ -985,6 +989,7 @@ public class ProductsServiceImpl implements ProductsService {
 
            return responses;
        }catch (Exception e){
+           e.printStackTrace();
            throw new ResourceNotFoundException("could not get wishlist");
        }
 
@@ -995,18 +1000,17 @@ public class ProductsServiceImpl implements ProductsService {
             log.info("Deleting wishlist item for userId: {}, specificProductId: {}", userId, specificProductId);
 
             if (specificProductId != null && !specificProductId.isEmpty()) {
-                // Fetch the specific product details
+                log.info("getting the specific product");
                 SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Specific product not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("could not get the specific product"));
                 log.info("got the specific product");
-                // Fetch the associated wishlist
+
                 WishList wishList = specificProductDetails.getWishList();
 
                 if (wishList != null) {
-                    // Remove the specific product from the wishlist's list of products
+
                     wishList.getSpecificProductDetails().remove(specificProductDetails);
 
-                    // Remove the wishlist reference in SpecificProductDetails
                     specificProductDetails.setWishList(null);
 
                     // Save the updated wishlist
@@ -1022,7 +1026,7 @@ public class ProductsServiceImpl implements ProductsService {
                     return HttpStatus.NOT_FOUND;
                 }
             } else {
-                // Delete the entire wishlist if no specific product ID is provided
+
                 WishList wishList = wishListRepository.findByUser(usersRepository.findUsersByUserId(userId))
                         .orElseThrow(() -> new ResourceNotFoundException("Wishlist not found"));
 

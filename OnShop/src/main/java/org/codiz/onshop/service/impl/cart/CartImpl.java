@@ -50,9 +50,9 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public ResponseEntity addItemToCart(CartItemsToAdd items) {
+    public ResponseEntity addItemToCart(List<CartItemsToAdd> items) {
        try {
-           Users users = usersRepository.findUsersByUserId(items.getUserId());
+           Users users = usersRepository.findUsersByUserId(items.get(0).getUserId());
 
 
            if (users == null) {
@@ -65,25 +65,27 @@ public class CartImpl implements CartService {
                        newCart.setUsers(users);
                        return cartRepository.save(newCart);
                    });
-
-       /* Products product = productsRepository.findById(items.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));*/
-
-           SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId())
-                   .orElseThrow(()->new ResourceNotFoundException("product not found"));
+                List<CartItems> cartItemsList = new ArrayList<>();
+            for (CartItemsToAdd item : items) {
+                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(item.getSpecificationId())
+                        .orElseThrow(()->new ResourceNotFoundException("product not found"));
 
 
 
-           if (cartItemsRepository.existsByProducts(productDetails)){
-               log.info("item exists");
-               return new ResponseEntity<>(HttpStatus.OK);
+                if (cartItemsRepository.existsByProducts(productDetails)){
+                    log.info("item exists");
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+
+                CartItems newCartItem = new CartItems();
+                newCartItem.setProducts(productDetails);
+                newCartItem.setQuantity(item.getQuantity());
+                newCartItem.setCart(cart);
+                cartItemsList.add(newCartItem);
+
             }
 
-           CartItems newCartItem = new CartItems();
-           newCartItem.setProducts(productDetails);
-           newCartItem.setQuantity(items.getQuantity());
-           newCartItem.setCart(cart);
-           cartItemsRepository.save(newCartItem);
+            cartItemsRepository.saveAll(cartItemsList);
 
            return new ResponseEntity<>(HttpStatus.OK);
        }catch (Exception e){

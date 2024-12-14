@@ -1,5 +1,7 @@
 package org.codiz.onshop.service;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.codiz.onshop.configurations.DarajaConfig;
 import org.codiz.onshop.service.impl.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class MpesaService {
-    @Autowired
-    private TokenService tokenService;
 
-    @Autowired
-    private DarajaConfig config;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private  final TokenService tokenService;
+    private final DarajaConfig config;
+    private final RestTemplate restTemplate;
 
     public String lipaNaMpesa(String phoneNumber, String amount) {
         String accessToken = tokenService.getAccessToken();

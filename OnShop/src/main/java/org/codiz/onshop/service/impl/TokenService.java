@@ -1,5 +1,6 @@
 package org.codiz.onshop.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.codiz.onshop.configurations.DarajaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -11,14 +12,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 import java.util.Map;
-
+@AllArgsConstructor
 @Service
 public class TokenService {
-    @Autowired
-    private DarajaConfig config;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final DarajaConfig config;
+    private final RestTemplate restTemplate;
 
     public String getAccessToken() {
         String auth = config.getConsumerKey() + ":" + config.getConsumerSecret();

@@ -31,7 +31,7 @@ public class CloudinaryService {
                             "resource_type", "auto",
                             "folder", "product_images",
                             "use_filename", true,
-                            "unique_filename", false
+                            "unique_filename", true
                     )
             );
             return uploadResult.get("url").toString();

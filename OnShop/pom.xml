@@ -12,7 +12,7 @@
     <artifactId>OnShop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>OnShop</name>
-    <description>OnShop</description>
+    <description>OnShop Project</description>
     <url/>
     <licenses>
         <license/>
@@ -78,15 +78,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>2.9.2</version>
-        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>3.4.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -149,10 +148,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.androidstudy.daraja/daraja -->
         <dependency>
-            <groupId>com.androidstudy</groupId>
+            <groupId>com.androidstudy.daraja</groupId>
             <artifactId>daraja</artifactId>
             <version>2.0.2</version>
+            <type>pom</type>
         </dependency>
 
 
