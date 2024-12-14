@@ -20,10 +20,8 @@ export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
     async (data = null, {fulfillWithValue,rejectWithValue}) => {
 
     const {userId, orderItemId} = data;
-
         try {
-            await RequestsConfig
-                .put(`/costumer/orders/cancel-order-item?userId=${userId}&orderItemId=${orderItemId}`, _,
+            await RequestsConfig.put(`/costumer/orders/cancel-order-item?userId=${userId}&orderItemId=${orderItemId}`, _,
                     {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
             return fulfillWithValue(true);
         } catch (error) {
