@@ -43,19 +43,15 @@ const PaymentPage = () => {
 
                 <div className={"payment-page-location-section-title"}>
                     <span className={"payment-page-location-section-shipping"} >Shipping Information</span>
-
                     <button className={"payment-page-location-section-edit"} ><CiEdit/> Edit</button>
-
                 </div>
 
                 <div className={"payment-page-location-section-address"}>
-
                     <PiMapPinAreaFill className={"payment-page-location-section-icon"} />
                     <div className={"payment-page-location-section-phone-location"}>
                         <span className={"payment-page-location-section-phone"}>{username} {phoneNumber}</span>
                         <span className={"payment-page-location-section-location"}>Location {location}</span>
                     </div>
-
                 </div>
 
             </section>
