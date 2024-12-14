@@ -36,7 +36,6 @@ const ProductCategories = () => {
     /*Fetch the products again*/
     useEffect(() => {
         if (success && !loading && !errorMessage) dispatch(getCategories());
-        console.log(success)
     }, [success]);
 
 

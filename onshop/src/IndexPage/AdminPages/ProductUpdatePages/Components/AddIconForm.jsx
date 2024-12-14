@@ -90,7 +90,7 @@ const AddIconForm= (props) => {
             /*Clean up states*/
             reset({categoryName : "",});
             setIconPreview([]);
-            setIconUpload(null)
+            setIconUpload(null);
         }else {
             const updateCategoryData = {categoryName: "", categoryIcon:null, categoryId:props.editdata.categoryId}
 
@@ -105,6 +105,8 @@ const AddIconForm= (props) => {
             setIconPreview([]);
             setIconUpload(null);
             props.editdata.setModalShow(false);
+
+            console.log("Update hit");
         }
     }
 
