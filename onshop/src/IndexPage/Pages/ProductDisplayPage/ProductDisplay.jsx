@@ -11,6 +11,7 @@ import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
 import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import {addToWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {makeOrder} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
@@ -45,7 +46,10 @@ const ProductDisplay = () => {
     }
 
     const handleOrderNow = () => {
+        const request = [{specificationId: productOnDisplay.productId, quantity: 1}];
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
 
+        dispatch(makeOrder(cartData));
     }
 
 

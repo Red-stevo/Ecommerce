@@ -15,6 +15,19 @@ export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
         }
     });
 
+export const makeOrder = createAsyncThunk("orderStatus/make-order",
+    async (orderData = null, {fulfillWithValue,rejectWithValue}) => {
+
+        const {userId, request} = orderData;
+        try {
+            await RequestsConfig.post(`/costumer/orders/make-order?userId=${userId}`, request ,
+                {headers:{"Content-Type":'application/json'}})
+            return fulfillWithValue("Order Added successfully");
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
+
 
 export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
     async (data = null, {fulfillWithValue,rejectWithValue}) => {
@@ -62,6 +75,21 @@ const OrderStatusReducer = createSlice({
                 state.success = action.payload;
             })
             .addCase(cancelOrderItem.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
+            .addCase(makeOrder.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(makeOrder.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(makeOrder.rejected, (state, action) => {
                 state.errorMessage = action.payload;
                 state.loading = false;
                 state.success = null;

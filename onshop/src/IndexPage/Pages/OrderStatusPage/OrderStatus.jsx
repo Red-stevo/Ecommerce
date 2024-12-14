@@ -5,7 +5,7 @@ import {CiDeliveryTruck} from "react-icons/ci";
 import {LuPackageCheck} from "react-icons/lu";
 import {useEffect, useRef, useState} from "react";
 import {Image} from "react-bootstrap";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
     cancelOrderItem,
     getOrderStatus
@@ -45,6 +45,8 @@ const statusList = [
 
 
 const OrderStatus = () => {
+    const { shippingStatus, loading, success, errorMessage} =
+        useSelector(status => status.OrderStatusReducer);
     const {orderId, status, orderTrackingProducts} = shippingStatus;
     const stepRef = useRef([]);
     const [margins,setMargins] = useState({marginsLeft:0, marginRight:0});
@@ -52,6 +54,7 @@ const OrderStatus = () => {
         if(status >= statusList.length) return 100;
         else return status / (statusList.length - 1)  * 100;});
     const dispatch = useDispatch();
+
 
     /*Track window resize*/
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
