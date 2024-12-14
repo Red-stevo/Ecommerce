@@ -990,18 +990,53 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-    public String deleteWishListItem(String userId, String specificProductIds) {
+    public HttpStatus deleteWishListItem(String userId, String specificProductId) {
         try {
+            log.info("Deleting wishlist item for userId: {}, specificProductId: {}", userId, specificProductId);
 
-            if (specificProductIds.isEmpty()) {
-                wishListRepository.deleteWishListBySpecificProductDetails(specificProductsRepository.findBySpecificProductId(specificProductIds).get());
+            if (specificProductId != null && !specificProductId.isEmpty()) {
+                // Fetch the specific product details
+                SpecificProductDetails specificProductDetails = specificProductsRepository.findBySpecificProductId(specificProductId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Specific product not found"));
+                log.info("got the specific product");
+                // Fetch the associated wishlist
+                WishList wishList = specificProductDetails.getWishList();
+
+                if (wishList != null) {
+                    // Remove the specific product from the wishlist's list of products
+                    wishList.getSpecificProductDetails().remove(specificProductDetails);
+
+                    // Remove the wishlist reference in SpecificProductDetails
+                    specificProductDetails.setWishList(null);
+
+                    // Save the updated wishlist
+                    wishListRepository.save(wishList);
+
+                    // Optionally delete the SpecificProductDetails entity if it's not used elsewhere
+                    specificProductsRepository.save(specificProductDetails);
+
+                    log.info("Specific product removed from wishlist successfully");
+                    return HttpStatus.OK;
+                } else {
+                    log.warn("No wishlist found for specific product");
+                    return HttpStatus.NOT_FOUND;
+                }
+            } else {
+                // Delete the entire wishlist if no specific product ID is provided
+                WishList wishList = wishListRepository.findByUser(usersRepository.findUsersByUserId(userId))
+                        .orElseThrow(() -> new ResourceNotFoundException("Wishlist not found"));
+
+                wishListRepository.delete(wishList);
+
+                log.info("Wishlist deleted successfully");
+                return HttpStatus.OK;
             }
-
-            return "Products removed from wishlist successfully";
-        } catch (Exception e){
-            throw new EntityDeletionException("could not delete wishlist");
+        } catch (Exception e) {
+            log.error("Error deleting wishlist item: ", e);
+            throw new EntityDeletionException("Could not delete wishlist");
         }
     }
+
 
     public List<DiscountedProductsResponse> findDiscountedProducts( int size) {
         try {

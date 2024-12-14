@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +55,9 @@ public class ProductsCustomerController {
 
 
 
-    @DeleteMapping("/delete-wishlist/{userId}")
-    public ResponseEntity<String> deleteWishListItem(@RequestBody String userId,@RequestBody(required = false) String specificProductIds){
+    @PutMapping("/delete-wishlist/{userId}")
+    public ResponseEntity<HttpStatus> deleteWishListItem(@PathVariable String userId, @RequestBody(required = false) String specificProductIds){
+        System.out.println(specificProductIds);
         return ResponseEntity.ok().body(productsService.deleteWishListItem(userId,specificProductIds));
     }
 
