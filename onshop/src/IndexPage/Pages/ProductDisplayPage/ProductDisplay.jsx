@@ -30,19 +30,17 @@ const ProductDisplay = () => {
     // Fetch products on component mount
     useEffect(() => {
         dispatch(getProductDetails(productId));
-
-        console.log("get called.")
     }, [productId]);
 
     const handleAddToCart = () => {
 
         const items = [{specificationId: productOnDisplay.productId, quantity: 1}];
-        const cartData = {userId: "12a8bb23-0d41-4118-bda0-0390f382814b",items};
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",items};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
         const wishListData =
-            {userId: "12a8bb23-0d41-4118-bda0-0390f382814b", specificationId: productOnDisplay.productId};
+            {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", specificationId: productOnDisplay.productId};
         dispatch(addToWishList(wishListData));
     }
 
