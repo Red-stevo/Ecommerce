@@ -13,7 +13,7 @@ const WishListPage = () => {
 
 
     useEffect(() => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
         dispatch(getWishList(userId));
     }, []);
 
