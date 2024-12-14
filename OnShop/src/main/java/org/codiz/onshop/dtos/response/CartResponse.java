@@ -20,4 +20,6 @@ public class CartResponse {
     private int totalPages;
 
     private boolean hasMore;
+
+    private Double totalPrice;
 }
