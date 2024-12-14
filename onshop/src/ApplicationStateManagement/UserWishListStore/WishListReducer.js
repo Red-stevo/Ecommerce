@@ -21,6 +21,19 @@ export const addToWishList = createAsyncThunk("wishlist/addToWishList",
         }
     });
 
+export const deleteWishList = createAsyncThunk("wishList/deleteWishList",
+    async (data = null, {fulfillWithValue,rejectWithValue}) => {
+        const specificProductIds = data.specificProductId;
+
+        try {
+            await RequestsConfig.get(`/customer/products/delete-wishlist/${data.userId}`, specificProductIds);
+            return fulfillWithValue(true);
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
+
+
 export const getWishList = createAsyncThunk("wishList/getWishList",
     async (userId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
@@ -29,7 +42,6 @@ export const getWishList = createAsyncThunk("wishList/getWishList",
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
     });
-
 
 
 const WishListReducer = createSlice({
@@ -65,6 +77,21 @@ const WishListReducer = createSlice({
                 state.wishListProducts = [...action.payload];
             })
             .addCase(getWishList.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
+            .addCase(deleteWishList.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(deleteWishList.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(deleteWishList.rejected, (state, action) => {
                 state.errorMessage = action.payload;
                 state.loading = false;
                 state.success = null;

@@ -1,12 +1,37 @@
 import "./Styles/WishListPage.css";
 import {Button, Image} from "react-bootstrap";
 import {FaTrash} from "react-icons/fa";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../../Loading/Loader.jsx";
+import {useEffect} from "react";
+import {deleteWishList, getWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
 
 
 const WishListPage = () => {
+    const dispatch = useDispatch();
     const {loading, success, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
+
+
+    useEffect(() => {
+        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        dispatch(getWishList(userId));
+    }, []);
+
+
+    /*Delete an Items in the wish List*/
+    const handleDeleteItem = (productId) => {
+        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const data = {userId, specificProductId:productId};
+
+        dispatch(deleteWishList(data));
+    }
+
+    /*Clear the Whole Wish List.*/
+    const handleDeleteWishList = () => {
+        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const data = {userId, specificProductId:""};
+        dispatch(deleteWishList(data));
+    }
 
 
     return (
@@ -20,8 +45,7 @@ const WishListPage = () => {
             <section className={"wish-list-products"}>
 
                 {wishListProducts && wishListProducts.length > 0 && wishListProducts.
-                    map(({productImage,productPrice, inStock, productColor,
-                            productName}, index) => (
+                    map(({productImage,productPrice, inStock, productColor, productName, specificProductId}, index) => (
                     <div key={index} className={`product-details-holder-wish-list ${inStock ? "green": "red"}`}>
                         <Image className={"wish-list-product-image"} src={productImage}/>
                         <div className={"wish-list-product-details"}>
@@ -43,14 +67,14 @@ const WishListPage = () => {
 
                         </div>
 
-                        <FaTrash className={"delete-button"}/>
+                        <FaTrash className={"delete-button"} onClick={() => handleDeleteItem(specificProductId)}/>
                     </div>
                 ))}
 
             </section>
 
             <section className={"wish-list-bottom-button"}>
-                <button className={"clear-wish-list"}>Clear WishList</button>
+                <button className={"clear-wish-list"} onClick={() => handleDeleteWishList}>Clear WishList</button>
                 <Button className={"app-button add-all "}>Add All to Cart</Button>
             </section>
 
