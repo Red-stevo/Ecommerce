@@ -6,6 +6,7 @@ import {Image, InputGroup} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {TbMoneybag} from "react-icons/tb";
 import {FaPlus} from "react-icons/fa";
+import EditLocationModal from "./Components/EditLocationModal.jsx";
 
 const paymentDetails = {
     username:"Bob Mirowe",
@@ -25,6 +26,7 @@ const PaymentPage = () => {
     const {username, phoneNumber, location, products, productsAmount,
     shippingCost} = paymentDetails;
     const [productCount, setProductsCount] = useState(0);
+    const [modalShow, setModalShow] = useState(false);
 
     useEffect(() => {
         const setItemsCount = () => {
@@ -43,7 +45,9 @@ const PaymentPage = () => {
 
                 <div className={"payment-page-location-section-title"}>
                     <span className={"payment-page-location-section-shipping"} >Shipping Information</span>
-                    <button className={"payment-page-location-section-edit"} ><CiEdit/> Edit</button>
+                    <button className={"payment-page-location-section-edit"} onClick={() => setModalShow(true)}>
+                        <CiEdit/> Edit
+                    </button>
                 </div>
 
                 <div className={"payment-page-location-section-address"}>
@@ -143,6 +147,7 @@ const PaymentPage = () => {
             </section>
 
 
+            <EditLocationModal show={modalShow} onHide={() => setModalShow(false)}  />
         </div>
     );
 };

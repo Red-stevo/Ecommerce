@@ -4,19 +4,20 @@ import {Form, FormGroup} from "react-bootstrap";
 import {useState} from "react";
 import {combineSlices} from "@reduxjs/toolkit";
 import {useDispatch} from "react-redux";
+import {fetchLocation} from "../../../../ApplicationStateManagement/OpenCage/openCageReducer.js";
 
 const EditLocationModal= (props) => {
     const [query, setQuery] = useState("");
     const dispatch = useDispatch();
     const handleSearch = () => {
-        dispatch()
+        dispatch(fetchLocation(query))
     }
 
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Enter Phone And Location
+                    Enter Phone Number And Delivery Location
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className={"user-details-modal"} >

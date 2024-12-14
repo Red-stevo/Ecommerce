@@ -10,7 +10,7 @@ const initialState = openCageAdapter.getInitialState({
 
 
 export const fetchLocation = createAsyncThunk("location/fetch",
-    async (query, {fulfillWithValue,
+    async (query = null, {fulfillWithValue,
         rejectWithValue}) => {
 
     try {
