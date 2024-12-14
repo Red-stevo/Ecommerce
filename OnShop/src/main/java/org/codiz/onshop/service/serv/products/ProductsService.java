@@ -34,7 +34,7 @@ public interface ProductsService {
     String deleteCategory(String categoryId) throws IOException;
     Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus, String categoryName,Float price1, Float price2, Pageable pageable );
     ResponseEntity addToWishList(String specificProductId, String userId);
-    String deleteWishListItem(String userId, List<String> specificProductIds);
+    String deleteWishListItem(String userId, String specificProductIds);
     List<WishListResponse> getWishList(String userId);
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
 

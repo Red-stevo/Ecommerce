@@ -30,10 +30,6 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.removeOrderItems(orderItemId, userId));
     }
 
-    @PutMapping("/cancel-order")
-    public ResponseEntity<EntityDeletionResponse> cancelOrder(@RequestParam String orderId, @RequestParam String username){
-        return ResponseEntity.ok(ordersService.cancelOrder(orderId, username));
-    }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrdersResponse> getOrder(@PathVariable String orderId){

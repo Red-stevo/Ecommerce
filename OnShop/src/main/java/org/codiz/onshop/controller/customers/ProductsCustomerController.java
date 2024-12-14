@@ -54,8 +54,8 @@ public class ProductsCustomerController {
 
 
 
-    @DeleteMapping("/delete-wishlist")
-    public ResponseEntity<String> deleteWishListItem(@RequestParam String userId, @RequestParam List<String> specificProductIds){
+    @DeleteMapping("/delete-wishlist/{userId}")
+    public ResponseEntity<String> deleteWishListItem(@RequestBody String userId,@RequestBody(required = false) String specificProductIds){
         return ResponseEntity.ok().body(productsService.deleteWishListItem(userId,specificProductIds));
     }
 

@@ -3,6 +3,7 @@ package org.codiz.onshop.entities.users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.messaging.InAppNotifications;
+import org.codiz.onshop.entities.products.WishList;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,9 @@ public class Users implements UserDetails {
 
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private UserProfiles profile;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private WishList wishList;
 
     /*@OneToMany(mappedBy = "users", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<InAppNotifications> notificationsList = new ArrayList<>();*/
