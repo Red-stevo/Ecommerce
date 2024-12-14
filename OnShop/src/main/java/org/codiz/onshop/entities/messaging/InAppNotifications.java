@@ -3,8 +3,6 @@ package org.codiz.onshop.entities.messaging;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.users.Users;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
