@@ -37,7 +37,7 @@ export const deleteWishList = createAsyncThunk("wishList/deleteWishList",
 export const getWishList = createAsyncThunk("wishList/getWishList",
     async (userId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
-            return fulfillWithValue(await RequestsConfig.get(`/customer/products/show-wishlist/${userId}`));
+            return fulfillWithValue((await RequestsConfig.get(`/customer/products/show-wishlist/${userId}`)).data);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
@@ -74,7 +74,7 @@ const WishListReducer = createSlice({
                 state.loading = false;
                 state.errorMessage = null;
                 state.success = true;
-                state.wishListProducts = [...action.payload];
+                state.wishListProducts = action.payload;
             })
             .addCase(getWishList.rejected, (state, action) => {
                 state.errorMessage = action.payload;

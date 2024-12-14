@@ -4,7 +4,7 @@ import {TbTruckDelivery} from "react-icons/tb";
 import {CiDeliveryTruck} from "react-icons/ci";
 import {LuPackageCheck} from "react-icons/lu";
 import {useEffect, useRef, useState} from "react";
-import {Button, Image} from "react-bootstrap";
+import {Image} from "react-bootstrap";
 
 const shippingStatus = {
 
@@ -37,6 +37,11 @@ const statusList = [
     { statusName:"Delivered", statusIcon:<CiDeliveryTruck /> },
     { statusName:"Signed", statusIcon:<LuPackageCheck /> },
 ]
+
+
+const handleCancelOrder = (productId) => {
+
+}
 
 const OrderStatus = () => {
     const {orderId, status, orderTrackingProducts} = shippingStatus;
@@ -92,24 +97,23 @@ const OrderStatus = () => {
                          marginLeft:`${margins.marginsLeft}px`, marginRight:`${margins.marginRight}px`}}>
 
                     <div className={"order-progress-bar"}
-                         style={{width:`${calcProgressBarWidth}%`,}} />
+                         style={{width:`${calcProgressBarWidth}%`}} />
 
                 </div>
-
 
             </section>
 
             <section className={"ordered-products-section"}>
 
                 {orderTrackingProducts && orderTrackingProducts.length > 0 &&
-                    orderTrackingProducts.map(({productImageUrl, productName, productPrice}, index) => (
+                    orderTrackingProducts.map(({productImageUrl, productName, productPrice, productId}, index) => (
                     <div key={index} className={"product-image-details-holder"}>
                         <Image className={"ordered-product-image"} src={productImageUrl} />
                         <div className={"ordered-product-details"}>
                             <span className={"ordered-product-name"}>{productName}</span>
                             <span className={"ordered-product-price"}>
                                <>ksh {productPrice}</>
-                                <span className={"cancel-order"}>cancel</span>
+                                <span className={"cancel-order"} onClick={() => handleCancelOrder(productId)}>cancel</span>
                             </span>
                         </div>
                     </div>

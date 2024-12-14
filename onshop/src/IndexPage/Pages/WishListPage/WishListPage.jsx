@@ -45,14 +45,14 @@ const WishListPage = () => {
             <section className={"wish-list-products"}>
 
                 {wishListProducts && wishListProducts.length > 0 && wishListProducts.
-                    map(({productImage,productPrice, inStock, productColor, productName, specificProductId}, index) => (
+                    map(({imageUrl, price, inStock, productColor, productName, specificProductId}, index) => (
                     <div key={index} className={`product-details-holder-wish-list ${inStock ? "green": "red"}`}>
-                        <Image className={"wish-list-product-image"} src={productImage}/>
+                        <Image className={"wish-list-product-image"} src={imageUrl}/>
                         <div className={"wish-list-product-details"}>
 
                             <div className={"top-details"}>
                                 <span className={"wish-list-product-name"}>{productName}</span>
-                                <span className={"wish-list-product-price"}>ksh {productPrice}</span>
+                                <span className={"wish-list-product-price"}>ksh {price}</span>
                                 <span className={"wish-list-product-stock"}>
                                     {inStock ?
                                     <span className={"in-stock"}>In Stock</span>:
