@@ -16,7 +16,7 @@ public class WishList {
     @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Users user;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "wishlist_products")
     @JsonIgnore
     private List<SpecificProductDetails> specificProductDetails;

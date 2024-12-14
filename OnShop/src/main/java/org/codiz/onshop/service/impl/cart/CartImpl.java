@@ -121,15 +121,11 @@ public class CartImpl implements CartService {
                     () -> new IllegalArgumentException("Cart not found"));
 
             CartResponse cartResponse = new CartResponse();
-            cartResponse.setCartId(cart.get().getCartId());
-            cartResponse.setUsername(cart.get().getUsers().getUsername());
-            log.info("set the name successfully");
-
-            // Map cart items to response
-            List<CartItemsResponse> itemsResponses = new ArrayList<>();
-            for (CartItems items : cart.get().getCartItems()) {
             cartResponse.setCartId(cart.getCartId());
             cartResponse.setUsername(cart.getUsers().getUsername());
+            log.info("set the name successfully");
+
+
 
             // Map cart items to response
             List<CartItemsResponse> itemsResponses = new ArrayList<>();
@@ -138,24 +134,23 @@ public class CartImpl implements CartService {
                 CartItemsResponse itemsResponse = new CartItemsResponse();
                 Products products = productsRepository.findByProductId(items.getProducts().getSpecificProductId());
 
-                CartItemsResponse itemsResponse = new CartItemsResponse();
                 String pro = items.getProducts().getSpecificProductId();
                 log.info(""+pro);
-                SpecificProductDetails products = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId()).orElseThrow();
+                SpecificProductDetails product = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId()).orElseThrow();
                 log.info(""+products);
                 itemsResponse.setCartItemId(items.getCartItemId());
                 itemsResponse.setCount(items.getQuantity());
-                itemsResponse.setProductId(products.getSpecificProductId());
-                itemsResponse.setProductName(products.getProducts().getProductName());
+                itemsResponse.setProductId(product.getSpecificProductId());
+                itemsResponse.setProductName(product.getProducts().getProductName());
                 itemsResponse.setProductImageUrl(items.getProducts().getProductImagesList().get(0).getImageUrl());
                 itemsResponse.setProductPrice(items.getProducts().getProductPrice()-items.getProducts().getDiscount());
 
                 log.info("setting specific products");
-                itemsResponse.setInStock(products.getCount() > 0);
-                itemsResponse.setColor(products.getColor());
+                itemsResponse.setInStock(product.getCount() > 0);
+                itemsResponse.setColor(product.getColor());
                 log.info("done with this round");
 
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId());
+                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId()).orElseThrow();
                 itemsResponse.setInStock(details.getCount() > 0);
                 totalPrice = totalPrice + itemsResponse.getProductPrice();
                 itemsResponses.add(itemsResponse);

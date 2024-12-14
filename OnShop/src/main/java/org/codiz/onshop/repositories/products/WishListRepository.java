@@ -1,5 +1,6 @@
 package org.codiz.onshop.repositories.products;
 
+import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.codiz.onshop.entities.products.WishList;
 import org.codiz.onshop.entities.users.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,8 @@ import java.util.Optional;
 @Repository
 public interface WishListRepository extends JpaRepository<WishList,String> {
     Optional<WishList> findByUser(Users users);
+
+    void deleteWishListBySpecificProductDetails(SpecificProductDetails bySpecificProductId);
+
+    void deleteWishListByUser(Users usersByUserId);
 }
