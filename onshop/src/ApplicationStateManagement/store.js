@@ -5,6 +5,7 @@ import CategoriesReducer from "./CatetegoriesStore/CategoriesReducer.js";
 import newProductReducer from "./ProductStores/newProductReducer.js";
 import CartReducer from "./UserCartStore/CartReducer.js";
 import WishListReducer from "./UserWishListStore/WishListReducer.js";
+import OrderStatusReducer from "./OrderStatusStore/OrderStatusReducer.js";
 
 
 export const store = configureStore({
@@ -15,5 +16,6 @@ export const store = configureStore({
         SearchProducts:SearchProducts,
         CartReducer:CartReducer,
         WishListReducer:WishListReducer,
+        OrderStatusReducer:OrderStatusReducer,
     }
 })
