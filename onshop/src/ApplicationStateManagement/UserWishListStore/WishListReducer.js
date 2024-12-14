@@ -23,10 +23,9 @@ export const addToWishList = createAsyncThunk("wishlist/addToWishList",
 
 export const deleteWishList = createAsyncThunk("wishList/deleteWishList",
     async (data = null, {fulfillWithValue,rejectWithValue}) => {
-        const specificProductIds = data.specificProductId;
-
+        const {specificProductIds, userId} = data;
         try {
-            await RequestsConfig.get(`/customer/products/delete-wishlist/${data.userId}`, specificProductIds);
+            await RequestsConfig.put(`/customer/products/delete-wishlist/${userId}`, specificProductIds);
             return fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);

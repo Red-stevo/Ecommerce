@@ -5,6 +5,8 @@ import {CiDeliveryTruck} from "react-icons/ci";
 import {LuPackageCheck} from "react-icons/lu";
 import {useEffect, useRef, useState} from "react";
 import {Image} from "react-bootstrap";
+import {useDispatch} from "react-redux";
+import {cancelOrderItem} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 const shippingStatus = {
 
@@ -39,18 +41,14 @@ const statusList = [
 ]
 
 
-const handleCancelOrder = (productId) => {
-
-}
-
 const OrderStatus = () => {
     const {orderId, status, orderTrackingProducts} = shippingStatus;
     const stepRef = useRef([]);
     const [margins,setMargins] = useState({marginsLeft:0, marginRight:0});
     const  [calcProgressBarWidth, setCalcProgressBarWidth] = useState(() => {
         if(status >= statusList.length) return 100;
-        else return status / (statusList.length - 1)  * 100;
-    });
+        else return status / (statusList.length - 1)  * 100;});
+    const dispatch = useDispatch();
 
     /*Track window resize*/
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -69,6 +67,10 @@ const OrderStatus = () => {
         });
     }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
+    const handleCancelOrder = (productId) => {
+        const data = {userId:"", orderItemId:productId};
+        dispatch(cancelOrderItem(data));
+    }
 
     return (
         <div className={"order-status-page"}>
@@ -106,14 +108,17 @@ const OrderStatus = () => {
             <section className={"ordered-products-section"}>
 
                 {orderTrackingProducts && orderTrackingProducts.length > 0 &&
-                    orderTrackingProducts.map(({productImageUrl, productName, productPrice, productId}, index) => (
+                    orderTrackingProducts
+                        .map(({productImageUrl, productName, productPrice, productId}, index) => (
                     <div key={index} className={"product-image-details-holder"}>
                         <Image className={"ordered-product-image"} src={productImageUrl} />
                         <div className={"ordered-product-details"}>
                             <span className={"ordered-product-name"}>{productName}</span>
                             <span className={"ordered-product-price"}>
                                <>ksh {productPrice}</>
-                                <span className={"cancel-order"} onClick={() => handleCancelOrder(productId)}>cancel</span>
+                                <button className={"cancel-order"} onClick={() => handleCancelOrder(productId)}>
+                                    cancel
+                                </button>
                             </span>
                         </div>
                     </div>

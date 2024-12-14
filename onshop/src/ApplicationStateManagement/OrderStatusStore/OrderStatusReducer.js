@@ -1,4 +1,4 @@
-import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import {configureStore, createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 const OrderStatusAdapter = createEntityAdapter();
 
@@ -15,6 +15,21 @@ export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
         }
     });
 
+
+export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
+    async (data = null, {fulfillWithValue,rejectWithValue}) => {
+
+    const {userId, orderItemId} = data;
+
+        try {
+            await RequestsConfig
+                .put(`/costumer/orders/cancel-order-item?userId=${userId}&orderItemId=${orderItemId}`, _,
+                    {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+            return fulfillWithValue(true);
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
 
 const OrderStatusReducer = createSlice({
     name:"orderStatus",
@@ -34,6 +49,21 @@ const OrderStatusReducer = createSlice({
                 state.shippingStatus = {...action.payload}
             })
             .addCase(getOrderStatus.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
+            .addCase(cancelOrderItem.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(cancelOrderItem.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(cancelOrderItem.rejected, (state, action) => {
                 state.errorMessage = action.payload;
                 state.loading = false;
                 state.success = null;
