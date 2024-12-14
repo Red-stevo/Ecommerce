@@ -31,7 +31,7 @@ const ProductsCart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const cartData = {page, size: 1, userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
+        const cartData = {page, size: 1, userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948"}
         dispatch(getCartItems(cartData));
     }, [page]);
 

@@ -13,21 +13,21 @@ const WishListPage = () => {
 
 
     useEffect(() => {
-        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         dispatch(getWishList(userId));
     }, []);
 
 
     /*Delete an Items in the wish List*/
     const handleDeleteItem = (productId) => {
-        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:productId};
         dispatch(deleteWishList(data));
     }
 
     /*Clear the Whole Wish List.*/
     const handleDeleteWishList = () => {
-        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
     }
