@@ -73,7 +73,7 @@ const WishListPage = () => {
             </section>
 
             <section className={"wish-list-bottom-button"}>
-                <button className={"clear-wish-list"} onClick={() => handleDeleteWishList}>Clear WishList</button>
+                <button className={"clear-wish-list"} onClick={handleDeleteWishList}>Clear WishList</button>
                 <Button className={"app-button add-all "}>Add All to Cart</Button>
             </section>
 
