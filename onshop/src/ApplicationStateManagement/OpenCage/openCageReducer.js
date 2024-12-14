@@ -9,7 +9,7 @@ const initialState = openCageAdapter.getInitialState({
 });
 
 
-const fetchLocation = createAsyncThunk("location/fetch",
+export const fetchLocation = createAsyncThunk("location/fetch",
     async (query, {fulfillWithValue,
         rejectWithValue}) => {
 
@@ -44,3 +44,6 @@ const openCageReducer = createSlice({
             state.results = [];
         })
 });
+
+
+export default  openCageReducer.reducer;

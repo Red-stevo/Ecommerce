@@ -1,8 +1,17 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {Form, FormGroup} from "react-bootstrap";
+import {useState} from "react";
+import {combineSlices} from "@reduxjs/toolkit";
+import {useDispatch} from "react-redux";
 
 const EditLocationModal= (props) => {
+    const [query, setQuery] = useState("");
+    const dispatch = useDispatch();
+    const handleSearch = () => {
+        dispatch()
+    }
+
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
             <Modal.Header closeButton>
@@ -16,6 +25,13 @@ const EditLocationModal= (props) => {
                     <FormGroup>
                         <input className={"form-control"} placeholder={"Full Name"} type={"tel"} />
                     </FormGroup>
+
+                    <FormGroup>
+                        <input value={query}
+                            onChange={(event) => setQuery(event.target.value)}
+                            type={"text"} placeholder={"Search Location"} />
+                    </FormGroup>
+                    <Button onClick={handleSearch}>Search</Button>
 
                 </Form>
             </Modal.Body>
