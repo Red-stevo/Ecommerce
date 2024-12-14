@@ -12,8 +12,8 @@ const initialState = cartAdapter.getInitialState(
 export const addToCart = createAsyncThunk("cart/addToCart",
     async (productData = null, {rejectWithValue,fulfillWithValue }) => {
     try {
-        await RequestsConfig.post("/customer/cart/add-to-cart",
-            productData, {headers:{'Content-Type':'application/json'}});
+        await RequestsConfig.post(`/customer/cart/add-to-cart/${productData.userId}`,
+            productData.items, {headers:{'Content-Type':'application/json'}});
         return fulfillWithValue(true);
     }catch (error){
         return rejectWithValue(error.response ? error.response.data : error.data);
