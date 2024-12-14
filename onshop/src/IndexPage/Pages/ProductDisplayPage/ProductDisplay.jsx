@@ -35,12 +35,12 @@ const ProductDisplay = () => {
     }, [productId]);
 
     const handleAddToCart = () => {
-        const cartData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId, quantity: 1};
+        const cartData = {userId: "12a8bb23-0d41-4118-bda0-0390f382814b", specificationId: productOnDisplay.productId, quantity: 1};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
         const wishListData =
-            {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId};
+            {userId: "12a8bb23-0d41-4118-bda0-0390f382814b", specificationId: productOnDisplay.productId};
 
         dispatch(addToWishList(wishListData));
     }

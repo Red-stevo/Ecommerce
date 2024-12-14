@@ -39,7 +39,7 @@ const SearchProducts = createSlice({
                 state.error = null;
             })
             .addCase(queryProducts.fulfilled, (state, action) => {
-                state.products = [...state.products, ...action.payload.products];
+                state.products = [...action.payload.products];
                 state.page = action.payload.page;
                 state.status = "fulfilled";
                 state.error = null;

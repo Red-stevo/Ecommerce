@@ -20,14 +20,14 @@ const WishListPage = () => {
 
     /*Delete an Items in the wish List*/
     const handleDeleteItem = (productId) => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
         const data = {userId, specificProductIds:productId};
         dispatch(deleteWishList(data));
     }
 
     /*Clear the Whole Wish List.*/
     const handleDeleteWishList = () => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
     }

@@ -6,7 +6,10 @@ import {LuPackageCheck} from "react-icons/lu";
 import {useEffect, useRef, useState} from "react";
 import {Image} from "react-bootstrap";
 import {useDispatch} from "react-redux";
-import {cancelOrderItem} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
+import {
+    cancelOrderItem,
+    getOrderStatus
+} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 const shippingStatus = {
 
@@ -68,9 +71,19 @@ const OrderStatus = () => {
     }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
     const handleCancelOrder = (productId) => {
-        const data = {userId:"", orderItemId:productId};
+        const data = {userId:"12a8bb23-0d41-4118-bda0-0390f382814b", orderItemId:productId};
         dispatch(cancelOrderItem(data));
     }
+
+    useEffect(() => {
+
+        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
+        const getOrderItems = () => {
+            dispatch(getOrderStatus(userId));
+        }
+
+        getOrderItems();
+    }, [])
 
     return (
         <div className={"order-status-page"}>
