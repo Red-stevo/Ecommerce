@@ -18,9 +18,7 @@ import {makeOrder} from "../../../ApplicationStateManagement/OrderStatusStore/Or
 
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
-    const {
-        username, cartId, cartItemsResponses, currentPage,
-        totalPages, hasMore, youMayLikes, totalPrice,
+    const {cartId,cartItemsResponses,currentPage,hasMore,youMayLikes,totalPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
     const {loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
