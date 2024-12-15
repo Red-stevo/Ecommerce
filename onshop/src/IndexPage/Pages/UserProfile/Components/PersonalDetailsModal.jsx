@@ -10,6 +10,8 @@ const PersonalDetailsModal= (props) => {
 
     useEffect(() => {
         reset({...props.userdata});
+
+        console.log(props.userdata);
     }, [props.userdata]);
 
     return (
@@ -29,16 +31,16 @@ const PersonalDetailsModal= (props) => {
 
                     <FormGroup>
                         <input className={"form-control"} placeholder={"Phone Number"} type={"tel"}
-                               {...register("gender")} />
+                               {...register("phoneNumber")} />
                     </FormGroup>
 
                     <FormGroup>
                         <input className={"form-control"} placeholder={"Address"} type={"text"}
-                               {...register("gender")} />
+                               {...register("address")} />
                     </FormGroup>
 
-                    <select defaultChecked={true} className={"form-select"}>
-                        <option value={1}>Select Gender</option>
+                    <select defaultChecked={true} className={"form-select"} {...register("gender")}>
+                        <option value={"NONE"}>Select Gender</option>
                         <option value={"MALE"}>Male</option>
                         <option value={"FEMALE"}>Female</option>
                         <option value={"NOT_SPECIFIED"}>Rather Not Say</option>
@@ -47,7 +49,7 @@ const PersonalDetailsModal= (props) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <Button className={"app-button"} onClick={props.onHide}>Update</Button>
             </Modal.Footer>
         </Modal>
     );
