@@ -7,7 +7,9 @@ const initialState = OrderStatusAdapter
 
 
 export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
-    async (userId = null, {fulfillWithValue,rejectWithValue}) => {
+    async (userId = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
         try {
             return fulfillWithValue((await RequestsConfig.get(`/costumer/orders/get-order-status?userId=${userId}`)).data);
         } catch (error) {
@@ -16,7 +18,9 @@ export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
     });
 
 export const makeOrder = createAsyncThunk("orderStatus/make-order",
-    async (orderData = null, {fulfillWithValue,rejectWithValue}) => {
+    async (orderData = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
 
         const {userId, request} = orderData;
         try {
@@ -30,12 +34,13 @@ export const makeOrder = createAsyncThunk("orderStatus/make-order",
 
 
 export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
-    async (data = null, {fulfillWithValue,rejectWithValue}) => {
-
-    const {userId, orderItemId} = data;
+    async (data = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
+        console.log(data);
         try {
-            await RequestsConfig.put(`/costumer/orders/cancel-order-item?userId=${userId}&orderItemId=${orderItemId}`, _,
-                    {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+            await RequestsConfig.put(`/costumer/orders/cancel-order-item`, data,
+                {headers:{"Content-Type":'application/json'}});
             return fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
@@ -45,7 +50,10 @@ export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
 const OrderStatusReducer = createSlice({
     name:"orderStatus",
     initialState,
-    reducers:{},
+    reducers:{
+        removeOrder:(state, action) => { state.shippingStatus.products = state.shippingStatus.products.filter(
+            ({specificProductId}) => specificProductId !== action.payload)}
+    },
     extraReducers: builder =>
         builder
             .addCase(getOrderStatus.pending, (state) => {

@@ -12,29 +12,6 @@ import {
 } from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 
-const shippingStatus = {
-
-    orderTrackingProducts : [
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-        {productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.WCCq2nZelTZuFIRbJF7AuAHaEK%26pid%3DApi&f=1&ipt=536de08d8441cea809d6267004fecd429bb7f1c6492547d25bf244e3d597bbdd&ipo=images",
-            productName:"J4 cactus jack sneakers", productPrice:2340.0},
-    ],
-    orderId:"34DF4T",
-    status:2    // PLACED_ORDER DELIVERED  TRANSIT SIGNED
-};
 
 
 const statusList = [
@@ -46,19 +23,18 @@ const statusList = [
 
 
 const OrderStatus = () => {
-    const { shippingStatus, loading, success, errorMessage} =
-        useSelector(status => status.OrderStatusReducer);
+    const { shippingStatus, loading, errorMessage} = useSelector(status => status.OrderStatusReducer);
     const {orderId, status, products} = shippingStatus;
     const stepRef = useRef([]);
     const [margins,setMargins] = useState({marginsLeft:0, marginRight:0});
-    const  [calcProgressBarWidth, setCalcProgressBarWidth] = useState(() => {
+    const  [calcProgressBarWidth] = useState(() => {
         if(status >= statusList.length) return 100;
         else return status / (statusList.length - 1)  * 100;});
     const dispatch = useDispatch();
 
 
     /*Track window resize*/
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [_, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         const updateWidth = () => setWindowWidth(window.innerWidth);
@@ -122,14 +98,14 @@ const OrderStatus = () => {
 
                 {products && products.length > 0 &&
                     products
-                        .map(({productImageUrl, productName, productPrice, productId}, index) => (
+                        .map(({productImageUrl, productName, productPrice, specificProductId}, index) => (
                     <div key={index} className={"product-image-details-holder"}>
                         <Image className={"ordered-product-image"} src={productImageUrl} />
                         <div className={"ordered-product-details"}>
                             <span className={"ordered-product-name"}>{productName}</span>
                             <span className={"ordered-product-price"}>
                                <>ksh {productPrice}</>
-                                <button className={"cancel-order"} onClick={() => handleCancelOrder(productId)}>
+                                <button className={"cancel-order"} onClick={() => handleCancelOrder(specificProductId)}>
                                     cancel
                                 </button>
                             </span>
