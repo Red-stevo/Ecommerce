@@ -6,29 +6,20 @@ import {TiShoppingCart} from "react-icons/ti";
 import {FaTruckArrowRight} from "react-icons/fa6";
 import {useNavigate} from "react-router-dom";
 import {CiEdit} from "react-icons/ci";
-import Button from "react-bootstrap/Button";
 import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
-import {useState} from "react";
-import {IoAddSharp} from "react-icons/io5";
-import {useDispatch} from "react-redux";
-
-
-
-const userProfileDetails = {
-    userProfileImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.d7mM-baDdCa6BOkxDwQdDwHaH6%26pid%3DApi&f=1&ipt=31109a06cc8020942c4fa80eca12537d34d498ed928ee25d22e910fd71fab11c&ipo=images",
-    username:"Stevo",
-    email:"stephenmuiru@gmail.com",
-    fullName:"Stephen Muiru",
-    phoneNumber:"+254110555949",
-    address:"Kimathi way, Nyeri, Kenya.",
-    gender:"Male"
-}
-
+import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    getUserProfile,
+    UpdateEmail, updateUserEmail
+} from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
+import {useForm} from "react-hook-form";
+import {FaEdit} from "react-icons/fa";
 
 const defaultImage = {
     female:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.2oQt34IoSR8xxxC18BxxSAHaHa%26pid%3DApi&f=1&ipt=7dc022e1de22d506b7a32e3d13af6881373b07fde2f687f4346ab332ff88d2be&ipo=images",
     male:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.d7mM-baDdCa6BOkxDwQdDwHaH6%26pid%3DApi&f=1&ipt=31109a06cc8020942c4fa80eca12537d34d498ed928ee25d22e910fd71fab11c&ipo=images",
-    default:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.RJHoTYI8wI7PtFxNzWXbwAHaHa%26pid%3DApi&f=1&ipt=12c1c2d6eae5a2cf82cbbff9450ea4fff43ea9cbaab13dbd21b1d0b10f645fc6&ipo=images"
+    defaultI:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.RJHoTYI8wI7PtFxNzWXbwAHaHa%26pid%3DApi&f=1&ipt=12c1c2d6eae5a2cf82cbbff9450ea4fff43ea9cbaab13dbd21b1d0b10f645fc6&ipo=images"
 }
 
 
@@ -40,39 +31,75 @@ const linksList = [
 
 
 const UserProfilePage = () => {
-    const {userProfileImage, address, email
+    const {male, female, defaultI} =defaultImage;
+    const {userProfileDetails, loading, success, error} = useSelector(state => state.UserProfileReducer);
+    const {profileImageUrl, address, email
         , fullName, gender, phoneNumber, username} = userProfileDetails;
     const navigate = useNavigate();
     const [modalShow, setModalShow] = useState(false);
     const [readEmail, setReadEmail] = useState(false);
     const dispatch = useDispatch();
+    const {reset, handleSubmit, register
+    } = useForm();
+    const [userData, setUserData] = useState(null);
 
+    useEffect(() => {
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        dispatch(getUserProfile(userId));
+    }, []);
 
+    useEffect(() => {
+        reset({email});
+    }, [email]);
 
+    const updateUserData = () => {
+        setUserData({userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", fullName, gender, address, phoneNumber});
+        setModalShow(true);
+    }
 
+    const handleUpdateEmail = (email) => {
+        setReadEmail((prevState) => !prevState);
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const data = {userId, email:email.email};
+        dispatch(UpdateEmail(data));
 
+        dispatch(updateUserEmail(email.email));
+    }
+
+    const handleImageChange = (inputData) => {
+        console.log(inputData);
+    }
 
     return (
         <div className={"user-profile-page"}>
-            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)} />
+            <PersonalDetailsModal userdata={userData} show={modalShow} onHide={() => setModalShow(false)} />
             <section className={"user-profile-top-section"}>
 
                 <div className={"notification-details"}>
 
-                    <Image className={"user-profile-image-url"} src={userProfileImage} />
+                    <Image className={"user-profile-image-url"} src={
+                        profileImageUrl ? profileImageUrl : gender === "MALE" ? male : gender === "FEMALE" ? female : defaultI}/>
 
                     <div className={"user-profile-details"}>
                         <span className={"user-profile-username"}>{username}</span>
                         <span className={"user-profile-email"}>{email}</span>
                     </div>
 
+                    <div className={"image-profile-input-holder"}>
+                        <label htmlFor={"image-profile-input"}>
+                            <FaEdit className={"image-profile-input-icon"}/>
+                        </label>
+                        <input {...register("upload")} onChange={handleSubmit(handleImageChange)}
+                            id={"image-profile-input"} type={"file"} className={"input-profile-image"}/>
+                    </div>
+
                 </div>
 
-               <button className={"notifications-button"}>
-                   <span className={"Notifications"}>Notifications</span>
-                   <MdCircleNotifications className={"notifications-icon"} />
-                   <span className={"notifications-count"}>0</span>
-               </button>
+                <button className={"notifications-button"}>
+                    <span className={"Notifications"}>Notifications</span>
+                    <MdCircleNotifications className={"notifications-icon"}/>
+                    <span className={"notifications-count"}>0</span>
+                </button>
 
             </section>
 
@@ -89,7 +116,7 @@ const UserProfilePage = () => {
 
 
             <section className={"user-personal-details"}>
-                <button className={"edit-details-button"}  onClick={() => setModalShow(true)}>
+                <button className={"edit-details-button"}  onClick={updateUserData}>
                     <CiEdit className={"edit-personal-details"}/>
                     <span className={"edit-personal-details-text"}>Edit</span>
                 </button>
@@ -130,7 +157,9 @@ const UserProfilePage = () => {
             <section className={"user-profile-email-section"}>
                 <span className={"email-header"}>My Email Address</span>
 
-                {readEmail ? <input className={"form-control email-input"} type={"text"} placeholder={"email"}/> :
+                {readEmail ?
+                    <input className={"form-control email-input"} type={"text"} placeholder={"email"}
+                           {...register("email") } /> :
                     email &&
                     <span className={"user-profile-email-holder"}>
                         <MdEmail className={"email-icon"}/>
@@ -141,7 +170,7 @@ const UserProfilePage = () => {
                 {!readEmail ? <button onClick={() => setReadEmail((prevState) => !prevState)}
                         className={"add-email-button"}>Change Email
                 </button> :
-                    <button onClick={() => setReadEmail((prevState) => !prevState)}
+                    <button onClick={handleSubmit(handleUpdateEmail)}
                         className={"add-email-button"}>Save</button>}
 
             </section>
