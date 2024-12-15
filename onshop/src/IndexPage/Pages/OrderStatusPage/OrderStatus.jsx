@@ -8,7 +8,7 @@ import {Image} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {
     cancelOrderItem,
-    getOrderStatus
+    getOrderStatus, removeOrder
 } from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 
@@ -53,6 +53,8 @@ const OrderStatus = () => {
     const handleCancelOrder = (productId) => {
         const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", orderItemId:productId};
         dispatch(cancelOrderItem(data));
+
+        dispatch(removeOrder(productId));
     }
 
     useEffect(() => {

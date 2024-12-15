@@ -106,5 +106,6 @@ const OrderStatusReducer = createSlice({
 
 export  default  OrderStatusReducer.reducer;
 
-
+export const  {removeOrder
+} = OrderStatusReducer.actions;
 
