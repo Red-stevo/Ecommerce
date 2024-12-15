@@ -1,6 +1,7 @@
 package org.codiz.onshop.controller.customers;
 
 import lombok.RequiredArgsConstructor;
+import org.codiz.onshop.dtos.requests.EmailUpdateModel;
 import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.UserProfileUpdateRequest;
 import org.codiz.onshop.dtos.response.UserProfileResponse;
@@ -27,8 +28,8 @@ public class CustomerUserController {
     }
 
     @PutMapping("/update/email/{userId}")
-    public ResponseEntity<HttpStatus> updateEmail(@PathVariable String userId,@RequestParam String email){
-        return ResponseEntity.ok(usersService.updateEmail(userId,email));
+    public ResponseEntity<HttpStatus> updateEmail(@PathVariable String userId, @RequestBody EmailUpdateModel email){
+        return ResponseEntity.ok(usersService.updateEmail(userId, email.getEmail()));
     }
     @PutMapping("/image/update/{userId}")
     public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, @RequestBody FileUploads uploads){

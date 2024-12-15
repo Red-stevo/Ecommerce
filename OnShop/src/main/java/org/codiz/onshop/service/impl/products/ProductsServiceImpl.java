@@ -819,18 +819,17 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    public Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus,String categoryName,
-                                                 Float price1, Float price2, Pageable pageable )
+    public Page<InventoryResponse> inventoryList(InventoryRequestFilter filter, Pageable pageable )
     {
 
         try{
             List<InventoryResponse> inventoryResponses = new ArrayList<>();
 
 
-            if (inventoryStatus != null) {
-                Page<Inventory> inventory = inventoryRepository.findAllByStatus(inventoryStatus,pageable);
+            if (filter.getInventoryStatus() != null) {
+                Page<Inventory> inventory = inventoryRepository.findAllByStatus(filter.getInventoryStatus(),pageable);
 
-                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+
                 for (Inventory inventoryItem : inventory.getContent()) {
                     for (Products products : inventoryItem.getProducts()){
                         for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
@@ -844,14 +843,10 @@ public class ProductsServiceImpl implements ProductsService {
                     }
                 }
 
-            /*int start = (int) pageable.getOffset();
-            int end = (int) pageable.getOffset() + pageable.getPageSize();
 
-            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
-            } else if (categoryName != null) {
-                Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
-                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            } else if (filter.getCategoryName() != null) {
+                Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(filter.getCategoryName());
+
                 for (Products products : categories.getProducts()) {
                     for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
                         InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
@@ -859,16 +854,12 @@ public class ProductsServiceImpl implements ProductsService {
                     }
                 }
 
-            /*int start = (int) pageable.getOffset();
-            int end = (int) pageable.getOffset() + pageable.getPageSize();
-            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());*/
 
-            } else if (price1 != null && price2 != null) {
+            } else if (filter.getPrice1() != null && filter.getPrice2() != null) {
 
-                Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(price1,price2,pageable);
+                Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(filter.getPrice1(),filter.getPrice2(),pageable);
 
-                //List<InventoryResponse> inventoryResponses = new ArrayList<>();
+
                 for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
                     InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
                     inventoryResponses.add(inventoryResponse);
@@ -889,7 +880,7 @@ public class ProductsServiceImpl implements ProductsService {
             List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
             return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
         } catch (Exception e){
-            throw new ResourceNotFoundException("could not found the inventory");
+            throw new ResourceNotFoundException("could not find the inventory");
         }
 
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.FileUploads;
+import org.codiz.onshop.dtos.requests.InventoryRequestFilter;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.InventoryStatus;
@@ -128,11 +129,10 @@ public class ProductsAdminController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             PagedResourcesAssembler<InventoryResponse> assembler,
-            InventoryStatus inventoryStatus,String categoryName, Float price1,Float price2 ){
+            @RequestBody InventoryRequestFilter filter){
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<InventoryResponse> resp = productsService.inventoryList(inventoryStatus,
-                categoryName,price1,price2,pageable);
+        Page<InventoryResponse> resp = productsService.inventoryList(filter,pageable);
         PagedModel<EntityModel<InventoryResponse>> model = assembler.toModel(resp);
 
         return ResponseEntity.ok(model);

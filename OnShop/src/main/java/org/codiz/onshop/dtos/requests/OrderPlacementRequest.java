@@ -9,6 +9,5 @@ public class OrderPlacementRequest {
     private String userId;
     private String officeAddress;
     private DoorStepAddressCoordinates doorStepAddress;
-    private List<OrderItemsRequests> requestsList;
 
 }
