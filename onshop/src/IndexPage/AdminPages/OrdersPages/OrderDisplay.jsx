@@ -64,7 +64,6 @@ const orderDetails = {
 }
 
 
-
 const OrderDisplay = () => {
     const {
         orderId, orderNumber,
