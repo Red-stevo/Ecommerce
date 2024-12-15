@@ -55,7 +55,7 @@ const WishListReducer = createSlice({
     reducers:{
         removeWishListItems:(state, action) => {
           state.wishListProducts = state.wishListProducts.filter(
-              ({specificProductId}) => specificProductId === action.payload);},
+              ({specificProductId}) => specificProductId !== action.payload);},
         clearWishList:(state) => state.wishListProducts = [],
 
     },

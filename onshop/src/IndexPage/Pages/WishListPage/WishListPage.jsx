@@ -14,7 +14,7 @@ import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartR
 
 const WishListPage = () => {
     const dispatch = useDispatch();
-    const {loading, success, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
+    const {loading, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
 
 
     useEffect(() => {
@@ -82,12 +82,9 @@ const WishListPage = () => {
                                 <span className={"wish-list-product-color"}>Color : {productColor}</span>
                                 <Button className={"app-button add-cart-button"}>Add to Cart</Button>
                             </div>
-
                         </div>
-
                         <FaTrash className={"delete-button"} onClick={() => handleDeleteItem(specificProductId)}/>
-                    </div>
-                ))}
+                    </div>))}
 
             </section>
 
