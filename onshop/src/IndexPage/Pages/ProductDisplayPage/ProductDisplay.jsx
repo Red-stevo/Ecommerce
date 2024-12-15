@@ -11,6 +11,7 @@ import StarRating from "../ProductsDisplayPage/Components/StarRating.jsx";
 import ShareComponent from "./Components/ShareComponent.jsx";
 import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 import {addToWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {makeOrder} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 const ProductDisplay = () => {
     const { products, productName, productDescription, relatedProducts, productReviews } = useSelector(
@@ -30,23 +31,27 @@ const ProductDisplay = () => {
     // Fetch products on component mount
     useEffect(() => {
         dispatch(getProductDetails(productId));
-
-        console.log("get called.")
     }, [productId]);
 
     const handleAddToCart = () => {
-        const cartData = {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId, quantity: 1};
+
+        const items = [{specificProductId: productOnDisplay.productId, quantity: 1}];
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",items};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
         const wishListData =
-            {userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f", specificationId: productOnDisplay.productId};
-
+            {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", specificationId: productOnDisplay.productId};
         dispatch(addToWishList(wishListData));
     }
 
     const handleOrderNow = () => {
+        const request = [{specificationId: productOnDisplay.productId, quantity: 1}];
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
 
+        dispatch(makeOrder(cartData));
+
+        navigate("/home/user/payment");
     }
 
 

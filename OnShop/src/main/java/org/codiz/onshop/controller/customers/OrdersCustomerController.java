@@ -39,7 +39,7 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.getOrders(orderId));
     }
 
-    @GetMapping("/get-order-status")
+    @GetMapping("/get-order-status") /*Done*/
     public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String userId){
         log.info("user is :" + userId);
         return ResponseEntity.ok(ordersService.getShippingStatus(userId));

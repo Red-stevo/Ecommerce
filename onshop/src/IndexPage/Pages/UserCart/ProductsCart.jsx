@@ -13,13 +13,12 @@ import {deleteCartItem, getCartItems, removeItems
 import noCartImage from "./../../../assets/NoCartItems.png";
 import Loader from "../../../Loading/Loader.jsx";
 import ErrorModal from "../../ErrorModal.jsx";
+import {makeOrder} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 
 const ProductsCart = () => {
     const [checkIcon, setCheckIcon] = useState(false);
-    const {
-        username, cartId, cartItemsResponses, currentPage,
-        totalPages, hasMore, youMayLikes, totalPrice,
+    const {cartId,cartItemsResponses,currentPage,hasMore,youMayLikes,totalPrice,
     } = useSelector(state => state.CartReducer.CartResponse);
     const {loading} = useSelector(state => state.CartReducer);
     const [index, setIndex] = useState(0);
@@ -31,7 +30,7 @@ const ProductsCart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const cartData = {page, size: 1, userId: "b69eb7ae-d567-45b8-a6a0-92c7f243874f"}
+        const cartData = {page, size: 1, userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -89,6 +88,13 @@ const ProductsCart = () => {
             setError("No Selected Item!");
             return;
         }
+
+        let request = [];
+        selectedProducts.forEach((id) => request = [...request, {specificationId:id, quantity: 1}]);
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
+        dispatch(makeOrder(cartData));
+
+        navigate("/home/user/payment");
     }
 
 
@@ -97,6 +103,7 @@ const ProductsCart = () => {
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
                 <Image src={noCartImage} className={"no-cart-items-image"}/>
+                <button onClick={() => navigate("/home/products/All%2BProducts")}>Continue Shopping</button>
             </div>
         );
     }
@@ -138,7 +145,8 @@ const ProductsCart = () => {
                     </div>
 
                     <div className={"button-shop"}>
-                        <span className={"continue-shopping"} title={"Continue Shopping"}>
+                        <span className={"continue-shopping"} title={"Continue Shopping"}
+                              onClick={() => navigate("/home/products/All%2BProducts")}>
                             <PiArrowFatLeftThin title={"Continue Shopping"}
                                                 className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`}/>
                             <PiArrowFatLineLeftThin title={"Continue Shopping"}

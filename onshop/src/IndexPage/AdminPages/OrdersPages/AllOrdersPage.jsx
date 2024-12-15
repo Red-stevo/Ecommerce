@@ -3,6 +3,8 @@ import {useEffect, useState} from "react";
 import {CiFilter} from "react-icons/ci";
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {getOrders} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 
 const orders = [
     {orderId:"FDR567NBHY", orderDate:"Sep Fri 13 2024", orderStatus:"CANCELED", orderTotal:2500.00},
@@ -32,6 +34,12 @@ const AllOrdersPage = () => {
     const [orderDisplay, setOrderDisplay] = useState([]);
     const [statusPointer, setStatusPointer] = useState(0);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(getOrders())
+    }, []);
 
     useEffect(() => {
 
@@ -46,6 +54,7 @@ const AllOrdersPage = () => {
         if (statusPointer >= 4) setStatusPointer(0);
         else setStatusPointer(prevState => prevState + 1);
     }
+
 
     return (
         <div className={"all-orders-page"}>
