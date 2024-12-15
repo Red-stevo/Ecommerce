@@ -9,7 +9,7 @@ const initialState = OrderStatusAdapter
 export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
     async (userId = null, {fulfillWithValue,rejectWithValue}) => {
         try {
-            return fulfillWithValue(await RequestsConfig.get(`/costumer/orders/get-order-status?userId=${userId}`));
+            return fulfillWithValue((await RequestsConfig.get(`/costumer/orders/get-order-status?userId=${userId}`)).data);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
         }

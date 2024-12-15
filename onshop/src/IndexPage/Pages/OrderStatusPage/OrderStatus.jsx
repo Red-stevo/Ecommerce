@@ -48,7 +48,7 @@ const statusList = [
 const OrderStatus = () => {
     const { shippingStatus, loading, success, errorMessage} =
         useSelector(status => status.OrderStatusReducer);
-    const {orderId, status, orderTrackingProducts} = shippingStatus;
+    const {orderId, status, products} = shippingStatus;
     const stepRef = useRef([]);
     const [margins,setMargins] = useState({marginsLeft:0, marginRight:0});
     const  [calcProgressBarWidth, setCalcProgressBarWidth] = useState(() => {
@@ -120,8 +120,8 @@ const OrderStatus = () => {
 
             <section className={"ordered-products-section"}>
 
-                {orderTrackingProducts && orderTrackingProducts.length > 0 &&
-                    orderTrackingProducts
+                {products && products.length > 0 &&
+                    products
                         .map(({productImageUrl, productName, productPrice, productId}, index) => (
                     <div key={index} className={"product-image-details-holder"}>
                         <Image className={"ordered-product-image"} src={productImageUrl} />
