@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../../Loading/Loader.jsx";
 import {useEffect} from "react";
 import {deleteWishList, getWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 
 
 const WishListPage = () => {
@@ -30,6 +31,14 @@ const WishListPage = () => {
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
+    }
+
+    const handleAddAllToWishList = () => {
+        let items = [];
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        wishListProducts.forEach(({specificProductId}) => items = [...items, specificProductId]);
+        const data = {userId, items};
+        dispatch(addToCart(data));
     }
 
 
@@ -74,7 +83,7 @@ const WishListPage = () => {
 
             <section className={"wish-list-bottom-button"}>
                 <button className={"clear-wish-list"} onClick={handleDeleteWishList}>Clear WishList</button>
-                <Button className={"app-button add-all "}>Add All to Cart</Button>
+                <Button className={"app-button add-all "} onClick={handleAddAllToWishList}>Add All to Cart</Button>
             </section>
 
             {loading && <Loader />}

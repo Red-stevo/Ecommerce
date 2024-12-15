@@ -66,7 +66,7 @@ const CartReducer = createSlice({
             action.payload.map((itemId) => {
                 state.CartResponse.cartItemsResponses =
                     state.CartResponse.cartItemsResponses.filter((product) => product.cartItemId !== itemId);
-            })
+            });
         }
     },
     extraReducers: builder =>
