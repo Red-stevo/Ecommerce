@@ -29,7 +29,7 @@ public class OrderItems {
     @PrePersist
     public void Status() {
         if (status == null) {
-            this.status = OrderItemStatus.PENDING;
+            this.status = OrderItemStatus.ACTIVE;
         }
     }
 }

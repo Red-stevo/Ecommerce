@@ -1029,7 +1029,7 @@ public class ProductsServiceImpl implements ProductsService {
 
                 WishList wishList = wishListRepository.findByUser(usersRepository.findUsersByUserId(userId))
                         .orElseThrow(() -> new ResourceNotFoundException("Wishlist not found"));
-
+                wishList.getSpecificProductDetails().removeAll(wishList.getSpecificProductDetails());
                 wishListRepository.delete(wishList);
 
                 log.info("Wishlist deleted successfully");

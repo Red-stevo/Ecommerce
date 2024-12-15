@@ -25,10 +25,10 @@ public class SpecificProductDetails{
     private int count;
     private Instant createdAt;
 
-    @OneToMany(mappedBy = "specificProductDetails",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "specificProductDetails",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
-    //@OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductImages> productImagesList;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

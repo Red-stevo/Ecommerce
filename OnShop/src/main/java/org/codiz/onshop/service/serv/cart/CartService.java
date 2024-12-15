@@ -18,6 +18,6 @@ public interface CartService {
     CartResponse getCartById(String userId, Pageable pageable);
     HttpStatus removeItemFromCart(List<String> cartItemId);
     HttpStatus updateItemQuantity(CartItemsUpdate cartItemsUpdate);
-    ResponseEntity addItemToCart(List<CartItemsToAdd> items);
+    ResponseEntity addItemToCart(List<CartItemsToAdd> items,String userId);
 
 }

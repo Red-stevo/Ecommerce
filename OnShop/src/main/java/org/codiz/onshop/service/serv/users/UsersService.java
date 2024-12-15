@@ -1,12 +1,12 @@
 package org.codiz.onshop.service.serv.users;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.LoginRequests;
+import org.codiz.onshop.dtos.requests.UserProfileUpdateRequest;
 import org.codiz.onshop.dtos.requests.UserRegistrationRequest;
-import org.codiz.onshop.dtos.response.AuthenticationResponse;
-import org.codiz.onshop.dtos.response.EntityResponse;
-import org.codiz.onshop.dtos.response.EntityDeletionResponse;
-import org.codiz.onshop.dtos.response.UserResponse;
+import org.codiz.onshop.dtos.response.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,4 +22,8 @@ public interface UsersService {
     ResponseEntity<AuthenticationResponse> loginUser(LoginRequests loginRequests);
     AuthenticationResponse refreshToken(HttpServletRequest request);
     EntityResponse registerAdminUser(UserRegistrationRequest request);
+    UserProfileResponse showUserProfile(String userId);
+    HttpStatus updateProfile(UserProfileUpdateRequest request);
+    HttpStatus updateEmail(String userId,String email);
+    HttpStatus updateProfileImage(String userId, FileUploads uploads);
 }

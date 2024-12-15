@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +49,10 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public ResponseEntity addItemToCart(List<CartItemsToAdd> items) {
+    public ResponseEntity addItemToCart(List<CartItemsToAdd> items,String userId) {
        try {
-           Users users = usersRepository.findUsersByUserId(items.get(0).getUserId());
+           System.out.println(userId);
+           Users users = usersRepository.findUsersByUserId(userId);
 
 
            if (users == null) {
@@ -66,8 +66,9 @@ public class CartImpl implements CartService {
                        return cartRepository.save(newCart);
                    });
                 List<CartItems> cartItemsList = new ArrayList<>();
+                log.info("specific :"+items);
             for (CartItemsToAdd item : items) {
-                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(item.getSpecificationId())
+                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(item.getSpecificProductId())
                         .orElseThrow(()->new ResourceNotFoundException("product not found"));
 
 
@@ -89,6 +90,7 @@ public class CartImpl implements CartService {
 
            return new ResponseEntity<>(HttpStatus.OK);
        }catch (Exception e){
+           e.printStackTrace();
            throw new ResourceCreationFailedException("could not add item to cart");
        }
     }
