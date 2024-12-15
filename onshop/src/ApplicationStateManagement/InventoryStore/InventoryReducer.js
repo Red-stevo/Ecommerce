@@ -3,14 +3,13 @@ import {RequestsConfig} from "../RequestsConfig.js";
 
 const inventoryAdapter = createEntityAdapter();
 
-
 const initialState = inventoryAdapter.getInitialState({
     error:"", loading:false, success:null, data:{}
 });
 
 
 export const fetchInventory = createAsyncThunk("inventory/fetchProducts",
-    async (query = null, {
+    async (_, {
         fulfillWithValue,
         rejectWithValue}) => {
 
