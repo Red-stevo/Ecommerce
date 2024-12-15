@@ -6,12 +6,13 @@ import {TiShoppingCart} from "react-icons/ti";
 import {FaTruckArrowRight} from "react-icons/fa6";
 import {useNavigate} from "react-router-dom";
 import {CiEdit} from "react-icons/ci";
-import Button from "react-bootstrap/Button";
 import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
 import {useEffect, useState} from "react";
-import {IoAddSharp} from "react-icons/io5";
 import {useDispatch, useSelector} from "react-redux";
-import {getUserProfile, UpdateEmail} from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
+import {
+    getUserProfile,
+    UpdateEmail, updateUserEmail
+} from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 import {useForm} from "react-hook-form";
 
 
@@ -42,15 +43,16 @@ const linksList = [
 
 
 const UserProfilePage = () => {
-    const {userProfileDetails, loading, error} = useSelector(state => state.UserProfileReducer);
-    const {userProfileImage, address, email
-        , fullName, gender, phoneNumber, username, profileImageUrl} = userProfileDetails;
+    const {userProfileDetails, loading, success, error} = useSelector(state => state.UserProfileReducer);
+    const {profileImageUrl, address, email
+        , fullName, gender, phoneNumber, username} = userProfileDetails;
     const navigate = useNavigate();
     const [modalShow, setModalShow] = useState(false);
     const [readEmail, setReadEmail] = useState(false);
     const dispatch = useDispatch();
     const {reset, handleSubmit, register
     } = useForm();
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
@@ -61,20 +63,29 @@ const UserProfilePage = () => {
         reset({email});
     }, [email]);
 
+    const updateUserData = () => {
+        setUserData({userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", fullName,
+                imageUrl: profileImageUrl, gender, address});
+        setModalShow(true);
+    }
 
     const handleUpdateEmail = (email) => {
         setReadEmail((prevState) => !prevState);
-        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", email};
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const data = {userId, email};
         dispatch(UpdateEmail(data));
+
+        dispatch(updateUserEmail(email.email));
     }
+
     return (
         <div className={"user-profile-page"}>
-            <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)} />
+            <PersonalDetailsModal userdata={userData} show={modalShow} onHide={() => setModalShow(false)} />
             <section className={"user-profile-top-section"}>
 
                 <div className={"notification-details"}>
 
-                    <Image className={"user-profile-image-url"} src={userProfileImage} />
+                    <Image className={"user-profile-image-url"} src={profileImageUrl} />
 
                     <div className={"user-profile-details"}>
                         <span className={"user-profile-username"}>{username}</span>
@@ -104,7 +115,7 @@ const UserProfilePage = () => {
 
 
             <section className={"user-personal-details"}>
-                <button className={"edit-details-button"}  onClick={() => setModalShow(true)}>
+                <button className={"edit-details-button"}  onClick={updateUserData}>
                     <CiEdit className={"edit-personal-details"}/>
                     <span className={"edit-personal-details-text"}>Edit</span>
                 </button>

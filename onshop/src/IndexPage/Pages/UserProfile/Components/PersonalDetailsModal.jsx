@@ -1,8 +1,17 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {Form, FormGroup} from "react-bootstrap";
+import {useEffect} from "react";
+import {useForm} from "react-hook-form";
 
 const PersonalDetailsModal= (props) => {
+    const {reset, register, handleSubmit
+    } = useForm();
+
+    useEffect(() => {
+        reset({...props.userdata});
+    }, [props.userdata]);
+
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
             <Modal.Header closeButton>
@@ -14,15 +23,18 @@ const PersonalDetailsModal= (props) => {
                 <Form className={"user-details-form"}>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Full Name"} type={"text"} />
+                        <input className={"form-control"} placeholder={"Full Name"} type={"text"}
+                               {...register("fullName")}/>
                     </FormGroup>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Phone Number"} type={"tel"} />
+                        <input className={"form-control"} placeholder={"Phone Number"} type={"tel"}
+                               {...register("gender")} />
                     </FormGroup>
 
                     <FormGroup>
-                        <input className={"form-control"} placeholder={"Address"} type={"text"} />
+                        <input className={"form-control"} placeholder={"Address"} type={"text"}
+                               {...register("gender")} />
                     </FormGroup>
 
                     <select defaultChecked={true} className={"form-select"}>
