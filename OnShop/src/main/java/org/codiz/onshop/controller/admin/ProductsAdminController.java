@@ -128,11 +128,10 @@ public class ProductsAdminController {
     public ResponseEntity<PagedModel<EntityModel<InventoryResponse>>> inventoryList(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            PagedResourcesAssembler<InventoryResponse> assembler,
-            @RequestBody InventoryRequestFilter filter){
+            PagedResourcesAssembler<InventoryResponse> assembler){
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<InventoryResponse> resp = productsService.inventoryList(filter,pageable);
+        Page<InventoryResponse> resp = productsService.inventoryList(pageable);
         PagedModel<EntityModel<InventoryResponse>> model = assembler.toModel(resp);
 
         return ResponseEntity.ok(model);

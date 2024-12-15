@@ -67,7 +67,7 @@ public class OrdersCustomerController {
     }
 
     @PutMapping("/update-order-quantity/{orderItemId}")
-    public ResponseEntity<HttpStatus> updateShippingQuantity(@PathVariable String orderItemId, @RequestParam int quantity){
+    public ResponseEntity<HttpStatus> updateShippingQuantity(@PathVariable String orderItemId, @RequestBody int quantity){
         return ResponseEntity.ok(ordersService.updateShippingQuantity(orderItemId,quantity));
     }
 

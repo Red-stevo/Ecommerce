@@ -34,7 +34,7 @@ public interface ProductsService {
     EntityResponse updateCategory(String categoryId,String categoryName, MultipartFile fileUploads) throws IOException;
     List<CategoryResponse> findAllCategories();
     String deleteCategory(String categoryId) throws IOException;
-    Page<InventoryResponse> inventoryList(InventoryRequestFilter filter, Pageable pageable );
+    Page<InventoryResponse> inventoryList( Pageable pageable );
     ResponseEntity addToWishList(String specificProductId, String userId);
     HttpStatus deleteWishListItem(String userId, String specificProductIds);
     List<WishListResponse> getWishList(String userId);
