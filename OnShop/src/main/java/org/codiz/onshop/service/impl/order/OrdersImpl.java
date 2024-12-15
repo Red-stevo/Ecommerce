@@ -145,9 +145,8 @@ public class OrdersImpl implements OrdersService {
     public EntityResponse placeOrder(OrderPlacementRequest request) {
 
         try {
-            String longitude = request.getDoorStepAddress().getLongitude();
-            String latitude = request.getDoorStepAddress().getLatitude();
-            Orders orders = new Orders();
+
+           /* Orders orders = new Orders();
             Users usr = usersRepository.findUsersByUserId(request.getUserId());
             orders.setUserId(usr);
             orders.setCreatedOn(Instant.now());
@@ -174,8 +173,8 @@ public class OrdersImpl implements OrdersService {
             EntityResponse entityResponse = new EntityResponse();
             entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             entityResponse.setMessage("Order successfully placed");
-            entityResponse.setStatus(HttpStatus.OK);
-            return entityResponse;
+            entityResponse.setStatus(HttpStatus.OK);*/
+            return null;
         }catch (Exception e) {
             throw new ResourceCreationFailedException("products could not be created");
         }

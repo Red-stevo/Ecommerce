@@ -818,72 +818,35 @@ public class ProductsServiceImpl implements ProductsService {
 
 
 
-    public Page<InventoryResponse> inventoryList(InventoryRequestFilter filter, Pageable pageable )
+    @Transactional
+    public Page<InventoryResponse> inventoryList( Pageable pageable )
     {
 
         try{
             List<InventoryResponse> inventoryResponses = new ArrayList<>();
 
 
-            if (filter.getInventoryStatus() != null) {
-                Page<Inventory> inventory = inventoryRepository.findAllByStatus(filter.getInventoryStatus(),pageable);
 
-
-                for (Inventory inventoryItem : inventory.getContent()) {
-                    for (Products products : inventoryItem.getProducts()){
-                        for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
-                            InventoryResponse inventoryResponse = new InventoryResponse();
-                            inventoryResponse.setProductName(products.getProductName());
-                            inventoryResponse.setStatus(inventoryItem.getStatus());
-                            inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-                            inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
-                            inventoryResponses.add(inventoryResponse);
-                        }
-                    }
-                }
-
-
-            } else if (filter.getCategoryName() != null) {
-                Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(filter.getCategoryName());
-
-                for (Products products : categories.getProducts()) {
-                    for (SpecificProductDetails specificProductDetails : products.getSpecificProductDetailsList()) {
-                        InventoryResponse inventoryResponse = getInventoryResponse(products, specificProductDetails);
-                        inventoryResponses.add(inventoryResponse);
-                    }
-                }
-
-
-            } else if (filter.getPrice1() != null && filter.getPrice2() != null) {
-
-                Page<SpecificProductDetails> productDetails = specificProductsRepository.findAllByProductPriceBetween(filter.getPrice1(),filter.getPrice2(),pageable);
-
-
-                for (SpecificProductDetails specificProductDetails : productDetails.getContent()) {
-                    InventoryResponse inventoryResponse = getInventoryResponse(specificProductDetails);
+            Page<Products> products = productsRepository.findAll(pageable);
+            for (Products products1 : products){
+                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
+                    InventoryResponse inventoryResponse = getInventoryResponse(details);
                     inventoryResponses.add(inventoryResponse);
                 }
             }
-            else {
-                Page<Products> products = productsRepository.findAll(pageable);
-                for (Products products1 : products){
-                    for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
-                        InventoryResponse inventoryResponse = getInventoryResponse(details);
-                        inventoryResponses.add(inventoryResponse);
-                    }
-                }
-            }
+
 
             int start = (int) pageable.getOffset();
             int end = (int) pageable.getOffset() + pageable.getPageSize();
             List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
             return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
         } catch (Exception e){
+            e.printStackTrace();
             throw new ResourceNotFoundException("could not find the inventory");
         }
 
-
     }
+
 
     private static InventoryResponse getInventoryResponse(Products products, SpecificProductDetails specificProductDetails) {
         InventoryResponse inventoryResponse = new InventoryResponse();
