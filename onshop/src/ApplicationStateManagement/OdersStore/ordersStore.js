@@ -1,15 +1,15 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 
-const userProfileAdapter = createEntityAdapter();
+const ordersAdapter = createEntityAdapter();
 
 
-const initialState = userProfileAdapter.getInitialState({
-    error:"", loading:false, success:null
+const initialState = ordersAdapter.getInitialState({
+    error:"", loading:false, success:null, pagedModel:{}
 });
 
 
-export const getUserProfile = createAsyncThunk("userProfile/getUserProfile",
+export const getOrders = createAsyncThunk("orders/getOrders",
     async (query = null, {
         fulfillWithValue,
         rejectWithValue}) => {
@@ -22,29 +22,28 @@ export const getUserProfile = createAsyncThunk("userProfile/getUserProfile",
     })
 
 
-const UserProfileReducer = createSlice({
-    name:"userProfile",
+const ordersStore = createSlice({
+    name:"orders",
     initialState,
     reducers:{},
     extraReducers:builder => builder
-        .addCase(getUserProfile.pending, (state) => {
+        .addCase(getOrders.pending, (state) => {
             state.loading = true;
             state.success = null;
             state.error = null;
         })
-        .addCase(getUserProfile.fulfilled, (state, action) => {
+        .addCase(getOrders.fulfilled, (state, action) => {
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.pagedModel = [...action.payload];
+            state.pagedModel = action.payload;
         })
-        .addCase(getUserProfile.rejected, (state, action) => {
+        .addCase(getOrders.rejected, (state, action) => {
             state.loading = false;
             state.success = false;
             state.error = action.payload ? action.payload : "Error Fetching Location";
-            state.results = [];
         })
 });
 
 
-export default  UserProfileReducer.reducer;
+export default  ordersStore.reducer;

@@ -10,7 +10,7 @@ import {
     deleteCategories,
     postCategory,
     putCategories
-} from "../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+} from "../../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 import Loader from "../../../../Loading/Loader.jsx";
 
 const AddIconForm= (props) => {

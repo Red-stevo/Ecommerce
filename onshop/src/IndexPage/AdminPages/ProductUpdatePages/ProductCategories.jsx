@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import AddIconForm from "./Components/AddIconForm.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {getCategories
-} from "../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 
 

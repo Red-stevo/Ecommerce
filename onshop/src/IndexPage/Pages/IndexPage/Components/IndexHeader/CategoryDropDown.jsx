@@ -1,7 +1,7 @@
 import {Dropdown} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import {getCategories} from "../../../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import {getCategories} from "../../../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 
 const CategoryDropDown = ({handleSearchProduct}) => {
     const dispatch = useDispatch();
