@@ -16,7 +16,7 @@ export const getUserProfile = createAsyncThunk("userProfile/getUserProfile",
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue((await RequestsConfig.get("")));
+            return fulfillWithValue(((await RequestsConfig.get("admin/orders/all")).data));
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -37,7 +37,7 @@ const UserProfileReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.results = [...action.payload];
+            state.pagedModel = [...action.payload];
         })
         .addCase(getUserProfile.rejected, (state, action) => {
             state.loading = false;
