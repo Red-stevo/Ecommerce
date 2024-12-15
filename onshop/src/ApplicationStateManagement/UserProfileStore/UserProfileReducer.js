@@ -51,6 +51,22 @@ export const updateUserData = createAsyncThunk("userProfile/updateData",
         }
     });
 
+export const updateProfileImage = createAsyncThunk("userProfile/updateData",
+    async (data = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
+
+    const {userId, upload} = data;
+        try {
+            await RequestsConfig.put(`customer/profile/image/update/{{userId}}`, data, {headers:{"Content-Type": "application/json"}})
+            return fulfillWithValue(true);
+        }catch (error){
+            return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
+        }
+    });
+
+
+
 const UserProfileReducer = createSlice({
     name:"userProfile",
     initialState,

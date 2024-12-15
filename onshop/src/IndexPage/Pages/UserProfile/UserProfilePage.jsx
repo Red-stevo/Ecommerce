@@ -60,10 +60,14 @@ const UserProfilePage = () => {
     const handleUpdateEmail = (email) => {
         setReadEmail((prevState) => !prevState);
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
-        const data = {userId, email};
+        const data = {userId, email:email.email};
         dispatch(UpdateEmail(data));
 
         dispatch(updateUserEmail(email.email));
+    }
+
+    const handleImageChange = (inputData) => {
+        console.log(inputData);
     }
 
     return (
@@ -85,7 +89,8 @@ const UserProfilePage = () => {
                         <label htmlFor={"image-profile-input"}>
                             <FaEdit className={"image-profile-input-icon"}/>
                         </label>
-                        <input id={"image-profile-input"} type={"file"} className={"input-profile-image"}/>
+                        <input {...register("upload")} onChange={handleSubmit(handleImageChange)}
+                            id={"image-profile-input"} type={"file"} className={"input-profile-image"}/>
                     </div>
 
                 </div>
