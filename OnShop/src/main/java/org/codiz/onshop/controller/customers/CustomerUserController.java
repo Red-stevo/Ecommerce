@@ -31,7 +31,7 @@ public class CustomerUserController {
         return ResponseEntity.ok(usersService.updateEmail(userId,email));
     }
     @PutMapping("/image/update/{userId}")
-    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, @RequestBody FileUploads upload)){
-        return ResponseEntity.ok(usersService.updateProfileImage(userId,upload));
+    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, @RequestBody FileUploads uploads){
+        return ResponseEntity.ok(usersService.updateProfileImage(userId,uploads));
     }
 }

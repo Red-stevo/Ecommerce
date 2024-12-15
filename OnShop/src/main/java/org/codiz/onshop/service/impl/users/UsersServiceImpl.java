@@ -269,7 +269,8 @@ public class UsersServiceImpl implements UsersService {
     public HttpStatus updateProfileImage(String userId, FileUploads uploads){
         Users users = usersRepository.findUsersByUserId(userId);
         UserProfiles profiles = users.getProfile();
-        profiles.setImageUrl(cloudinaryService.uploadImage(uploads));
+        FileUploads image = new FileUploads(uploads.getFileName(),uploads.getFileData());
+        profiles.setImageUrl(cloudinaryService.uploadImage(image));
         userProfilesRepository.save(profiles);
         return HttpStatus.OK;
     }
