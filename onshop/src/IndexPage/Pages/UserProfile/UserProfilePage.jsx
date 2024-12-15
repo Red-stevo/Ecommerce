@@ -64,8 +64,7 @@ const UserProfilePage = () => {
     }, [email]);
 
     const updateUserData = () => {
-        setUserData({userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", fullName,
-                imageUrl: profileImageUrl, gender, address, phoneNumber});
+        setUserData({userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", fullName, gender, address, phoneNumber});
         setModalShow(true);
     }
 

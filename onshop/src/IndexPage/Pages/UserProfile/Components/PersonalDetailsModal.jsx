@@ -3,16 +3,21 @@ import Modal from 'react-bootstrap/Modal';
 import {Form, FormGroup} from "react-bootstrap";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {updateUserData} from "../../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 
 const PersonalDetailsModal= (props) => {
     const {reset, register, handleSubmit
     } = useForm();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         reset({...props.userdata});
-
-        console.log(props.userdata);
     }, [props.userdata]);
+
+    const handleUserDataUpdate = (data) => {
+       dispatch(updateUserData(data));
+    }
 
     return (
         <Modal{...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered >
@@ -49,7 +54,7 @@ const PersonalDetailsModal= (props) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className={"app-button"} onClick={props.onHide}>Update</Button>
+                <Button className={"app-button"} onClick={handleSubmit(handleUserDataUpdate)}>Update</Button>
             </Modal.Footer>
         </Modal>
     );
