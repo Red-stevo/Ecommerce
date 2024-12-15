@@ -70,4 +70,9 @@ public class OrdersCustomerController {
     public ResponseEntity<HttpStatus> updateShippingQuantity(@PathVariable String orderItemId, @RequestParam int quantity){
         return ResponseEntity.ok(ordersService.updateShippingQuantity(orderItemId,quantity));
     }
+
+    @GetMapping("/specific-order-item/{orderItemId}")
+    public ResponseEntity<SpecificOrderItemResponse> getOrderItemDetails(@PathVariable String orderItemId){
+        return ResponseEntity.ok(ordersService.getOrderItemDetails(orderItemId));
+    }
 }

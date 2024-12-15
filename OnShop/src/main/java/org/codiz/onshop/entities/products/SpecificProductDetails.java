@@ -8,7 +8,6 @@ import org.codiz.onshop.entities.cart.CartItems;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 

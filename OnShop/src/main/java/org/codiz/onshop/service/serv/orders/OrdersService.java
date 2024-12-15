@@ -35,4 +35,5 @@ public interface OrdersService {
     PaymentDetails getPaymentDetails(String userId);
     HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest);
     HttpStatus updateShippingQuantity(String orderItemId, int quantity);
+    SpecificOrderItemResponse getOrderItemDetails(String orderItemId);
 }
