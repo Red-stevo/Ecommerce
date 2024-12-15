@@ -7,6 +7,7 @@ import CartReducer from "./UserCartStore/CartReducer.js";
 import WishListReducer from "./UserWishListStore/WishListReducer.js";
 import OrderStatusReducer from "./OrderStatusStore/OrderStatusReducer.js";
 import openCageReducer from "./OpenCage/openCageReducer.js";
+import UserProfileReducer from "./UserProfileStore/UserProfileReducer.js";
 
 
 export const store = configureStore({
@@ -18,6 +19,7 @@ export const store = configureStore({
         CartReducer:CartReducer,
         WishListReducer:WishListReducer,
         OrderStatusReducer:OrderStatusReducer,
-        openCageReducer:openCageReducer
+        openCageReducer:openCageReducer,
+        UserProfileReducer:UserProfileReducer
     }
 })

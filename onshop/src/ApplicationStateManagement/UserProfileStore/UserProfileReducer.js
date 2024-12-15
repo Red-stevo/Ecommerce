@@ -48,4 +48,4 @@ const UserProfileReducer = createSlice({
 });
 
 
-export default  openCageReducer.reducer;
+export default  UserProfileReducer.reducer;
