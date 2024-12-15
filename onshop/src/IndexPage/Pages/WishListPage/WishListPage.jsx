@@ -38,7 +38,7 @@ const WishListPage = () => {
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
 
-        dispatch(clearWishList);
+        dispatch(clearWishList());
     }
 
     const handleAddAllToWishList = () => {
@@ -48,7 +48,7 @@ const WishListPage = () => {
         const data = {userId, items};
         dispatch(addToCart(data));
 
-        dispatch(clearWishList);
+        dispatch(clearWishList());
     }
 
 
