@@ -17,6 +17,30 @@
     gap: 20px;
 }
 
+.notification-details {
+    position: relative;
+}
+
+.input-profile-image {
+    display: none;
+}
+
+.image-profile-input-icon {
+    font-size: 22px;
+    color: gold;
+    cursor: pointer;
+}
+
+.image-profile-input-holder {
+    position: absolute;
+    bottom: 50px;
+    left: 210px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .user-profile-image-url {
     width: 240px;
     height: 240px;

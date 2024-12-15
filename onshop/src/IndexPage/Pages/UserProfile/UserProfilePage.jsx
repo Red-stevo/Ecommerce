@@ -14,6 +14,7 @@ import {
     UpdateEmail, updateUserEmail
 } from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 import {useForm} from "react-hook-form";
+import {FaEdit} from "react-icons/fa";
 
 const defaultImage = {
     female:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.2oQt34IoSR8xxxC18BxxSAHaHa%26pid%3DApi&f=1&ipt=7dc022e1de22d506b7a32e3d13af6881373b07fde2f687f4346ab332ff88d2be&ipo=images",
@@ -73,20 +74,27 @@ const UserProfilePage = () => {
                 <div className={"notification-details"}>
 
                     <Image className={"user-profile-image-url"} src={
-                        profileImageUrl?profileImageUrl:gender==="MALE"?male:gender==="FEMALE"?female:defaultI} />
+                        profileImageUrl ? profileImageUrl : gender === "MALE" ? male : gender === "FEMALE" ? female : defaultI}/>
 
                     <div className={"user-profile-details"}>
                         <span className={"user-profile-username"}>{username}</span>
                         <span className={"user-profile-email"}>{email}</span>
                     </div>
 
+                    <div className={"image-profile-input-holder"}>
+                        <label htmlFor={"image-profile-input"}>
+                            <FaEdit className={"image-profile-input-icon"}/>
+                        </label>
+                        <input id={"image-profile-input"} type={"file"} className={"input-profile-image"}/>
+                    </div>
+
                 </div>
 
-               <button className={"notifications-button"}>
-                   <span className={"Notifications"}>Notifications</span>
-                   <MdCircleNotifications className={"notifications-icon"} />
-                   <span className={"notifications-count"}>0</span>
-               </button>
+                <button className={"notifications-button"}>
+                    <span className={"Notifications"}>Notifications</span>
+                    <MdCircleNotifications className={"notifications-icon"}/>
+                    <span className={"notifications-count"}>0</span>
+                </button>
 
             </section>
 
