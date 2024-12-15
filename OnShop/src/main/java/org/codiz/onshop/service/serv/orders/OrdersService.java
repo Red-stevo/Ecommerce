@@ -3,7 +3,6 @@ package org.codiz.onshop.service.serv.orders;
 
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
-import org.codiz.onshop.dtos.requests.ShipmentRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.entities.orders.ShippingStatus;
@@ -13,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public interface OrdersService {
@@ -34,4 +31,5 @@ public interface OrdersService {
     String updateShippingStatus(String orderId, ShippingStatus status);
     ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
     HttpStatus makeOrder(List<MakingOrderRequest> request, String userId);
+    PaymentDetails getPaymentDetails(String userId);
 }

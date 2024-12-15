@@ -268,13 +268,13 @@ public class UsersServiceImpl implements UsersService {
     public HttpStatus updateEmail(String userId,String email) {
 
         if (usersRepository.existsByUserEmail(email)){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+            throw new ResponseStatusException(HttpStatus.OK, "User already exists");
         }
 
         Users users = usersRepository.findUsersByUserId(userId);
 
         if (users == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new ResponseStatusException(HttpStatus.OK, "User not found");
         }
 
 
