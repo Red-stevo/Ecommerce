@@ -47,7 +47,7 @@ const AddIconForm= (props) => {
             if (!file) return;
 
             /*Check the file size, if too large ignore the file.*/
-            if (file.size > 10485760)return;
+            if (file.size > 10485760) return;
 
             /*add file to the upload list.*/
             setIconUpload(() => file);

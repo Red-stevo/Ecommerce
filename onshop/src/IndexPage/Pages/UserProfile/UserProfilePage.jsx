@@ -11,7 +11,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
     getUserProfile,
-    UpdateEmail, updateUserEmail
+    UpdateEmail, updateProfileImage, updateUserEmail
 } from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 import {useForm} from "react-hook-form";
 import {FaEdit} from "react-icons/fa";
@@ -66,9 +66,19 @@ const UserProfilePage = () => {
         dispatch(updateUserEmail(email.email));
     }
 
-    const handleImageChange = (inputData) => {
-        console.log(inputData);
+    const handleImageChange = (event) => {
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const upload = event.target.files[0];
+
+        if (!upload) return;
+
+        /*Check the file size, if too large ignore the file.*/
+        if (upload.size > 10485760) return;
+
+        dispatch(updateProfileImage({userId, upload}));
     }
+
+
 
     return (
         <div className={"user-profile-page"}>
@@ -89,7 +99,7 @@ const UserProfilePage = () => {
                         <label htmlFor={"image-profile-input"}>
                             <FaEdit className={"image-profile-input-icon"}/>
                         </label>
-                        <input {...register("upload")} onChange={handleSubmit(handleImageChange)}
+                        <input  onChange={handleImageChange}
                             id={"image-profile-input"} type={"file"} className={"input-profile-image"}/>
                     </div>
 

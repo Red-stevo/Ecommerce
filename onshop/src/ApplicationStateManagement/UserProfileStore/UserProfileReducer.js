@@ -1,6 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 
+
 const userProfileAdapter = createEntityAdapter();
 
 
@@ -32,6 +33,7 @@ export const UpdateEmail = createAsyncThunk("userProfile/updateEmail",
         try {
             await RequestsConfig.put(`/customer/profile/update/email/${userId}`, email,
                 {headers:{"Content-Type": "application/json"} });
+
             return fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
@@ -51,14 +53,23 @@ export const updateUserData = createAsyncThunk("userProfile/updateData",
         }
     });
 
-export const updateProfileImage = createAsyncThunk("userProfile/updateData",
+export const updateProfileImage = createAsyncThunk("userProfile/profileImage",
     async (data = null, {
         fulfillWithValue,
-        rejectWithValue}) => {
+        rejectWithValue,
+        dispatch }) => {
 
     const {userId, upload} = data;
+
+    const formData = new FormData();
+    formData.append("upload", upload);
+
         try {
-            await RequestsConfig.put(`customer/profile/image/update/{{userId}}`, data, {headers:{"Content-Type": "application/json"}})
+            const res = await RequestsConfig.put(`customer/profile/image/update/${userId}`, formData,
+                {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+
+            await dispatch(getUserProfile(userId));
+
             return fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
@@ -124,6 +135,21 @@ const UserProfileReducer = createSlice({
             state.loading = false;
             state.success = false;
             state.error = action.payload ? action.payload : "Error Updating the User Data.";
+        })
+        .addCase(updateProfileImage.pending, (state) => {
+            state.loading = true;
+            state.success = null;
+            state.error = null;
+        })
+        .addCase(updateProfileImage.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = action.payload;
+            state.error = null;
+        })
+        .addCase(updateProfileImage.rejected, (state, action) => {
+            state.loading = false;
+            state.success = false;
+            state.error = action.payload ? action.payload : "Error Updating the User Profile Image.";
         })
 });
 

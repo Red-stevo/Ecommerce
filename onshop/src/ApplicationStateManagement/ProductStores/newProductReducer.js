@@ -1,5 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
+import {updateProfileImage} from "../UserProfileStore/UserProfileReducer.js";
 
 const newProductAdapter = createEntityAdapter();
 
@@ -55,6 +56,22 @@ export const postProduct = createAsyncThunk("new-product/create",
 );
 
 
+export const deleteProduct = createAsyncThunk("new-product/delete-product",
+    async (productId= null, {
+               fulfillWithValue,
+               rejectWithValue
+           }) => {
+
+        /*Axios request to save products.*/
+        try {
+            await RequestsConfig.post(`/admin/products/delete-product?productId=${productId}`);
+            return fulfillWithValue(true);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    });
+
+
 
 const newProductReducer = createSlice(
     {
@@ -74,7 +91,22 @@ const newProductReducer = createSlice(
                 state.success = null;
                 state.loading = false;
                 state.errorMessage = action.payload ? action.payload : "Error Posting Products.";
-            });
+            })
+            .addCase(deleteProduct.pending, (state) => {
+                state.loading = true;
+                state.success = null;
+                state.error = null;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.success = action.payload;
+                state.error = null;
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.success = false;
+                state.error = action.payload ? action.payload : "Error Deleting Product.";
+            })
         }
     }
 );

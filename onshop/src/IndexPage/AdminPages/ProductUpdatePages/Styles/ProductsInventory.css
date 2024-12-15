@@ -87,6 +87,7 @@
 
 .trash-product-inventory {
     align-self: center;
+    cursor: pointer;
 }
 
 .filter-holder {
