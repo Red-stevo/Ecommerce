@@ -7,6 +7,7 @@ import {PiArrowFatLeftThin, PiArrowFatRightThin} from "react-icons/pi";
 import {useDispatch} from "react-redux";
 import {useEffect} from "react";
 import {fetchInventory} from "../../../ApplicationStateManagement/InventoryStore/InventoryReducer.js";
+import {deleteProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 
 const  InventoryResponse  = [
     {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
@@ -59,6 +60,8 @@ const ProductsInventory = () => {
     const handlePageClick = (event) => {
 
     };
+
+    const handleDeleteProduct = (productId) => {dispatch(deleteProduct(productId));}
 
     return (
         <div className={"inventory-page"}>
@@ -114,7 +117,7 @@ const ProductsInventory = () => {
 
                 <div className={"inventory-page-products-section-products"}>
                     {InventoryResponse && InventoryResponse.length > 0 && InventoryResponse.map(
-                    ({productName, unitPrice,quantity, imageUrl, status}, index) => (
+                    ({productName, unitPrice,quantity, imageUrl, status, productId}, index) => (
                         <div key={index}
                             className={`inventory-page-products-section-product 
                             ${status === 1 && " red-border "}
@@ -136,7 +139,8 @@ const ProductsInventory = () => {
 
                             <div className={"edit-delete-inventory-buttons"}>
                                 <Button className={"app-button edit-product-inventory"}><CiEdit /> Edit</Button>
-                                <FiTrash2 className={"trash-product-inventory"} />
+                                <FiTrash2 className={"trash-product-inventory"}
+                                          onClick={() => handleDeleteProduct(productId)}/>
                             </div>
 
                         </div>
