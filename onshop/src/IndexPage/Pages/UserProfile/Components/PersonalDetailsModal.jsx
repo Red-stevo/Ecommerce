@@ -4,7 +4,10 @@ import {Form, FormGroup} from "react-bootstrap";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {updateUserData} from "../../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
+import {
+    updateUserData,
+    updateUserState
+} from "../../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 
 const PersonalDetailsModal= (props) => {
     const {reset, register, handleSubmit
@@ -17,6 +20,9 @@ const PersonalDetailsModal= (props) => {
 
     const handleUserDataUpdate = (data) => {
        dispatch(updateUserData(data));
+
+       /*Update the current state.*/
+        dispatch(updateUserState(data));
     }
 
     return (

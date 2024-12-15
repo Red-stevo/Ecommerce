@@ -5,7 +5,7 @@ const userProfileAdapter = createEntityAdapter();
 
 
 const initialState = userProfileAdapter.getInitialState({
-    error:"", loading:false, success:null, userProfileDetails:{ email:""}
+    error:"", loading:false, success:null, userProfileDetails:{}
 });
 
 
@@ -56,7 +56,10 @@ const UserProfileReducer = createSlice({
     initialState,
     reducers:{
         updateUserEmail:(state, action) => {
-            state.userProfileDetails.email = action.payload
+            state.userProfileDetails.email = action.payload;
+        },
+        updateUserState:(state, action) => {
+            state.userProfileDetails = {...action.payload, ...state.userProfileDetails};
         }
     },
     extraReducers:builder => builder
@@ -69,7 +72,7 @@ const UserProfileReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.userProfileDetails = {...action.payload};
+            state.userProfileDetails = action.payload;
         })
         .addCase(getUserProfile.rejected, (state, action) => {
             state.loading = false;
@@ -104,11 +107,12 @@ const UserProfileReducer = createSlice({
         .addCase(updateUserData.rejected, (state, action) => {
             state.loading = false;
             state.success = false;
-            state.error = action.payload ? action.payload : "Error Updating the Email.";
+            state.error = action.payload ? action.payload : "Error Updating the User Data.";
         })
 });
 
 
 export default  UserProfileReducer.reducer;
 
-export const { updateUserEmail} = UserProfileReducer.actions;
+export const { updateUserEmail, updateUserState
+} = UserProfileReducer.actions;
