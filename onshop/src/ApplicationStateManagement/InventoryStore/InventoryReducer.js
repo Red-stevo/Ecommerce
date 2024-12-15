@@ -5,7 +5,7 @@ const inventoryAdapter = createEntityAdapter();
 
 
 const initialState = inventoryAdapter.getInitialState({
-    error:"", loading:false, success:null
+    error:"", loading:false, success:null, data:{}
 });
 
 
@@ -15,7 +15,7 @@ export const fetchInventory = createAsyncThunk("inventory/fetchProducts",
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue((await RequestsConfig.get(``)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/admin/products/show-inventory`)).data);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -36,6 +36,7 @@ const InventoryReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
+            state.data = action.payload;
         })
         .addCase(fetchInventory.rejected, (state, action) => {
             state.loading = false;
