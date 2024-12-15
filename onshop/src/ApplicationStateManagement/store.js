@@ -9,19 +9,13 @@ import OrderStatusReducer from "./OrderStatusStore/OrderStatusReducer.js";
 import openCageReducer from "./OpenCage/openCageReducer.js";
 import UserProfileReducer from "./UserProfileStore/UserProfileReducer.js";
 import ordersStore from "./OdersStore/ordersStore.js";
+import InventoryReducer from "./InventoryStore/InventoryReducer.js";
 
 
 export const store = configureStore({
     reducer:{
         productReducer:productStore,
-        newProductReducer:newProductReducer,
-        CategoriesReducer:CategoriesReducer,
-        SearchProducts:SearchProducts,
-        CartReducer:CartReducer,
-        WishListReducer:WishListReducer,
-        OrderStatusReducer:OrderStatusReducer,
-        openCageReducer:openCageReducer,
-        UserProfileReducer:UserProfileReducer,
-        ordersStore:ordersStore
+        newProductReducer, CategoriesReducer, SearchProducts, CartReducer, WishListReducer,
+        OrderStatusReducer, openCageReducer, UserProfileReducer, ordersStore, InventoryReducer
     }
 })
