@@ -33,6 +33,7 @@ export const UpdateEmail = createAsyncThunk("userProfile/updateEmail",
         try {
             await RequestsConfig.put(`/customer/profile/update/email/${userId}`, email,
                 {headers:{"Content-Type": "application/json"} });
+
             return fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
@@ -55,7 +56,8 @@ export const updateUserData = createAsyncThunk("userProfile/updateData",
 export const updateProfileImage = createAsyncThunk("userProfile/profileImage",
     async (data = null, {
         fulfillWithValue,
-        rejectWithValue,}) => {
+        rejectWithValue,
+        dispatch }) => {
 
     const {userId, upload} = data;
 
@@ -63,8 +65,10 @@ export const updateProfileImage = createAsyncThunk("userProfile/profileImage",
     formData.append("upload", upload);
 
         try {
-            await RequestsConfig.put(`customer/profile/image/update/${userId}`, formData,
+            const res = await RequestsConfig.put(`customer/profile/image/update/${userId}`, formData,
                 {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+
+            await dispatch(getUserProfile(userId));
 
             return fulfillWithValue(true);
         }catch (error){
