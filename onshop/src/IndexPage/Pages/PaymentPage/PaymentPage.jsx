@@ -7,6 +7,9 @@ import {useEffect, useState} from "react";
 import {TbMoneybag} from "react-icons/tb";
 import {FaPlus} from "react-icons/fa";
 import EditLocationModal from "./Components/EditLocationModal.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import PaymentReducer, {getPaymentDetails} from "../../../ApplicationStateManagement/PaymentStore/PaymentReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 const paymentDetails = {
     username:"Bob Mirowe",
@@ -23,10 +26,19 @@ const paymentDetails = {
 }
 
 const PaymentPage = () => {
+    const {paymentDetails, loading, error} = useSelector(state => state.PaymentReducer);
     const {username, phoneNumber, location, products, productsAmount,
     shippingCost} = paymentDetails;
     const [productCount, setProductsCount] = useState(0);
     const [modalShow, setModalShow] = useState(false);
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        dispatch(getPaymentDetails(userId));
+    }, []);
+
 
     useEffect(() => {
         const setItemsCount = () => {
@@ -148,6 +160,8 @@ const PaymentPage = () => {
 
 
             <EditLocationModal show={modalShow} onHide={() => setModalShow(false)}  />
+
+            {loading && <Loader />}
         </div>
     );
 };

@@ -1,20 +1,21 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import {RequestsConfig} from "../RequestsConfig.js";
 
 
 const paymentAdapter = createEntityAdapter();
 
 
 const initialState = paymentAdapter.getInitialState({
-    error:"",loading:false, success:null
+    error:"",loading:false, success:null, paymentDetails:{}
 });
 
 
 export const getPaymentDetails = createAsyncThunk("location/fetch",
-    async (query = null, {fulfillWithValue,
+    async (userId = null, {fulfillWithValue,
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue((await openCageAxiosConfig.get(``)).data);
+            return fulfillWithValue((await RequestsConfig.get(`/costumer/orders/payment-details/${userId}`)).data);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -35,6 +36,7 @@ const PaymentReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
+            state.paymentDetails = action.payload;
         })
         .addCase(getPaymentDetails.rejected, (state, action) => {
             state.loading = false;
