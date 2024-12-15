@@ -2,6 +2,7 @@ package org.codiz.onshop.service.serv.products;
 
 
 import org.codiz.onshop.dtos.requests.FileUploads;
+import org.codiz.onshop.dtos.requests.InventoryRequestFilter;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
 import org.codiz.onshop.dtos.requests.RatingsRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -33,7 +34,7 @@ public interface ProductsService {
     EntityResponse updateCategory(String categoryId,String categoryName, MultipartFile fileUploads) throws IOException;
     List<CategoryResponse> findAllCategories();
     String deleteCategory(String categoryId) throws IOException;
-    Page<InventoryResponse> inventoryList(InventoryStatus inventoryStatus, String categoryName,Float price1, Float price2, Pageable pageable );
+    Page<InventoryResponse> inventoryList(InventoryRequestFilter filter, Pageable pageable );
     ResponseEntity addToWishList(String specificProductId, String userId);
     HttpStatus deleteWishListItem(String userId, String specificProductIds);
     List<WishListResponse> getWishList(String userId);

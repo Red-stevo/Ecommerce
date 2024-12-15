@@ -159,30 +159,15 @@ public class OrdersImpl implements OrdersService {
 
             List<OrderItems> orderItems = new ArrayList<>();
 
-            double totalAmount = 0;
-            for (OrderItemsRequests itemsRequests : request.getRequestsList()) {
 
-
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(itemsRequests.getSpecificationId())
-                        .orElseThrow(()-> new ResourceCreationFailedException("Product not found"));
-                OrderItems items = new OrderItems();
-                items.setOrderId(order);
-                items.setQuantity(itemsRequests.getQuantity());
-                items.setSpecificProductDetails(details);
-                items.setStatus(OrderItemStatus.ACTIVE);
-
-                double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
-                items.setTotalPrice(totalPrice);
-                totalAmount += totalPrice;
-                ordersItemsRepository.save(items);
-                orderItems.add(items);
-                details.setCount(details.getCount() - itemsRequests.getQuantity());
-                specificProductsRepository.save(details);
-
-
-            }
             Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
-            newOrder.setTotalAmount(totalAmount);
+            List<OrderItems> orderItemsList = orders.getOrderItems();
+            float amount = 0;
+            for (OrderItems orderItem : orderItemsList) {
+                amount += (orderItem.getSpecificProductDetails().getProductPrice() - orderItem
+                        .getSpecificProductDetails().getDiscount()) * orderItem.getQuantity();
+            }
+            newOrder.setTotalAmount(amount);
             newOrder.setOrderItems(orderItems);
             newOrder.setOrderStatus(OrderStatus.UNDELIVERED);
             ordersRepository.save(newOrder);
@@ -348,7 +333,8 @@ public class OrdersImpl implements OrdersService {
 
             return new PageImpl<>(responses) ;
         }catch (Exception e) {
-            throw new EntityDeletionException("could not find");
+            e.printStackTrace();
+            throw new ResourceNotFoundException("could not find orders");
         }
     }
 

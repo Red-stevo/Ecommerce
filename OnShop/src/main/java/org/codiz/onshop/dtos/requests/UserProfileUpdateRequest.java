@@ -7,9 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class UserProfileUpdateRequest {
     private String userId;
-    private String firstName;
-    private MultipartFile imageUrl;
-    private String secondaryEmail;
+    private String fullName;
+    private String phoneNumber;
     private Gender gender;
     private String address;
 }

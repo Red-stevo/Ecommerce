@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.ControllerAdvice.custom.InvalidTokensException;
+import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.ControllerAdvice.custom.UserDoesNotExistException;
 import org.codiz.onshop.dtos.requests.*;
 import org.codiz.onshop.dtos.response.*;
@@ -29,8 +30,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -219,17 +222,26 @@ public class UsersServiceImpl implements UsersService {
 
 
     public UserProfileResponse showUserProfile(String userId){
-        Users users = usersRepository.findUsersByUsername(userId).get();
-        UserProfiles profiles = userProfilesRepository.findByUserId(users);
+       try {
+           log.info("userId :"+ userId);
+           Users users = usersRepository.findUsersByUserId(userId);
 
-        UserProfileResponse userProfileResponse = new UserProfileResponse();
-        userProfileResponse.setUsername(users.getUsername());
-        userProfileResponse.setFullName(profiles.getFullName());
-        userProfileResponse.setGender(String.valueOf(profiles.getGender()));
-        userProfileResponse.setEmail(users.getUserEmail());
-        userProfileResponse.setPhoneNumber(users.getPhoneNumber());
-        userProfileResponse.setAddress(profiles.getAddress());
-        return userProfileResponse;
+           UserProfiles profiles = users.getProfile();
+
+           UserProfileResponse userProfileResponse = new UserProfileResponse();
+           userProfileResponse.setUsername(users.getUsername());
+           userProfileResponse.setFullName(profiles.getFullName());
+           userProfileResponse.setProfileImageUrl(profiles.getImageUrl());
+           userProfileResponse.setGender(String.valueOf(profiles.getGender()));
+           userProfileResponse.setEmail(users.getUserEmail());
+           userProfileResponse.setPhoneNumber(users.getPhoneNumber());
+           userProfileResponse.setAddress(profiles.getAddress());
+           System.out.println(userProfileResponse);
+           return userProfileResponse;
+       }catch (Exception e){
+           e.printStackTrace();
+           throw new ResourceNotFoundException("could not find user");
+       }
     }
 
     public HttpStatus updateProfile(UserProfileUpdateRequest request) {
@@ -241,10 +253,12 @@ public class UsersServiceImpl implements UsersService {
         }
 
 
-        profiles.setFullName(request.getFirstName());
+        profiles.setFullName(request.getFullName());
         profiles.setGender(request.getGender());
         profiles.setAddress(request.getAddress());
-        profiles.setSecondaryEmail(request.getSecondaryEmail());
+        users.setPhoneNumber(request.getPhoneNumber());
+
+        usersRepository.save(users);
 
         userProfilesRepository.save(profiles);
         return HttpStatus.OK;
@@ -252,24 +266,31 @@ public class UsersServiceImpl implements UsersService {
     }
 
     public HttpStatus updateEmail(String userId,String email) {
+
+        if (usersRepository.existsByUserEmail(email)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+        }
+
         Users users = usersRepository.findUsersByUserId(userId);
+
         if (users == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        if (Objects.equals(users.getUserEmail(), email)){
-            users.setUserEmail(email);
-        } else if (Objects.equals(users.getProfile().getSecondaryEmail(), email)) {
-            users.setUserEmail(email);
-        }
+
+
+        users.setUserEmail(email);
+
 
         usersRepository.save(users);
+        log.info("email updated successfully");
         return HttpStatus.OK;
     }
 
-    public HttpStatus updateProfileImage(String userId, FileUploads uploads){
+    public HttpStatus updateProfileImage(String userId, MultipartFile upload) throws IOException {
         Users users = usersRepository.findUsersByUserId(userId);
         UserProfiles profiles = users.getProfile();
-        profiles.setImageUrl(cloudinaryService.uploadImage(uploads));
+        FileUploads image = new FileUploads(upload.getOriginalFilename(),upload.getBytes());
+        profiles.setImageUrl(cloudinaryService.uploadImage(image));
         userProfilesRepository.save(profiles);
         return HttpStatus.OK;
     }
