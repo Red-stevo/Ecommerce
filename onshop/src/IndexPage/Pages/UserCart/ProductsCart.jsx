@@ -13,6 +13,7 @@ import {deleteCartItem, getCartItems, removeItems
 import noCartImage from "./../../../assets/NoCartItems.png";
 import Loader from "../../../Loading/Loader.jsx";
 import ErrorModal from "../../ErrorModal.jsx";
+import {makeOrder} from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
 
 
 const ProductsCart = () => {
@@ -89,6 +90,11 @@ const ProductsCart = () => {
             setError("No Selected Item!");
             return;
         }
+
+        let request = [];
+        selectedProducts.forEach((id) => request = [...request, {specificationId:id, quantity: 1}]);
+        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
+        dispatch(makeOrder(cartData));
     }
 
 
