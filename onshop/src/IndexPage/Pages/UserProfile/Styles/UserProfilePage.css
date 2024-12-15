@@ -250,6 +250,17 @@
     .notification-details{
         flex-direction: column;
     }
+
+    .image-profile-input-holder {
+        bottom: 150px;
+        left: 225px;
+        padding: 6px;
+    }
+
+    .image-profile-input-icon {
+        font-size: 18px;
+    }
+
 }
 
 
@@ -282,6 +293,17 @@
         height: 140px;
         border-radius: 50%;
     }
+
+    .image-profile-input-holder {
+        bottom: 90px;
+        left: 120px;
+        padding: 6px;
+    }
+
+    .image-profile-input-icon {
+        font-size: 16px;
+    }
+
 
     .user-profile-username, .user-profile-email {
         font-weight: 500;

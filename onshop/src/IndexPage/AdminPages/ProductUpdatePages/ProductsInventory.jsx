@@ -4,9 +4,11 @@ import {CiEdit} from "react-icons/ci";
 import { FiTrash2 } from "react-icons/fi";
 import ReactPaginate from "react-paginate";
 import {PiArrowFatLeftThin, PiArrowFatRightThin} from "react-icons/pi";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import {fetchInventory} from "../../../ApplicationStateManagement/InventoryStore/InventoryReducer.js";
+import InventoryReducer, {fetchInventory} from "../../../ApplicationStateManagement/InventoryStore/InventoryReducer.js";
+import {deleteProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
+import CategoriesReducer, {getCategories} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 
 const  InventoryResponse  = [
     {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
@@ -50,15 +52,21 @@ const categories = [
 
 const ProductsInventory = () => {
     const dispatch = useDispatch();
+    const {InventoryResponse} = useSelector(state => state.InventoryReducer);
+    const {categories} = useSelector(state => state.CategoriesReducer);
 
     useEffect(() => {
         dispatch(fetchInventory());
+
+        dispatch(getCategories());
     }, []);
 
 
     const handlePageClick = (event) => {
 
     };
+
+    const handleDeleteProduct = (productId) => {dispatch(deleteProduct(productId));}
 
     return (
         <div className={"inventory-page"}>
@@ -114,7 +122,7 @@ const ProductsInventory = () => {
 
                 <div className={"inventory-page-products-section-products"}>
                     {InventoryResponse && InventoryResponse.length > 0 && InventoryResponse.map(
-                    ({productName, unitPrice,quantity, imageUrl, status}, index) => (
+                    ({productName, unitPrice,quantity, imageUrl, status, productId}, index) => (
                         <div key={index}
                             className={`inventory-page-products-section-product 
                             ${status === 1 && " red-border "}
@@ -136,7 +144,8 @@ const ProductsInventory = () => {
 
                             <div className={"edit-delete-inventory-buttons"}>
                                 <Button className={"app-button edit-product-inventory"}><CiEdit /> Edit</Button>
-                                <FiTrash2 className={"trash-product-inventory"} />
+                                <FiTrash2 className={"trash-product-inventory"}
+                                          onClick={() => handleDeleteProduct(productId)}/>
                             </div>
 
                         </div>
