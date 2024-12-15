@@ -1,6 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
 
+
 const userProfileAdapter = createEntityAdapter();
 
 
@@ -54,7 +55,7 @@ export const updateUserData = createAsyncThunk("userProfile/updateData",
 export const updateProfileImage = createAsyncThunk("userProfile/profileImage",
     async (data = null, {
         fulfillWithValue,
-        rejectWithValue}) => {
+        rejectWithValue,}) => {
 
     const {userId, upload} = data;
 
@@ -63,7 +64,8 @@ export const updateProfileImage = createAsyncThunk("userProfile/profileImage",
 
         try {
             await RequestsConfig.put(`customer/profile/image/update/${userId}`, formData,
-                {headers:{"Content-Type": "application/x-www-form-urlencoded"}})
+                {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+
             return fulfillWithValue(true);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
