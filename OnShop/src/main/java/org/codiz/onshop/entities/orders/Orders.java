@@ -24,7 +24,6 @@ public class Orders {
     private Users userId;
     private Instant createdOn;
     private double totalAmount;
-    private String officeAddress;
     private String latitude;
     private String longitude;
     private ShippingStatus shippingStatus;
