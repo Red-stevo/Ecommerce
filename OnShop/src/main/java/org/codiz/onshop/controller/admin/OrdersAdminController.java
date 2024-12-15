@@ -26,9 +26,11 @@ public class OrdersAdminController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> getAllOrdersGroupedByDate(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                                   @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                                   PagedResourcesAssembler<AllOrdersResponse> assembler) {
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>>
+    getAllOrdersGroupedByDate(@RequestParam(value = "page", defaultValue = "0") int page,
+                              @RequestParam(value = "size", defaultValue = "10") int size,
+                              PagedResourcesAssembler<AllOrdersResponse> assembler) {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<AllOrdersResponse>  responses = ordersService.getAllOrdersGroupedByDate(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
@@ -37,9 +39,10 @@ public class OrdersAdminController {
 
 
     @GetMapping("/delivered")
-    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> getDeliveredOrders(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                      @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                      PagedResourcesAssembler<AllOrdersResponse> assembler){
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>>
+    getDeliveredOrders(@RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "size", defaultValue = "10") int size,
+                       PagedResourcesAssembler<AllOrdersResponse> assembler){
         Pageable pageable = PageRequest.of(page, size);
         Page<AllOrdersResponse>  responses = ordersService.getDeliveredOrders(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
@@ -47,9 +50,10 @@ public class OrdersAdminController {
     }
 
     @GetMapping("/undelivered")
-    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> getUndeliveredOrders(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                      @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                      PagedResourcesAssembler<AllOrdersResponse> assembler){
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>>
+    getUndeliveredOrders(@RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size,
+                         PagedResourcesAssembler<AllOrdersResponse> assembler){
         Pageable pageable = PageRequest.of(page, size);
         Page<AllOrdersResponse>  responses = ordersService.getUndeliveredOrders(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
@@ -57,18 +61,20 @@ public class OrdersAdminController {
     }
 
     @GetMapping("/shipping")
-    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> getShipping(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                      @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                      PagedResourcesAssembler<AllOrdersResponse> assembler){
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>>
+    getShipping(@RequestParam(value = "page", defaultValue = "0") int page,
+                @RequestParam(value = "size", defaultValue = "10") int size,
+                PagedResourcesAssembler<AllOrdersResponse> assembler){
         Pageable pageable = PageRequest.of(page, size);
         Page<AllOrdersResponse>  responses = ordersService.getShippingOrders(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
         return ResponseEntity.ok(pagedModel);
     }
     @GetMapping("/cancelled")
-    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>> cancelledOrders(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                      @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                      PagedResourcesAssembler<AllOrdersResponse> assembler){
+    public ResponseEntity<PagedModel<EntityModel<AllOrdersResponse>>>
+    cancelledOrders(@RequestParam(value = "page", defaultValue = "0") int page,
+                    @RequestParam(value = "size", defaultValue = "10") int size,
+                    PagedResourcesAssembler<AllOrdersResponse> assembler){
         Pageable pageable = PageRequest.of(page, size);
         Page<AllOrdersResponse>  responses = ordersService.getCancelledOrders(pageable);
         PagedModel<EntityModel<AllOrdersResponse>> pagedModel = assembler.toModel(responses);
@@ -84,7 +90,8 @@ public class OrdersAdminController {
 
 
     @PutMapping("/update_shipping-status")
-    public ResponseEntity<String> updateShippingStatus(@RequestParam String orderId, @RequestParam ShippingStatus status){
+    public ResponseEntity<String> updateShippingStatus(
+            @RequestParam String orderId, @RequestParam ShippingStatus status){
         String result = ordersService.updateShippingStatus(orderId, status);
         return ResponseEntity.ok(result);
     }
