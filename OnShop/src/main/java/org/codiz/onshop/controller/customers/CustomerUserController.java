@@ -9,6 +9,9 @@ import org.codiz.onshop.service.serv.users.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +35,7 @@ public class CustomerUserController {
         return ResponseEntity.ok(usersService.updateEmail(userId, email.getEmail()));
     }
     @PutMapping("/image/update/{userId}")
-    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, @RequestBody FileUploads uploads){
-        return ResponseEntity.ok(usersService.updateProfileImage(userId,uploads));
+    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, MultipartFile upload) throws IOException {
+        return ResponseEntity.ok(usersService.updateProfileImage(userId,upload));
     }
 }

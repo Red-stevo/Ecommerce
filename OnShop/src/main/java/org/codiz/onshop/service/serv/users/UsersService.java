@@ -9,7 +9,9 @@ import org.codiz.onshop.dtos.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -25,5 +27,5 @@ public interface UsersService {
     UserProfileResponse showUserProfile(String userId);
     HttpStatus updateProfile(UserProfileUpdateRequest request);
     HttpStatus updateEmail(String userId,String email);
-    HttpStatus updateProfileImage(String userId, FileUploads uploads);
+    HttpStatus updateProfileImage(String userId, MultipartFile upload) throws IOException;
 }

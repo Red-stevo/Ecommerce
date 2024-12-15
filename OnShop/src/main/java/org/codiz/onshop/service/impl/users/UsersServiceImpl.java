@@ -30,8 +30,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -284,10 +286,10 @@ public class UsersServiceImpl implements UsersService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus updateProfileImage(String userId, FileUploads uploads){
+    public HttpStatus updateProfileImage(String userId, MultipartFile upload) throws IOException {
         Users users = usersRepository.findUsersByUserId(userId);
         UserProfiles profiles = users.getProfile();
-        FileUploads image = new FileUploads(uploads.getFileName(),uploads.getFileData());
+        FileUploads image = new FileUploads(upload.getOriginalFilename(),upload.getBytes());
         profiles.setImageUrl(cloudinaryService.uploadImage(image));
         userProfilesRepository.save(profiles);
         return HttpStatus.OK;
