@@ -45,6 +45,9 @@ public class Orders {
         if (this.shippingStatus == null) {
             this.shippingStatus = ShippingStatus.PLACED_ORDER;
         }
+        if (this.getCreatedOn() == null) {
+            this.createdOn = Instant.now();
+        }
     }
 
 }

@@ -55,4 +55,9 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.makeOrder(request,userId));
     }
 
+    @GetMapping("/payment-details")
+    public ResponseEntity<PaymentDetails> getCustomerDetails(String userId){
+        return ResponseEntity.ok(ordersService.getPaymentDetails(userId));
+    }
+
 }

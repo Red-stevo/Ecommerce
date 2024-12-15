@@ -541,4 +541,48 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
+    public PaymentDetails getPaymentDetails(String userId){
+        try {
+
+            Users usr = usersRepository.findUsersByUserId(userId);
+            Orders orders = ordersRepository.findByUserId(usr);
+            if (orders == null){
+                log.error("could not find payment details");
+                return null;
+            }
+
+            PaymentDetails paymentDetails = new PaymentDetails();
+            paymentDetails.setUsername(usr.getUsername());
+            paymentDetails.setOrderId(orders.getOrderId());
+            paymentDetails.setPhoneNumber(usr.getPhoneNumber());
+            if (orders.getOfficeAddress() != null){
+                paymentDetails.setLocation(orders.getOfficeAddress());
+            }else
+                paymentDetails.setLocation(orders.getLongitude()+","+orders.getLatitude());
+
+            List<PaymentProducts> products = new ArrayList<>();
+            float totals = 0;
+            for (OrderItems orderItems : orders.getOrderItems()) {
+                PaymentProducts productDetails = new PaymentProducts();
+                productDetails.setProductId(orderItems.getOrderItemId());
+                productDetails.setProductName(orderItems.getSpecificProductDetails().getProducts().getProductName());
+                productDetails.setProductCount(orderItems.getQuantity());
+                productDetails.setProductImage(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+                float price = (orderItems.getSpecificProductDetails().getProductPrice() - orderItems.getSpecificProductDetails().getDiscount()) * orderItems.getQuantity();
+                productDetails.setProductPrice(price);
+                totals += price;
+                products.add(productDetails);
+            }
+            paymentDetails.setProducts(products);
+
+            paymentDetails.setProductsAmount(totals);
+            paymentDetails.setShippingCost(0);
+
+            return paymentDetails;
+
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not find the payment details");
+        }
+    }
+
 }

@@ -35,7 +35,7 @@ public class CustomerUserController {
         return ResponseEntity.ok(usersService.updateEmail(userId, email.getEmail()));
     }
     @PutMapping("/image/update/{userId}")
-    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId, MultipartFile upload) throws IOException {
+    public ResponseEntity<HttpStatus>  updateProfileImage(@PathVariable String userId,@RequestPart MultipartFile upload) throws IOException {
         return ResponseEntity.ok(usersService.updateProfileImage(userId,upload));
     }
 }
