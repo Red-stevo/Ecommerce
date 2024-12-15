@@ -93,6 +93,8 @@ const ProductsCart = () => {
         selectedProducts.forEach((id) => request = [...request, {specificationId:id, quantity: 1}]);
         const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
         dispatch(makeOrder(cartData));
+
+        navigate("/home/user/payment");
     }
 
 
@@ -101,6 +103,7 @@ const ProductsCart = () => {
             <div className={"no-cart-items"}>
                 <span className={"title-empty-list"}>Oops! Your Cart is Empty.</span>
                 <Image src={noCartImage} className={"no-cart-items-image"}/>
+                <button onClick={() => navigate("/home/products/All%2BProducts")}>Continue Shopping</button>
             </div>
         );
     }
@@ -142,7 +145,8 @@ const ProductsCart = () => {
                     </div>
 
                     <div className={"button-shop"}>
-                        <span className={"continue-shopping"} title={"Continue Shopping"}>
+                        <span className={"continue-shopping"} title={"Continue Shopping"}
+                              onClick={() => navigate("/home/products/All%2BProducts")}>
                             <PiArrowFatLeftThin title={"Continue Shopping"}
                                                 className={`${index === 0 ? "unhidden-arrow" : "hidden-arrow"}`}/>
                             <PiArrowFatLineLeftThin title={"Continue Shopping"}
