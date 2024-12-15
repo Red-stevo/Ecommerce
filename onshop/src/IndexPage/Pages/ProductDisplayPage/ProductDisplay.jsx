@@ -35,7 +35,7 @@ const ProductDisplay = () => {
 
     const handleAddToCart = () => {
 
-        const items = [{specificationId: productOnDisplay.productId, quantity: 1}];
+        const items = [{specificProductId: productOnDisplay.productId, quantity: 1}];
         const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",items};
         dispatch(addToCart(cartData));
     }

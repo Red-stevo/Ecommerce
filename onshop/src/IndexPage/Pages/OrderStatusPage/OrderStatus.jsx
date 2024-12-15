@@ -10,6 +10,7 @@ import {
     cancelOrderItem,
     getOrderStatus
 } from "../../../ApplicationStateManagement/OrderStatusStore/OrderStatusReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 const shippingStatus = {
 
@@ -74,13 +75,13 @@ const OrderStatus = () => {
     }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
     const handleCancelOrder = (productId) => {
-        const data = {userId:"12a8bb23-0d41-4118-bda0-0390f382814b", orderItemId:productId};
+        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", orderItemId:productId};
         dispatch(cancelOrderItem(data));
     }
 
     useEffect(() => {
 
-        const userId = "12a8bb23-0d41-4118-bda0-0390f382814b";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const getOrderItems = () => {
             dispatch(getOrderStatus(userId));
         }
@@ -110,13 +111,9 @@ const OrderStatus = () => {
 
 
                 <div className={"order-progress"}
-                     style={{
-                         width:`calc(100% - ${margins.marginsLeft + margins.marginRight}px)`,
+                     style={{width:`calc(100% - ${margins.marginsLeft + margins.marginRight}px)`,
                          marginLeft:`${margins.marginsLeft}px`, marginRight:`${margins.marginRight}px`}}>
-
-                    <div className={"order-progress-bar"}
-                         style={{width:`${calcProgressBarWidth}%`}} />
-
+                    <div className={"order-progress-bar"} style={{width:`${calcProgressBarWidth}%`}} />
                 </div>
 
             </section>
@@ -141,7 +138,7 @@ const OrderStatus = () => {
                 ))}
 
             </section>
-
+            {loading && <Loader />}
         </div>
     );
 };
