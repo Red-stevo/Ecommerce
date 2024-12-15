@@ -232,7 +232,7 @@ public class UsersServiceImpl implements UsersService {
         return userProfileResponse;
     }
 
-    public String updateProfile(UserProfileUpdateRequest request) {
+    public HttpStatus updateProfile(UserProfileUpdateRequest request) {
         Users users = usersRepository.findUsersByUserId(request.getUserId());
 
         UserProfiles profiles = userProfilesRepository.findByUserId(users);
@@ -247,11 +247,11 @@ public class UsersServiceImpl implements UsersService {
         profiles.setSecondaryEmail(request.getSecondaryEmail());
 
         userProfilesRepository.save(profiles);
-        return "profile updated";
+        return HttpStatus.OK;
 
     }
 
-    public String updateEmail(String userId,String email) {
+    public HttpStatus updateEmail(String userId,String email) {
         Users users = usersRepository.findUsersByUserId(userId);
         if (users == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -263,15 +263,15 @@ public class UsersServiceImpl implements UsersService {
         }
 
         usersRepository.save(users);
-        return "email updated";
+        return HttpStatus.OK;
     }
 
-    public String updateProfileImage(String userId, FileUploads uploads){
+    public HttpStatus updateProfileImage(String userId, FileUploads uploads){
         Users users = usersRepository.findUsersByUserId(userId);
         UserProfiles profiles = users.getProfile();
         profiles.setImageUrl(cloudinaryService.uploadImage(uploads));
         userProfilesRepository.save(profiles);
-        return "profile updated";
+        return HttpStatus.OK;
     }
 
 

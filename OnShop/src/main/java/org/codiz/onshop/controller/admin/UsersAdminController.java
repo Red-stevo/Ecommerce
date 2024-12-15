@@ -28,4 +28,5 @@ public class UsersAdminController {
     public ResponseEntity<List<UserResponse>> getAllUsers(){
         return ResponseEntity.ok(usersService.retrieveAllUsers());
     }
+
 }

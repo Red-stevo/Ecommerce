@@ -5,9 +5,8 @@ import lombok.Data;
 @Data
 public class CartItemsToAdd {
 
-    private String userId;
 
-    private String specificationId;
+    private String specificProductId;
 
     private int quantity;
 

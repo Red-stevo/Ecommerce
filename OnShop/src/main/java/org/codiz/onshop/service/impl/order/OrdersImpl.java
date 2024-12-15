@@ -14,6 +14,7 @@ import org.codiz.onshop.entities.orders.*;
 import org.codiz.onshop.entities.products.PopularProducts;
 import org.codiz.onshop.entities.products.SpecificProductDetails;
 import org.codiz.onshop.entities.users.Users;
+import org.codiz.onshop.repositories.cart.CartItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersItemsRepository;
 import org.codiz.onshop.repositories.order.OrdersRepository;
 import org.codiz.onshop.repositories.products.InventoryRepository;
@@ -58,6 +59,7 @@ public class OrdersImpl implements OrdersService {
     private final ModelMapper modelMapper;
     private final SpecificProductsRepository specificProductsRepository;
     private final PopularProductsRepository popularProductsRepository;
+    private final CartItemsRepository cartItemsRepository;
 
 
     public String generateShipmentTracingId() {
@@ -75,7 +77,7 @@ public class OrdersImpl implements OrdersService {
     }
 
     @Transactional
-    public String makeOrder(List<MakingOrderRequest> request, String userId) {
+    public HttpStatus makeOrder(List<MakingOrderRequest> request, String userId) {
         try {
 
             Users usr = usersRepository.findById(userId)
@@ -94,25 +96,45 @@ public class OrdersImpl implements OrdersService {
             /*int count = 1;*/
             for (MakingOrderRequest orderRequest : request) {
                 OrderItems orderItems = new OrderItems();
+                log.info("item id :" +orderRequest.getSpecificationId() + "quantity :"+orderRequest.getQuantity());
                 PopularProducts popularProducts = new PopularProducts();
-                SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(orderRequest.getSpecificProductId())
-                        .orElseThrow(()->new ResourceNotFoundException("could not get the products"));
+
+                SpecificProductDetails details;
+                details = specificProductsRepository.findBySpecificProductId(orderRequest.getSpecificationId()).orElse(null);
+
+                if (details == null){
+                    details =  cartItemsRepository.findCartItemsByCartItemId(orderRequest.getSpecificationId()).getProducts();
+                }
+
+                if (ordersItemsRepository.existsOrderItemsBySpecificProductDetails(details)){
+                    log.info("product already exists");
+                    OrderItems items = ordersItemsRepository.findOrderItemsBySpecificProductDetails(details);
+                    if (items.getStatus() == OrderItemStatus.CANCELLED){
+                        items.setStatus(OrderItemStatus.ACTIVE);
+                    }
+                    return HttpStatus.OK;
+                }
                 orderItems.setSpecificProductDetails(details);
                 orderItems.setQuantity(orderRequest.getQuantity());
                 orderItems.setOrderId(orders);
                 /*popularProducts.setSpecificProductDetails(details);
                 popularProducts.setCount(count);*/
-                popularProductsRepository.save(popularProducts);
+
                 orderItemsList.add(orderItems);
+                //popularProductsRepository.save(popularProducts);
+
             }
+
+
             ordersItemsRepository.saveAll(orderItemsList);
 
-            return "Order placed successfully";
+            return HttpStatus.OK;
         } catch (NoSuchElementException e) {
             throw new ResourceCreationFailedException("User not found");
         } catch (ResourceCreationFailedException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResourceCreationFailedException("Could not make the order");
         }
     }
@@ -147,7 +169,7 @@ public class OrdersImpl implements OrdersService {
                 items.setOrderId(order);
                 items.setQuantity(itemsRequests.getQuantity());
                 items.setSpecificProductDetails(details);
-                items.setStatus(OrderItemStatus.PENDING);
+                items.setStatus(OrderItemStatus.ACTIVE);
 
                 double totalPrice = (details.getProductPrice() - details.getDiscount()) * itemsRequests.getQuantity();
                 items.setTotalPrice(totalPrice);
@@ -174,7 +196,7 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
-    public String removeOrderItems(String orderItemId,String userId) {
+    public HttpStatus removeOrderItems(String orderItemId,String userId) {
         try {
             OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).get();
             if (!userId.equals(items.getOrderId().getUserId().getUserId())){
@@ -183,7 +205,8 @@ public class OrdersImpl implements OrdersService {
             productsService.addProductQuantity(items.getSpecificProductDetails().getSpecificProductId(), items.getQuantity());
             items.setStatus(OrderItemStatus.CANCELLED);
             ordersItemsRepository.save(items);
-            return "item successfully removed";
+            log.info("cancelled successfully");
+            return HttpStatus.OK;
         }catch (Exception e) {
             throw new EntityDeletionException("could not remove the order item from orders");
         }
@@ -280,6 +303,7 @@ public class OrdersImpl implements OrdersService {
 
             return response;
         }catch (Exception e){
+            e.printStackTrace();
             throw new ResourceNotFoundException("could not find order");
         }
 
@@ -465,14 +489,17 @@ public class OrdersImpl implements OrdersService {
         return "order status updated successfully";
     }
 
+    @Transactional
     public OrderStatusResponse getShippingStatus(String userId){
         try{
             Users usr = usersRepository.findUsersByUserId(userId);
 
             Orders orders = ordersRepository.findByUserId(usr);
+
             ShippingStatus status = orders.getShippingStatus();
             OrderStatusResponse orderStatus = new OrderStatusResponse();
             orderStatus.setOrderId(orders.getOrderId());
+
             if (status == ShippingStatus.SIGNED){
                 orderStatus.setStatus(status.ordinal() + 1);
             }else {
@@ -480,17 +507,26 @@ public class OrdersImpl implements OrdersService {
             }
 
             List<OrderTrackingProducts> products = new ArrayList<>();
+            log.info("filtering the itemsList");
+            List<OrderItems> itemsList = orders.getOrderItems().stream().filter(
+                    orderItems -> orderItems.getStatus() != OrderItemStatus.CANCELLED).toList();
+            log.info("list filtered");
 
-            for (OrderItems items : orders.getOrderItems()){
+            for (OrderItems items : itemsList){
                 OrderTrackingProducts orderTrackingProducts = new OrderTrackingProducts();
                 orderTrackingProducts.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
                 orderTrackingProducts.setProductPrice(items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount());
                 orderTrackingProducts.setProductName(items.getSpecificProductDetails().getProducts().getProductName());
+                orderTrackingProducts.setProductQuantity(items.getQuantity());
+                orderTrackingProducts.setSpecificProductId(items.getOrderItemId());
+
                 products.add(orderTrackingProducts);
             }
             orderStatus.setProducts(products);
+            log.info("success in getting the order status");
             return orderStatus;
         }catch (Exception e){
+            e.printStackTrace();
             throw new ResourceNotFoundException("could not find shipping status");
         }
     }

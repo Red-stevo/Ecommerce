@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +49,10 @@ public class CartImpl implements CartService {
 
 
     @Transactional
-    public ResponseEntity addItemToCart(CartItemsToAdd items) {
+    public ResponseEntity addItemToCart(List<CartItemsToAdd> items,String userId) {
        try {
-           Users users = usersRepository.findUsersByUserId(items.getUserId());
+           System.out.println(userId);
+           Users users = usersRepository.findUsersByUserId(userId);
 
 
            if (users == null) {
@@ -65,28 +65,32 @@ public class CartImpl implements CartService {
                        newCart.setUsers(users);
                        return cartRepository.save(newCart);
                    });
-
-       /* Products product = productsRepository.findById(items.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));*/
-
-           SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(items.getSpecificationId())
-                   .orElseThrow(()->new ResourceNotFoundException("product not found"));
-
+                List<CartItems> cartItemsList = new ArrayList<>();
+                log.info("specific :"+items);
+            for (CartItemsToAdd item : items) {
+                SpecificProductDetails productDetails = specificProductsRepository.findBySpecificProductId(item.getSpecificProductId())
+                        .orElseThrow(()->new ResourceNotFoundException("product not found"));
 
 
-           if (cartItemsRepository.existsByProducts(productDetails)){
-               log.info("item exists");
-               return new ResponseEntity<>(HttpStatus.OK);
+
+                if (cartItemsRepository.existsByProducts(productDetails)){
+                    log.info("item exists");
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+
+                CartItems newCartItem = new CartItems();
+                newCartItem.setProducts(productDetails);
+                newCartItem.setQuantity(item.getQuantity());
+                newCartItem.setCart(cart);
+                cartItemsList.add(newCartItem);
+
             }
 
-           CartItems newCartItem = new CartItems();
-           newCartItem.setProducts(productDetails);
-           newCartItem.setQuantity(items.getQuantity());
-           newCartItem.setCart(cart);
-           cartItemsRepository.save(newCartItem);
+            cartItemsRepository.saveAll(cartItemsList);
 
            return new ResponseEntity<>(HttpStatus.OK);
        }catch (Exception e){
+           e.printStackTrace();
            throw new ResourceCreationFailedException("could not add item to cart");
        }
     }

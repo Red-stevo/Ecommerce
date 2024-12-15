@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class MakingOrderRequest {
-    private String specificProductId;
+    private String specificationId;
     private int quantity;
 }

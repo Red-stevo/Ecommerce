@@ -10,4 +10,8 @@ public class OrderTrackingProducts {
     private String productName;
 
     private float productPrice;
+
+    private int productQuantity;
+
+    private String specificProductId;
 }

@@ -5,25 +5,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-
-@Configuration
 @Data
+@Configuration
 public class DarajaConfig {
-    @Value("${consumer-key}")
+    //@Value("${consumer-key}")
     private String consumerKey;
 
-    @Value("${consumer-secret}")
+    //@Value("${consumer-secret}")
     private String consumerSecret;
 
-    @Value("${base-url}")
+    //@Value("${base-url}")
     private String baseUrl;
-    @Value("${short-code}")
+    //@Value("${short-code}")
     private String shortCode;
 
-    @Value("${passkey}")
+    //@Value("${passkey}")
     private String passKey;
 
-    @Value("${callback-url}")
+    //@Value("${callback-url}")
     private String callbackUrl;
 
     @Bean

@@ -9,6 +9,7 @@ import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.entities.orders.ShippingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ import java.util.Map;
 @Service
 public interface OrdersService {
     EntityResponse placeOrder(OrderPlacementRequest request);
-    String removeOrderItems(String orderItemId,String userId);
+   HttpStatus removeOrderItems(String orderItemId,String userId);
     EntityDeletionResponse cancelOrder(String orderId,String username);
     OrdersResponse getOrders(String orderId);
     Page<AllOrdersResponse> getAllOrdersGroupedByDate(Pageable pageable);
@@ -32,5 +33,5 @@ public interface OrdersService {
     OrderStatusResponse getShippingStatus(String userId);
     String updateShippingStatus(String orderId, ShippingStatus status);
     ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
-    String makeOrder(List<MakingOrderRequest> request, String userId);
+    HttpStatus makeOrder(List<MakingOrderRequest> request, String userId);
 }

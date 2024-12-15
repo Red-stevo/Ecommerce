@@ -3,10 +3,12 @@ package org.codiz.onshop.controller.customers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.dtos.requests.CancelOrderRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.service.serv.orders.OrdersService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,9 @@ public class OrdersCustomerController {
     }
 
     @PutMapping("/cancel-order-item")
-    public ResponseEntity<String> removeOrderItems(@RequestParam String orderItemId, @RequestParam String userId){
-        return ResponseEntity.ok(ordersService.removeOrderItems(orderItemId, userId));
+    public ResponseEntity<HttpStatus> removeOrderItems(@RequestBody CancelOrderRequest data){
+        log.info("request to cancel order");
+        return ResponseEntity.ok(ordersService.removeOrderItems(data.getOrderItemId(), data.getUserId()));
     }
 
 
@@ -38,6 +41,7 @@ public class OrdersCustomerController {
 
     @GetMapping("/get-order-status") /*Done*/
     public ResponseEntity<OrderStatusResponse> getOrderStatus(@RequestParam String userId){
+        log.info("user is :" + userId);
         return ResponseEntity.ok(ordersService.getShippingStatus(userId));
     }
 
@@ -47,7 +51,7 @@ public class OrdersCustomerController {
     }
 
     @PostMapping("/make-order")
-    public ResponseEntity<String> makeOrder(@RequestBody List<MakingOrderRequest> request, @RequestParam String userId){
+    public ResponseEntity<HttpStatus> makeOrder(@RequestBody List<MakingOrderRequest> request, @RequestParam String userId){
         return ResponseEntity.ok(ordersService.makeOrder(request,userId));
     }
 

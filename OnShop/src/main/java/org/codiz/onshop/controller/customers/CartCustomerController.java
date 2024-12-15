@@ -22,10 +22,10 @@ public class CartCustomerController {
 
     private final CartService cartService;
 
-    @PostMapping("/add-to-cart")
-    public ResponseEntity addItemToCart(@RequestBody CartItemsToAdd itemsToAdd) {
+    @PostMapping("/add-to-cart/{userId}")
+    public ResponseEntity addItemToCart(@RequestBody List<CartItemsToAdd> items,@PathVariable String userId) {
 
-            return ResponseEntity.ok(cartService.addItemToCart(itemsToAdd));
+            return ResponseEntity.ok(cartService.addItemToCart(items,userId));
     }
 
     @PutMapping("update-cart")
