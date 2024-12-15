@@ -15,23 +15,10 @@ import {
 } from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
 import {useForm} from "react-hook-form";
 
-
-
-const userProfileDetails = {
-    userProfileImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.d7mM-baDdCa6BOkxDwQdDwHaH6%26pid%3DApi&f=1&ipt=31109a06cc8020942c4fa80eca12537d34d498ed928ee25d22e910fd71fab11c&ipo=images",
-    username:"Stevo",
-    email:"stephenmuiru@gmail.com",
-    fullName:"Stephen Muiru",
-    phoneNumber:"+254110555949",
-    address:"Kimathi way, Nyeri, Kenya.",
-    gender:"Male"
-}
-
-
 const defaultImage = {
     female:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.2oQt34IoSR8xxxC18BxxSAHaHa%26pid%3DApi&f=1&ipt=7dc022e1de22d506b7a32e3d13af6881373b07fde2f687f4346ab332ff88d2be&ipo=images",
     male:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.d7mM-baDdCa6BOkxDwQdDwHaH6%26pid%3DApi&f=1&ipt=31109a06cc8020942c4fa80eca12537d34d498ed928ee25d22e910fd71fab11c&ipo=images",
-    default:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.RJHoTYI8wI7PtFxNzWXbwAHaHa%26pid%3DApi&f=1&ipt=12c1c2d6eae5a2cf82cbbff9450ea4fff43ea9cbaab13dbd21b1d0b10f645fc6&ipo=images"
+    defaultI:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.RJHoTYI8wI7PtFxNzWXbwAHaHa%26pid%3DApi&f=1&ipt=12c1c2d6eae5a2cf82cbbff9450ea4fff43ea9cbaab13dbd21b1d0b10f645fc6&ipo=images"
 }
 
 
@@ -43,6 +30,7 @@ const linksList = [
 
 
 const UserProfilePage = () => {
+    const {male, female, defaultI} =defaultImage;
     const {userProfileDetails, loading, success, error} = useSelector(state => state.UserProfileReducer);
     const {profileImageUrl, address, email
         , fullName, gender, phoneNumber, username} = userProfileDetails;
@@ -84,7 +72,8 @@ const UserProfilePage = () => {
 
                 <div className={"notification-details"}>
 
-                    <Image className={"user-profile-image-url"} src={profileImageUrl} />
+                    <Image className={"user-profile-image-url"} src={
+                        profileImageUrl?profileImageUrl:gender==="MALE"?male:gender==="FEMALE"?female:defaultI} />
 
                     <div className={"user-profile-details"}>
                         <span className={"user-profile-username"}>{username}</span>

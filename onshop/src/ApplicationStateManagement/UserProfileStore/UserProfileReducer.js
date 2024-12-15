@@ -59,7 +59,7 @@ const UserProfileReducer = createSlice({
             state.userProfileDetails.email = action.payload;
         },
         updateUserState:(state, action) => {
-            state.userProfileDetails = {...action.payload, ...state.userProfileDetails};
+            state.userProfileDetails = { ...state.userProfileDetails, ...action.payload};
         }
     },
     extraReducers:builder => builder
