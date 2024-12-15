@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
+import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
@@ -150,7 +151,6 @@ public class OrdersImpl implements OrdersService {
             Users usr = usersRepository.findUsersByUserId(request.getUserId());
             orders.setUserId(usr);
             orders.setCreatedOn(Instant.now());
-            orders.setOfficeAddress(request.getOfficeAddress());
             if (longitude != null && latitude != null) {
                 orders.setLongitude(longitude);
                 orders.setLatitude(latitude);
@@ -280,11 +280,9 @@ public class OrdersImpl implements OrdersService {
 
             response.setOrderSummary(orderSummary);
 
-            if (orders.getOfficeAddress() != null) {
-                response.setAddress(orders.getOfficeAddress());
-            }else {
-                response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
-            }
+
+            response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
+
 
             return response;
         }catch (Exception e){
@@ -389,11 +387,10 @@ public class OrdersImpl implements OrdersService {
         response.setOrderDate(dateCreated);
         response.setOrderTotal((float) order.getTotalAmount());
         //response.setOrderStatus(order.getOrderStatus().toString());
-        if (order.getOfficeAddress() != null) {
-            response.setOrderAddress(order.getOfficeAddress());
-        }else {
-            response.setOrderAddress(order.getLongitude()+","+order.getLatitude());
-        }
+
+
+        response.setOrderAddress(order.getLongitude()+","+order.getLatitude());
+
         getOrderItemsResponse(order, response);
         return response;
     }
@@ -436,11 +433,9 @@ public class OrdersImpl implements OrdersService {
         response.setOrderId(order.getOrderId());
         response.setOrderStatus(order.getOrderStatus().toString());
 
-        if (order.getOfficeAddress() != null) {
-            response.setOrderAddress(order.getOfficeAddress());
-        } else {
-            response.setOrderAddress(order.getLongitude() + "," + order.getLatitude());
-        }
+
+        response.setOrderAddress(order.getLongitude() + "," + order.getLatitude());
+
 
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDate localDate = order.getCreatedOn().atZone(zoneId).toLocalDate();
@@ -541,6 +536,7 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
+    @Transactional
     public PaymentDetails getPaymentDetails(String userId){
         try {
 
@@ -555,10 +551,7 @@ public class OrdersImpl implements OrdersService {
             paymentDetails.setUsername(usr.getUsername());
             paymentDetails.setOrderId(orders.getOrderId());
             paymentDetails.setPhoneNumber(usr.getPhoneNumber());
-            if (orders.getOfficeAddress() != null){
-                paymentDetails.setLocation(orders.getOfficeAddress());
-            }else
-                paymentDetails.setLocation(orders.getLongitude()+","+orders.getLatitude());
+            paymentDetails.setLocation(usr.getProfile().getAddress());
 
             List<PaymentProducts> products = new ArrayList<>();
             float totals = 0;
@@ -577,11 +570,63 @@ public class OrdersImpl implements OrdersService {
 
             paymentDetails.setProductsAmount(totals);
             paymentDetails.setShippingCost(0);
+            log.info("success");
 
             return paymentDetails;
 
         }catch (Exception e){
+            e.printStackTrace();
             throw new ResourceNotFoundException("could not find the payment details");
+        }
+    }
+
+    public HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest){
+        try {
+            Users usr = usersRepository.findUsersByUserId(userId);
+            Orders orders = ordersRepository.findByUserId(usr);
+            orders.setLongitude(locationRequest.getLongitude());
+            orders.setLatitude(locationRequest.getLatitude());
+            ordersRepository.save(orders);
+
+            return HttpStatus.OK;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResourceCreationFailedException("could not update shipping details");
+        }
+    }
+
+    public HttpStatus updateShippingQuantity(String orderItemId, int quantity){
+        try {
+           OrderItems orderItems = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).orElse(null);
+           if (orderItems == null){
+               return HttpStatus.OK;
+           }
+           orderItems.setQuantity(quantity);
+           return HttpStatus.OK;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResourceCreationFailedException("could not update shipping quantity");
+        }
+    }
+
+    public SpecificOrderItemResponse getOrderItemDetails(String orderItemId){
+        try {
+            OrderItems orderItems = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).orElse(null);
+            if (orderItems == null){
+                return null;
+            }
+            SpecificOrderItemResponse itemResponse = new SpecificOrderItemResponse();
+            itemResponse.setActive(orderItems.getStatus() == OrderItemStatus.ACTIVE);
+            itemResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+            itemResponse.setProportion(orderItems.getSpecificProductDetails().getSize());
+            itemResponse.setVariety(orderItems.getSpecificProductDetails().getColor());
+            itemResponse.setQuantity(orderItems.getQuantity());
+            itemResponse.setProductName(orderItems.getSpecificProductDetails().getProducts().getProductName());
+            itemResponse.setProductDescription(orderItems.getSpecificProductDetails().getProducts().getProductDescription());
+            return itemResponse;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResourceNotFoundException("could not get order item details");
         }
     }
 

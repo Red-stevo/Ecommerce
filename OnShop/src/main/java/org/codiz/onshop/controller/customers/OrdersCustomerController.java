@@ -4,6 +4,7 @@ package org.codiz.onshop.controller.customers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.CancelOrderRequest;
+import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -55,9 +56,23 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.makeOrder(request,userId));
     }
 
-    @GetMapping("/payment-details")
-    public ResponseEntity<PaymentDetails> getCustomerDetails(String userId){
+    @GetMapping("/payment-details/{userId}")
+    public ResponseEntity<PaymentDetails> getCustomerDetails(@PathVariable String userId){
         return ResponseEntity.ok(ordersService.getPaymentDetails(userId));
     }
 
+    @PutMapping("/update-shipping-details/{userId}")
+    public ResponseEntity<HttpStatus> updateShippingDetails(@PathVariable String userId, @RequestBody LocationRequest locationRequest){
+        return ResponseEntity.ok(ordersService.updateShippingDetails(userId,locationRequest));
+    }
+
+    @PutMapping("/update-order-quantity/{orderItemId}")
+    public ResponseEntity<HttpStatus> updateShippingQuantity(@PathVariable String orderItemId, @RequestParam int quantity){
+        return ResponseEntity.ok(ordersService.updateShippingQuantity(orderItemId,quantity));
+    }
+
+    @GetMapping("/specific-order-item/{orderItemId}")
+    public ResponseEntity<SpecificOrderItemResponse> getOrderItemDetails(@PathVariable String orderItemId){
+        return ResponseEntity.ok(ordersService.getOrderItemDetails(orderItemId));
+    }
 }
