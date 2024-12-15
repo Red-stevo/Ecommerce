@@ -1,7 +1,11 @@
 import {Image} from "react-bootstrap";
 import {RxTriangleDown, RxTriangleUp} from "react-icons/rx";
+import {useState} from "react";
+
 
 const ProductDisplayComponent = ({productId, productImage, productName, productPrice, productCount}) => {
+    const [productQuantity, setProductQuantity] = useState(productCount ? productCount : 1);
+
     return (
         <div key={productId} className={"payment-page-products-section-product"}>
             <Image src={productImage}
@@ -15,9 +19,10 @@ const ProductDisplayComponent = ({productId, productImage, productName, productP
                 </span>
                 <span className={"payment-page-products-section-product-count"}>
                     <span className={"quantity-toggle-section"}>
-                        <RxTriangleUp/>
-                        {productCount}
-                        <RxTriangleDown/>
+                        <RxTriangleUp onClick={() => setProductQuantity(prevState => prevState +1)}/>
+                        <span className={"quantity"}>{productQuantity}</span>
+                        <RxTriangleDown onClick={() => setProductQuantity(prevState =>{
+                            if (prevState > 1) return prevState - 1; else return 1; })}/>
                     </span>
                 </span>
             </div>
