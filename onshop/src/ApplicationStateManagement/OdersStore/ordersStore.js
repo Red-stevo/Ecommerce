@@ -10,7 +10,7 @@ const initialState = ordersAdapter.getInitialState({
 
 
 export const getOrders = createAsyncThunk("orders/getOrders",
-    async (query = null, {
+    async (_, {
         fulfillWithValue,
         rejectWithValue}) => {
 
