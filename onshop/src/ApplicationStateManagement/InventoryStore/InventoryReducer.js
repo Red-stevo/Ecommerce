@@ -4,7 +4,7 @@ import {RequestsConfig} from "../RequestsConfig.js";
 const inventoryAdapter = createEntityAdapter();
 
 const initialState = inventoryAdapter.getInitialState({
-    error:"", loading:false, success:null, data:{}
+    error:"", loading:false, success:null, InventoryResponse:{}
 });
 
 
@@ -35,12 +35,12 @@ const InventoryReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.data = action.payload;
+            state.InventoryResponse = action.payload;
         })
         .addCase(fetchInventory.rejected, (state, action) => {
             state.loading = false;
             state.success = false;
-            state.error = action.payload ? action.payload : "Error Fetching Location";
+            state.error = action.payload ? action.payload : "Error Fetching Products";
         })
 });
 
