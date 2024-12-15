@@ -4,7 +4,11 @@ import {FaTrash} from "react-icons/fa";
 import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../../Loading/Loader.jsx";
 import {useEffect} from "react";
-import {deleteWishList, getWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {
+    clearWishList,
+    deleteWishList,
+    getWishList, removeWishListItems
+} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
 import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 
 
@@ -24,6 +28,8 @@ const WishListPage = () => {
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:productId};
         dispatch(deleteWishList(data));
+
+        dispatch(removeWishListItems(productId));
     }
 
     /*Clear the Whole Wish List.*/
@@ -31,6 +37,8 @@ const WishListPage = () => {
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
+
+        dispatch(clearWishList);
     }
 
     const handleAddAllToWishList = () => {
@@ -39,6 +47,8 @@ const WishListPage = () => {
         wishListProducts.forEach(({specificProductId}) => items = [...items, specificProductId]);
         const data = {userId, items};
         dispatch(addToCart(data));
+
+        dispatch(clearWishList);
     }
 
 
