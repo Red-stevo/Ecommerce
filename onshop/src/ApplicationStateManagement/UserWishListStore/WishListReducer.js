@@ -6,8 +6,10 @@ const wishListAdapter = createEntityAdapter();
 const initialState = wishListAdapter
     .getInitialState({errorMessage:"", loading:"", success:"",wishListProducts:[]});
 
-export const addToWishList = createAsyncThunk("wishlist/addToWishList",
-    async (productData = null, {fulfillWithValue,rejectWithValue}) => {
+export const addToWishList= createAsyncThunk("wishlist/addToWishList",
+    async (productData = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
 
         const {userId, specificationId} = productData;
         try {
@@ -19,12 +21,15 @@ export const addToWishList = createAsyncThunk("wishlist/addToWishList",
         }
     });
 
-export const deleteWishList = createAsyncThunk("wishList/deleteWishList",
-    async (data = null, {fulfillWithValue,rejectWithValue}) => {
+export const deleteWishList =
+    createAsyncThunk("wishList/deleteWishList",
+    async (data = null, {
+        fulfillWithValue
+        ,rejectWithValue}) =>{
         const {specificProductIds, userId} = data;
         try {
-            await RequestsConfig.put(`/customer/products/delete-wishlist/${userId}`,
-                {specificProductIds:specificProductIds});
+            await RequestsConfig
+                .put(`/customer/products/delete-wishlist/${userId}?specificProductIds=${specificProductIds}`);
             return fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
@@ -33,7 +38,9 @@ export const deleteWishList = createAsyncThunk("wishList/deleteWishList",
 
 
 export const getWishList = createAsyncThunk("wishList/getWishList",
-    async (userId = null, {fulfillWithValue,rejectWithValue}) => {
+    async (userId = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
         try {
             return fulfillWithValue((await RequestsConfig.get(`/customer/products/show-wishlist/${userId}`)).data);
         } catch (error) {
@@ -45,7 +52,12 @@ export const getWishList = createAsyncThunk("wishList/getWishList",
 const WishListReducer = createSlice({
     name:"wishList",
     initialState,
-    reducers:{},
+    reducers:{
+        removeWishListItems:(state, action) => {
+          state.wishListProducts = state.wishListProducts.filter(
+              ({specificProductId}) => specificProductId !== action.payload);},
+        clearWishList:(state) =>{state.wishListProducts = []}
+    },
     extraReducers: builder =>
         builder
             .addCase(addToWishList.pending, (state) => {
@@ -98,5 +110,9 @@ const WishListReducer = createSlice({
 
 export  default  WishListReducer.reducer;
 
+export const {
+    clearWishList,
+    removeWishListItems
+} = WishListReducer.actions;
 
 

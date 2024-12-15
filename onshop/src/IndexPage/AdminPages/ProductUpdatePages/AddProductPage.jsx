@@ -8,7 +8,7 @@ import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {postProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
-import {getCategories} from "../../../ApplicationStateManagement/CatetegoriesStore/CategoriesReducer.js";
+import {getCategories} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 
 const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);

@@ -4,32 +4,61 @@ import {FaTrash} from "react-icons/fa";
 import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../../Loading/Loader.jsx";
 import {useEffect} from "react";
-import {deleteWishList, getWishList} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {
+    clearWishList,
+    deleteWishList,
+    getWishList, removeWishListItems
+} from "../../../ApplicationStateManagement/UserWishListStore/WishListReducer.js";
+import {addToCart} from "../../../ApplicationStateManagement/UserCartStore/CartReducer.js";
 
 
 const WishListPage = () => {
     const dispatch = useDispatch();
-    const {loading, success, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
+    const {loading, wishListProducts, errorMessage} = useSelector(state => state.WishListReducer);
 
 
     useEffect(() => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         dispatch(getWishList(userId));
     }, []);
 
 
     /*Delete an Items in the wish List*/
     const handleDeleteItem = (productId) => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:productId};
         dispatch(deleteWishList(data));
+
+        dispatch(removeWishListItems(productId));
     }
 
     /*Clear the Whole Wish List.*/
     const handleDeleteWishList = () => {
-        const userId = "b69eb7ae-d567-45b8-a6a0-92c7f243874f";
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
+
+        dispatch(clearWishList());
+    }
+
+    const handleAddAllToWishList = () => {
+        let items = [];
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        wishListProducts.forEach(({specificProductId}) => items = [...items, {specificProductId, quantity:1}]);
+        const data = {userId, items};
+        dispatch(addToCart(data));
+
+        dispatch(clearWishList());
+    }
+
+    const handleAddToCart = (specificProductId) => {
+        const items = [{specificProductId, quantity:1}];
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+
+        const data = {userId, items};
+        dispatch(addToCart(data));
+
+        dispatch(removeWishListItems(specificProductId));
     }
 
 
@@ -61,20 +90,20 @@ const WishListPage = () => {
 
                             <div className={"down-details"}>
                                 <span className={"wish-list-product-color"}>Color : {productColor}</span>
-                                <Button className={"app-button add-cart-button"}>Add to Cart</Button>
+                                <Button className={"app-button add-cart-button"}
+                                        onClick={() => handleAddToCart(specificProductId)}>
+                                    Add to Cart
+                                </Button>
                             </div>
-
                         </div>
-
                         <FaTrash className={"delete-button"} onClick={() => handleDeleteItem(specificProductId)}/>
-                    </div>
-                ))}
+                    </div>))}
 
             </section>
 
             <section className={"wish-list-bottom-button"}>
-                <button className={"clear-wish-list"} onClick={() => handleDeleteWishList}>Clear WishList</button>
-                <Button className={"app-button add-all "}>Add All to Cart</Button>
+                <button className={"clear-wish-list"} onClick={handleDeleteWishList}>Clear WishList</button>
+                <Button className={"app-button add-all "} onClick={handleAddAllToWishList}>Add All to Cart</Button>
             </section>
 
             {loading && <Loader />}

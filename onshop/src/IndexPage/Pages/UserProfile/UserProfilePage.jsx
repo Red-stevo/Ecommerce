@@ -10,6 +10,7 @@ import Button from "react-bootstrap/Button";
 import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
 import {useState} from "react";
 import {IoAddSharp} from "react-icons/io5";
+import {useDispatch} from "react-redux";
 
 
 
@@ -44,6 +45,11 @@ const UserProfilePage = () => {
     const navigate = useNavigate();
     const [modalShow, setModalShow] = useState(false);
     const [readEmail, setReadEmail] = useState(false);
+    const dispatch = useDispatch();
+
+
+
+
 
 
     return (

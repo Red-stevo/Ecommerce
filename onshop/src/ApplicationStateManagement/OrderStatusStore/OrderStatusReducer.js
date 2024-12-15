@@ -7,9 +7,26 @@ const initialState = OrderStatusAdapter
 
 
 export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
-    async (userId = null, {fulfillWithValue,rejectWithValue}) => {
+    async (userId = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
         try {
-            return fulfillWithValue(await RequestsConfig.get(`/costumer/orders/get-order-status?userId=${userId}`));
+            return fulfillWithValue((await RequestsConfig.get(`/costumer/orders/get-order-status?userId=${userId}`)).data);
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.data);
+        }
+    });
+
+export const makeOrder = createAsyncThunk("orderStatus/make-order",
+    async (orderData = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
+
+        const {userId, request} = orderData;
+        try {
+            await RequestsConfig.post(`/costumer/orders/make-order?userId=${userId}`, request ,
+                {headers:{"Content-Type":'application/json'}})
+            return fulfillWithValue("Order Added successfully");
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
         }
@@ -17,12 +34,13 @@ export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
 
 
 export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
-    async (data = null, {fulfillWithValue,rejectWithValue}) => {
-
-    const {userId, orderItemId} = data;
+    async (data = null, {
+        fulfillWithValue,
+        rejectWithValue}) => {
+        console.log(data);
         try {
-            await RequestsConfig.put(`/costumer/orders/cancel-order-item?userId=${userId}&orderItemId=${orderItemId}`, _,
-                    {headers:{"Content-Type": "application/x-www-form-urlencoded"}});
+            await RequestsConfig.put(`/costumer/orders/cancel-order-item`, data,
+                {headers:{"Content-Type":'application/json'}});
             return fulfillWithValue(true);
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
@@ -32,7 +50,10 @@ export const cancelOrderItem = createAsyncThunk("orderStatus/cancelItem",
 const OrderStatusReducer = createSlice({
     name:"orderStatus",
     initialState,
-    reducers:{},
+    reducers:{
+        removeOrder:(state, action) => { state.shippingStatus.products = state.shippingStatus.products.filter(
+            ({specificProductId}) => specificProductId !== action.payload)}
+    },
     extraReducers: builder =>
         builder
             .addCase(getOrderStatus.pending, (state) => {
@@ -66,9 +87,25 @@ const OrderStatusReducer = createSlice({
                 state.loading = false;
                 state.success = null;
             })
+            .addCase(makeOrder.pending, (state) => {
+                state.success = null;
+                state.errorMessage = null;
+                state.loading = true;
+            })
+            .addCase(makeOrder.fulfilled, (state, action) => {
+                state.loading = false;
+                state.errorMessage = null;
+                state.success = action.payload;
+            })
+            .addCase(makeOrder.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                state.loading = false;
+                state.success = null;
+            })
 });
 
 export  default  OrderStatusReducer.reducer;
 
-
+export const  {removeOrder
+} = OrderStatusReducer.actions;
 
