@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.ControllerAdvice.custom.EntityDeletionException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
+import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
@@ -582,6 +583,33 @@ public class OrdersImpl implements OrdersService {
 
         }catch (Exception e){
             throw new ResourceNotFoundException("could not find the payment details");
+        }
+    }
+
+    public HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest){
+        try {
+            Users usr = usersRepository.findUsersByUserId(userId);
+            Orders orders = ordersRepository.findByUserId(usr);
+            orders.setLongitude(locationRequest.getLongitude());
+            orders.setLatitude(locationRequest.getLatitude());
+            ordersRepository.save(orders);
+
+            return HttpStatus.OK;
+        }catch (Exception e){
+            throw new ResourceCreationFailedException("could not update shipping details");
+        }
+    }
+
+    public HttpStatus updateShippingQuantity(String orderItemId, int quantity){
+        try {
+           OrderItems orderItems = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).orElse(null);
+           if (orderItems == null){
+               return HttpStatus.OK;
+           }
+           orderItems.setQuantity(quantity);
+           return HttpStatus.OK;
+        }catch (Exception e){
+            throw new ResourceCreationFailedException("could not update shipping quantity");
         }
     }
 

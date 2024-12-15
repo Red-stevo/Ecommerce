@@ -1,6 +1,7 @@
 package org.codiz.onshop.service.serv.orders;
 
 
+import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
@@ -32,4 +33,6 @@ public interface OrdersService {
     ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
     HttpStatus makeOrder(List<MakingOrderRequest> request, String userId);
     PaymentDetails getPaymentDetails(String userId);
+    HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest);
+    HttpStatus updateShippingQuantity(String orderItemId, int quantity);
 }
