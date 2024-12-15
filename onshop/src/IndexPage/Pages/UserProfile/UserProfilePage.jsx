@@ -8,9 +8,11 @@ import {useNavigate} from "react-router-dom";
 import {CiEdit} from "react-icons/ci";
 import Button from "react-bootstrap/Button";
 import PersonalDetailsModal from "./Components/PersonalDetailsModal.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {IoAddSharp} from "react-icons/io5";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {getUserProfile, UpdateEmail} from "../../../ApplicationStateManagement/UserProfileStore/UserProfileReducer.js";
+import {useForm} from "react-hook-form";
 
 
 
@@ -40,18 +42,31 @@ const linksList = [
 
 
 const UserProfilePage = () => {
+    const {userProfileDetails, loading, error} = useSelector(state => state.UserProfileReducer);
     const {userProfileImage, address, email
-        , fullName, gender, phoneNumber, username} = userProfileDetails;
+        , fullName, gender, phoneNumber, username, profileImageUrl} = userProfileDetails;
     const navigate = useNavigate();
     const [modalShow, setModalShow] = useState(false);
     const [readEmail, setReadEmail] = useState(false);
     const dispatch = useDispatch();
+    const {reset, handleSubmit, register
+    } = useForm();
+
+    useEffect(() => {
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        dispatch(getUserProfile(userId));
+    }, []);
+
+    useEffect(() => {
+        reset({email});
+    }, [email]);
 
 
-
-
-
-
+    const handleUpdateEmail = (email) => {
+        setReadEmail((prevState) => !prevState);
+        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", email};
+        dispatch(UpdateEmail(data));
+    }
     return (
         <div className={"user-profile-page"}>
             <PersonalDetailsModal show={modalShow} onHide={() => setModalShow(false)} />
@@ -130,7 +145,9 @@ const UserProfilePage = () => {
             <section className={"user-profile-email-section"}>
                 <span className={"email-header"}>My Email Address</span>
 
-                {readEmail ? <input className={"form-control email-input"} type={"text"} placeholder={"email"}/> :
+                {readEmail ?
+                    <input className={"form-control email-input"} type={"text"} placeholder={"email"}
+                           {...register("email") } /> :
                     email &&
                     <span className={"user-profile-email-holder"}>
                         <MdEmail className={"email-icon"}/>
@@ -141,7 +158,7 @@ const UserProfilePage = () => {
                 {!readEmail ? <button onClick={() => setReadEmail((prevState) => !prevState)}
                         className={"add-email-button"}>Change Email
                 </button> :
-                    <button onClick={() => setReadEmail((prevState) => !prevState)}
+                    <button onClick={handleSubmit(handleUpdateEmail)}
                         className={"add-email-button"}>Save</button>}
 
             </section>
