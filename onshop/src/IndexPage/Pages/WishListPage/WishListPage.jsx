@@ -44,11 +44,21 @@ const WishListPage = () => {
     const handleAddAllToWishList = () => {
         let items = [];
         const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
-        wishListProducts.forEach(({specificProductId}) => items = [...items, specificProductId]);
+        wishListProducts.forEach(({specificProductId}) => items = [...items, {specificProductId, quantity:1}]);
         const data = {userId, items};
         dispatch(addToCart(data));
 
         dispatch(clearWishList());
+    }
+
+    const handleAddToCart = (specificProductId) => {
+        const items = [{specificProductId, quantity:1}];
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+
+        const data = {userId, items};
+        dispatch(addToCart(data));
+
+        dispatch(removeWishListItems(specificProductId));
     }
 
 
@@ -80,7 +90,10 @@ const WishListPage = () => {
 
                             <div className={"down-details"}>
                                 <span className={"wish-list-product-color"}>Color : {productColor}</span>
-                                <Button className={"app-button add-cart-button"}>Add to Cart</Button>
+                                <Button className={"app-button add-cart-button"}
+                                        onClick={() => handleAddToCart(specificProductId)}>
+                                    Add to Cart
+                                </Button>
                             </div>
                         </div>
                         <FaTrash className={"delete-button"} onClick={() => handleDeleteItem(specificProductId)}/>
