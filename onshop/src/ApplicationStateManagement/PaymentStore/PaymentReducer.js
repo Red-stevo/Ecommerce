@@ -10,7 +10,7 @@ const initialState = paymentAdapter.getInitialState({
 });
 
 
-export const getPaymentDetails = createAsyncThunk("location/fetch",
+export const getPaymentDetails = createAsyncThunk("payment/fetch",
     async (userId = null, {fulfillWithValue,
         rejectWithValue}) => {
 
