@@ -1,10 +1,19 @@
 import {Image} from "react-bootstrap";
 import {RxTriangleDown, RxTriangleUp} from "react-icons/rx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useDispatch} from "react-redux";
+import {updateOrderQuantity} from "../../../../ApplicationStateManagement/PaymentStore/PaymentReducer.js";
 
 
 const ProductDisplayComponent = ({productId, productImage, productName, productPrice, productCount}) => {
     const [productQuantity, setProductQuantity] = useState(productCount ? productCount : 1);
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", quantity:productQuantity}
+        dispatch(updateOrderQuantity(data));
+    }, [productQuantity]);
 
     return (
         <div key={productId} className={"payment-page-products-section-product"}>

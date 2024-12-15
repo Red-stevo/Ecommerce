@@ -21,6 +21,20 @@ export const getPaymentDetails = createAsyncThunk("payment/fetch",
         }
     })
 
+export const updateOrderQuantity = createAsyncThunk("payment/updateQuantity",
+    async (data = null, {fulfillWithValue,
+        rejectWithValue}) => {
+
+    const {userId, quantity} = data;
+        try {
+            await RequestsConfig.put(`/costumer/orders/update-order-quantity/${userId}`, quantity,
+                {headers:{"Content-Type":"application/json"}});
+            return fulfillWithValue(true);
+        }catch (error){
+            return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
+        }
+    })
+
 
 const PaymentReducer = createSlice({
     name:"payment",
@@ -39,6 +53,21 @@ const PaymentReducer = createSlice({
             state.paymentDetails = action.payload;
         })
         .addCase(getPaymentDetails.rejected, (state, action) => {
+            state.loading = false;
+            state.success = false;
+            state.error = action.payload ? action.payload : "Error Fetching Payment Details";
+        })
+        .addCase(updateOrderQuantity.pending, (state) => {
+            state.loading = true;
+            state.success = null;
+            state.error = null;
+        })
+        .addCase(updateOrderQuantity.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success =action.payload;
+            state.error = null;
+        })
+        .addCase(updateOrderQuantity.rejected, (state, action) => {
             state.loading = false;
             state.success = false;
             state.error = action.payload ? action.payload : "Error Fetching Payment Details";
