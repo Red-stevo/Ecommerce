@@ -2,8 +2,8 @@ import "./Styles/OrderDisplay.css";
 import {FaRegUser} from "react-icons/fa";
 import {Button, Image} from "react-bootstrap";
 import {LiaTimesSolid} from "react-icons/lia";
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {updateOrderStatus} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 
@@ -78,6 +78,12 @@ const OrderDisplay = () => {
     const navigate = useNavigate();
     const [currentStatus, setCurrentStatus] = useState(orderStatus ? orderStatus : "UNDELIVERED");
     const dispatch = useDispatch();
+    const { orderid} = useParams();
+
+
+    useEffect(() => {
+
+    }, []);
 
     const handleStatusUpdate = () => {
 
@@ -87,7 +93,6 @@ const OrderDisplay = () => {
         const data = {orderId, status:currentStatus}
         dispatch(updateOrderStatus(data));
     }
-
 
 
     return (

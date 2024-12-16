@@ -38,8 +38,8 @@ const App = () => {
               <Route path={"/admin"} element={<AdminstrationSideBar />}>
                   <Route path={"/admin/newProduct"} element={<AddProductPage />} />
                   <Route path={"/admin"} element={<AllOrdersPage />} />
-                  <Route path={"/admin/orders/:orderId"} element={<OrderDisplay />} />
-                  <Route path={"/admin/orders/:orderId/:productId"} element={<SingleProductDisplay />} />
+                  <Route path={"/admin/orders/:orderid"} element={<OrderDisplay />} />
+                  <Route path={"/admin/orders/:orderid/:productId"} element={<SingleProductDisplay />} />
                   <Route path={"/admin/productCategories"} element={<ProductCategories />} />
                   <Route path={"/admin/productList"} element={<ProductsInventory />}/>
               </Route>
