@@ -3,6 +3,7 @@ import {FaRegUser} from "react-icons/fa";
 import {Button, Image} from "react-bootstrap";
 import {LiaTimesSolid} from "react-icons/lia";
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 
 
 const orderDetails = {
@@ -63,19 +64,24 @@ const orderDetails = {
     }
 }
 
+const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED","CANCELED", "ALL"];
+
 
 const OrderDisplay = () => {
-    const {
-        orderId, orderNumber,
-        orderSummary, orderStatus,
-        address, itemList,
-        totalCharges, customerDetails
-    } = orderDetails;
+    const {orderId, orderNumber, orderSummary, orderStatus, address,
+        itemList, totalCharges, customerDetails} = orderDetails;
     const {orderDate, orderTime, orderTotal, deliveryFee} = orderSummary;
-    const  {
-        numberOfItemsOrdered, ordersNumber,
-        customerEmail, customerName, customerPhone} = customerDetails;
+    const  {numberOfItemsOrdered, ordersNumber, customerEmail, customerName, customerPhone
+    } = customerDetails;
     const navigate = useNavigate();
+    const [currentStatus, setCurrentStatus] = useState(orderStatus ? orderStatus : "UNDELIVERED");
+
+    const handleStatusUpdate = () => {
+
+        if (statusList.indexOf(currentStatus) <= statusList.length - 2 )
+            setCurrentStatus(statusList[statusList.indexOf(currentStatus) + 1]);
+
+    }
 
 
 
@@ -89,7 +95,10 @@ const OrderDisplay = () => {
 
             <div className={"order-status-num"}>
                 <span className={"order-num"}>ID <span className={"order-number"}>#{orderId}</span></span>
-                <Button className={"order-status-button app-button"}>{orderStatus}</Button>
+
+                <Button className={"order-status-button app-button"} onClick={handleStatusUpdate}>
+                    {currentStatus}
+                </Button>
             </div>
 
 
