@@ -4,6 +4,8 @@ import {Button, Image} from "react-bootstrap";
 import {LiaTimesSolid} from "react-icons/lia";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {useDispatch} from "react-redux";
+import {updateOrderStatus} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 
 
 const orderDetails = {
@@ -75,12 +77,15 @@ const OrderDisplay = () => {
     } = customerDetails;
     const navigate = useNavigate();
     const [currentStatus, setCurrentStatus] = useState(orderStatus ? orderStatus : "UNDELIVERED");
+    const dispatch = useDispatch();
 
     const handleStatusUpdate = () => {
 
         if (statusList.indexOf(currentStatus) <= statusList.length - 2 )
             setCurrentStatus(statusList[statusList.indexOf(currentStatus) + 1]);
 
+        const data = {orderId, status:currentStatus}
+        dispatch(updateOrderStatus(data));
     }
 
 
