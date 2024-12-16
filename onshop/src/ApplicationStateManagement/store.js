@@ -11,12 +11,14 @@ import UserProfileReducer from "./UserProfileStore/UserProfileReducer.js";
 import ordersStore from "./OdersStore/ordersStore.js";
 import InventoryReducer from "./InventoryStore/InventoryReducer.js";
 import PaymentReducer from "./PaymentStore/PaymentReducer.js";
+import OrderInfoReducer from "./OrderInfoStore/OrderInfoReducer.js";
 
 
 export const store = configureStore({
     reducer:{
-        productReducer:productStore,
-        newProductReducer, CategoriesReducer, SearchProducts, CartReducer, WishListReducer,
-        OrderStatusReducer, openCageReducer, UserProfileReducer, ordersStore, InventoryReducer, PaymentReducer
+        productReducer:productStore, newProductReducer, CategoriesReducer,
+        SearchProducts, CartReducer, WishListReducer, OrderStatusReducer,
+        openCageReducer, UserProfileReducer, ordersStore, InventoryReducer,
+        PaymentReducer, OrderInfoReducer
     }
 })
