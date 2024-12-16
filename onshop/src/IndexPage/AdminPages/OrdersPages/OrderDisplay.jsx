@@ -6,6 +6,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {updateOrderStatus} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
+import {getOrderInfo} from "../../../ApplicationStateManagement/OrderInfoStore/OrderInfoReducer.js";
 
 
 const orderDetails = {
@@ -82,7 +83,7 @@ const OrderDisplay = () => {
 
 
     useEffect(() => {
-
+            dispatch(getOrderInfo(orderid));
     }, []);
 
     const handleStatusUpdate = () => {

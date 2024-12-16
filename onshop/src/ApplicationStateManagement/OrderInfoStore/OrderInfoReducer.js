@@ -10,12 +10,12 @@ const initialState = orderInfoAdapter.getInitialState({
 
 
 export const getOrderInfo = createAsyncThunk("orderInfo/getOrderInfo",
-    async (_, {
+    async (orderId = null, {
         fulfillWithValue,
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue(((await RequestsConfig.get("admin/orders/all")).data));
+            return fulfillWithValue(((await RequestsConfig.get(`costumer/orders/${orderId}`)).data));
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -42,7 +42,7 @@ const OrderInfoReducer = createSlice({
         .addCase(getOrderInfo.rejected, (state, action) => {
             state.loading = false;
             state.success = false;
-            state.error = action.payload ? action.payload : "Error Getting Orders!";
+            state.error = action.payload ? action.payload : "Error Getting Order Details!";
         })
 
 });
