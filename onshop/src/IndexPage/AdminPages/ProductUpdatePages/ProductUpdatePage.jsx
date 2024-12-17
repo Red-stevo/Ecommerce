@@ -79,12 +79,15 @@ const ProductUpdatePage = () => {
 
     return (
         <div className={"product-update-page"}>
+
             <input className={"product-update-page-name-update"} type={"text"}/>
-            <FloatingLabel className={"product-description product-update-page-description-update"}
-                           controlId="floatingTextarea" label="Product Decription">
-                <textarea required={true} className={"input-field form-control"}
-                    placeholder={"Product Description"} style={{height: '100px'}} id={"productDescription"}/>
+
+            <FloatingLabel className={"form-control product-update-page-description-update "} controlId="floatingTextarea"
+                           label="Product Decription">
+                <textarea required={true} className={"form-control description-update-input-field"}
+                          placeholder={"Product Description"} style={{height: '100px'}}/>
             </FloatingLabel>
+
 
             <section className={"product-update-page-categories"}>
                 {productCategories && productCategories.length > 0 &&
@@ -111,13 +114,13 @@ const ProductUpdatePage = () => {
             </div>
 
             <div className={"product-update-page-count-triangle"}>
-                <GoTriangleUp className={"product-update-page-triangle"} />
+                <GoTriangleUp className={"product-update-page-triangle"}/>
                 <input className={"product-update-page-count-update"} placeholder={"count"}/>
-                <GoTriangleDown className={"product-update-page-triangle"} />
+                <GoTriangleDown className={"product-update-page-triangle"}/>
             </div>
 
             <FileUploadPreview onChange={handleFileChange} previewImages={previewFile}
-                               handleRemove={handleImageRemove} />
+                               handleRemove={handleImageRemove}/>
 
         </div>
     );
