@@ -853,8 +853,9 @@ public class ProductsServiceImpl implements ProductsService {
         inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
         inventoryResponse.setQuantity(specificProductDetails.getCount());
         inventoryResponse.setImageUrl(imageUrl);
-        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
+        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus().ordinal());
         inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        inventoryResponse.setProductId(specificProductDetails.getProducts().getProductId());
 
         return inventoryResponse;
     }
@@ -1044,8 +1045,19 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-    public HttpStatus updateProductImage(String imag){
-        return null;
+    public HttpStatus deleteProductImage(String image) {
+
+        try{
+            ProductImages img = productImagesRepository.findByImageUrl(image).orElse(null);
+            if (img != null) {
+                productImagesRepository.delete(img);
+                cloudinaryService.deleteImage(image);
+            }
+           return HttpStatus.OK;
+        }catch (Exception e){
+            throw new EntityDeletionException("Could not update product image");
+        }
+
     }
 
 

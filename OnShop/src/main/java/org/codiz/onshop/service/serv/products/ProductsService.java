@@ -39,6 +39,7 @@ public interface ProductsService {
     HttpStatus deleteWishListItem(String userId, String specificProductIds);
     List<WishListResponse> getWishList(String userId);
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
+    HttpStatus deleteProductImage(String image);
 
 
 
