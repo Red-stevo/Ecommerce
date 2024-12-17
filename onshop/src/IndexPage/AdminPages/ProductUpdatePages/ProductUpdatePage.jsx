@@ -90,26 +90,26 @@ const ProductUpdatePage = () => {
 
 
             <section className={"product-update-page-categories"}>
-                {productCategories && productCategories.length > 0 &&
-                    productCategories.map((category, index) => (
-                        <div key={index} className={"categories-preview"}>
-                            {category}
-                            <IoIosClose className={"cancel-categories"}/>
-                        </div>
-                    ))
-                }
+
+                <div className={"selected-categories"}>
+                    {productCategories && productCategories.length > 0 &&
+                        productCategories.map((category, index) => (
+                            <div key={index} className={"categories-preview"}>
+                                {category}
+                                <IoIosClose className={"cancel-categories"}/>
+                            </div>))}
+                </div>
+
                 <input className={"input-category-select"} type={"text"}/>
             </section>
 
-            <div>
+            <div className={"product-update-page-proportion-variety-update"}>
                 <input className={"product-update-page-variety-update"} placeholder={"variety"}/>
-
                 <input className={"product-update-page-proportion-update"} placeholder={"proportion"}/>
             </div>
 
-            <div className={"proportion-variety-update-input"}>
+            <div className={"product-price-discount-update-input"}>
                 <input className={"product-update-page-price-update"} placeholder={"price"}/>
-
                 <input className={"product-update-page-discount-update"} placeholder={"discount"}/>
             </div>
 
