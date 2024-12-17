@@ -114,7 +114,7 @@ public class ProductsAdminController {
 
 
     @DeleteMapping("delete-product")
-    public ResponseEntity<String> deleteProduct(@RequestParam String productId){
+    public ResponseEntity<HttpStatus> deleteProduct(@RequestParam String productId){
         return ResponseEntity.ok(productsService.deleteProduct(productId));
     }
 

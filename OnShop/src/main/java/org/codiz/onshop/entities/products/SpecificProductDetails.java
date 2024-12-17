@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.codiz.onshop.entities.cart.CartItems;
+import org.codiz.onshop.entities.orders.OrderItems;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -30,14 +31,13 @@ public class SpecificProductDetails{
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductImages> productImagesList;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     @ToString.Exclude
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Products products;
 
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnore
     @ToString.Exclude
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -48,4 +48,9 @@ public class SpecificProductDetails{
     @JoinColumn(name = "cart_items")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CartItems cartItems;
+
+    @OneToMany(mappedBy = "specificProductDetails",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<OrderItems> orderItems;
 }

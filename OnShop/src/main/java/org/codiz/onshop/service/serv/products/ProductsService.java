@@ -27,7 +27,7 @@ public interface ProductsService {
     Page<ProductsPageResponse> productsPageResponseList(Pageable pageable);
     SpecificProductResponse specificProductResponse(String productId);
     EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest,List<FileUploads> uploads);
-    String deleteProduct(String productId);
+    HttpStatus deleteProduct(String productId);
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
     EntityResponse createCategory(String categoryNames, MultipartFile uploads);

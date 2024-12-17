@@ -160,7 +160,7 @@ public class ProductsServiceImpl implements ProductsService {
         try {
             Inventory inventory = new Inventory();
 
-            inventory.setStatus(InventoryStatus.INACTIVE);
+            inventory.setStatus(InventoryStatus.ACTIVE);
             inventory.setProducts(new ArrayList<>());
 
             Products product = new Products();
@@ -249,6 +249,7 @@ public class ProductsServiceImpl implements ProductsService {
                 if (productsList == null) {
                     productsList = Collections.emptyList(); // Avoid null
                 }
+
                 Collections.shuffle(productsList);
             } else {
                 // Search products by name or description
@@ -323,6 +324,10 @@ public class ProductsServiceImpl implements ProductsService {
             e.printStackTrace();
             throw new ResourceNotFoundException("An error occurred while fetching products.");
         }
+    }
+
+    private static boolean isProductActive(Products product) {
+        return product.getInventory().getStatus() == InventoryStatus.ACTIVE;
     }
 
 
@@ -687,8 +692,8 @@ public class ProductsServiceImpl implements ProductsService {
     /*
     * method to delete a product
     * */
-
-    public String deleteProduct(String productId){
+    @Transactional
+    public HttpStatus deleteProduct(String productId){
         try {
             Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
                     ()->new RuntimeException("The product with ID " + productId + " does not exist")
@@ -702,6 +707,7 @@ public class ProductsServiceImpl implements ProductsService {
                     try {
                         String imageUrl = productImages.getImageUrl();
                         cloudinaryService.deleteImage(imageUrl);
+                        log.info("deleted from cloudinary");
                     }catch (Exception e){
                         throw new RuntimeException("could not delete image from cloudinary");
                     }
@@ -712,8 +718,9 @@ public class ProductsServiceImpl implements ProductsService {
 
 
             productsRepository.delete(products);
-            return "product successfully deleted";
+            return HttpStatus.OK;
         } catch (Exception e){
+            e.printStackTrace();
             throw new EntityDeletionException("could not delete the product");
         }
 
@@ -1059,6 +1066,8 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
     }
+
+
 
 
 
