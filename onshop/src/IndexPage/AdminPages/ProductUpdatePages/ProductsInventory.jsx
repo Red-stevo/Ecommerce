@@ -9,6 +9,7 @@ import {useEffect} from "react";
 import InventoryReducer, {fetchInventory} from "../../../ApplicationStateManagement/InventoryStore/InventoryReducer.js";
 import {deleteProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 import CategoriesReducer, {getCategories} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 const  InventoryResponse  = [
     {productName:"Wireless Earbuds", unitPrice:3500, quantity:103, status:1,imageUrl:"https://i5.walmartimages.com/asr/c48aa8a1-95bf-4c40-b798-d55eac7eff39_1.098ecde4b7f02c72568e2e00ae8f9864.jpeg"},
@@ -38,7 +39,7 @@ const  InventoryResponse  = [
 
 const ProductsInventory = () => {
     const dispatch = useDispatch();
-    const {InventoryResponse} = useSelector(state => state.InventoryReducer);
+    const {InventoryResponse, page, loading, error} = useSelector(state => state.InventoryReducer);
     const {categories} = useSelector(state => state.CategoriesReducer);
 
     useEffect(() => {
@@ -52,7 +53,10 @@ const ProductsInventory = () => {
 
     };
 
-    const handleDeleteProduct = (productId) => {dispatch(deleteProduct(productId));}
+    const handleDeleteProduct = (productId) => {
+        dispatch(deleteProduct(productId));
+        dispatch(deleteProduct(productId));
+    }
 
     return (
         <div className={"inventory-page"}>
@@ -149,6 +153,8 @@ const ProductsInventory = () => {
                     previousLabel={<PiArrowFatLeftThin className={"pager-arrow"} />}
                     nextLabel={<PiArrowFatRightThin className={"pager-arrow"} />}/>
             </div>
+
+            {loading && <Loader />}
         </div>
     );
 };

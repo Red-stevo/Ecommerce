@@ -64,7 +64,7 @@ export const deleteProduct = createAsyncThunk("new-product/delete-product",
 
         /*Axios request to save products.*/
         try {
-            await RequestsConfig.post(`/admin/products/delete-product?productId=${productId}`);
+            await RequestsConfig.delete(`/admin/products/delete-product?productId=${productId}`);
             return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);

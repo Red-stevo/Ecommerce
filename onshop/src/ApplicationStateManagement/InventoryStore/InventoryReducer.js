@@ -31,7 +31,12 @@ export const fetchInventory = createAsyncThunk("inventory/fetchProducts",
 const InventoryReducer = createSlice({
     name:"inventory",
     initialState,
-    reducers:{},
+    reducers:{
+        deleteProduct:(state, action) => {
+            state.InventoryResponse =
+                state.InventoryResponse.filter(({productId}) => productId === action.payload);
+        }
+    },
     extraReducers:builder => builder
         .addCase(fetchInventory.pending, (state) => {
             state.loading = true;
@@ -54,3 +59,6 @@ const InventoryReducer = createSlice({
 
 
 export default  InventoryReducer.reducer;
+
+
+export const { deleteProduct } = InventoryReducer.actions;
