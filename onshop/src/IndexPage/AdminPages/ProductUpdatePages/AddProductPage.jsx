@@ -1,14 +1,63 @@
 import "./Styles/AddProductPage.css";
 import {Button, FloatingLabel, Form, InputGroup} from "react-bootstrap";
-import {MdCloudUpload} from "react-icons/md";
 import {useEffect, useState} from "react";
-import FileReview from "./Components/FileReview.jsx";
 import {IoIosClose} from "react-icons/io";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {postProduct} from "../../../ApplicationStateManagement/ProductStores/newProductReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 import {getCategories} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
+import FileUploadPreview from "./Components/FileUploadPreview.jsx";
+
+
+function FileChange(productDetailsList, setUploads, setPreviewFile) {
+    return (event) => {
+        const files = Array.from(event.target.files);
+
+        {
+            files.length > 0 && files.forEach((image) => {
+
+                if (!image) return;
+
+                /*Rename files*/
+                const file = new File([image], `${productDetailsList.length}+${image.name}`,
+                    {
+                        type: image.type,
+                        lastModified: image.lastModified,
+                    })
+
+                /*Check the file size, if too large ignore the file.*/
+                if (file.size > 10485760) {
+                    console.log("The File '", file.name, "' is too large");
+                    return;
+                }
+
+
+                /*add file to the upload list.*/
+                setUploads((prevState) => [...prevState, file]);
+
+                const reader = new FileReader();
+
+                // Check if the file is an image or video
+                if (file.type.startsWith("image/")) {
+                    reader.onload = (e) => {
+                        setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "image"}]);
+                    };
+                    reader.readAsDataURL(file);
+
+                } else if (file.type.startsWith("video/") || file.type.startsWith("application/")) {
+                    reader.onload = (e) => {
+                        setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "video"}]);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    console.log(`File starts with ${file.type}`);
+                    console.error("File type not supported. Please upload an image or video.");
+                }
+            })
+        }
+    };
+}
 
 const AddProductPage = () => {
     const [uploads, setUploads] = useState([]);
@@ -29,52 +78,7 @@ const AddProductPage = () => {
        setUploads(uploads.filter((_,index) => index !== imageIndex));
        setPreviewFile(previewFile.filter((_, index) => index !== imageIndex))
     }
-
-
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files);
-
-        {files.length > 0 && files.forEach((image) => {
-
-            if (!image) return;
-
-            /*Rename files*/
-            const file = new File([image], `${productDetailsList.length}+${image.name}`,
-                {
-                    type: image.type,
-                    lastModified: image.lastModified,
-                })
-
-            /*Check the file size, if too large ignore the file.*/
-            if (file.size > 10485760){
-                console.log("The File '",file.name,"' is too large");
-                return;
-            }
-
-
-            /*add file to the upload list.*/
-            setUploads((prevState) => [...prevState, file]);
-
-            const reader = new FileReader();
-
-            // Check if the file is an image or video
-            if (file.type.startsWith("image/")) {
-                reader.onload = (e) => {
-                    setPreviewFile((prevState) => [...prevState, {file:e.target.result, type:"image"}]);
-                };
-                reader.readAsDataURL(file);
-
-            } else if (file.type.startsWith("video/") || file.type.startsWith("application/")) {
-                reader.onload = (e) => {
-                    setPreviewFile((prevState) => [...prevState, {file:e.target.result, type:"video"}]);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                console.log(`File starts with ${file.type}`);
-                console.error("File type not supported. Please upload an image or video.");
-            }
-        })}
-    };
+    const handleFileChange = FileChange(productDetailsList, setUploads, setPreviewFile);
 
     const handleAddProduct = (data) => {
         if (!productTopDetails){
@@ -119,7 +123,7 @@ const AddProductPage = () => {
 
     return (
         <>
-            {loading && <Loader />}
+            {loading && <Loader/>}
             <div className={"add-product-page"}>
                 <div className={"title-form-buttons-holder"}>
                     <span className={"page-title"}>Add Product</span>
@@ -152,7 +156,7 @@ const AddProductPage = () => {
                                 <div key={index} className={"categories-preview"}>
                                     {category}
                                     <IoIosClose className={"cancel-categories"}
-                                                onClick={() => removeCategory(category)} />
+                                                onClick={() => removeCategory(category)}/>
                                 </div>))
                             }
                         </div>
@@ -183,11 +187,11 @@ const AddProductPage = () => {
                         <div className={"price-count"}>
                             <InputGroup className="">
                                 <input className={"productPrice form-control"} required={true}
-                                              aria-label="Product Price" placeholder={'Product Price'}
-                                       id={"productPrice"} {...register("productPrice") } />
+                                       aria-label="Product Price" placeholder={'Product Price'}
+                                       id={"productPrice"} {...register("productPrice")} />
                                 <input className={"productDiscount form-control"} required={true}
-                                              aria-label="Product discount" placeholder={"Product discount"}
-                                id={"discount"} {...register("discount")} />
+                                       aria-label="Product discount" placeholder={"Product discount"}
+                                       id={"discount"} {...register("discount")} />
                             </InputGroup>
 
                             <Form.Group>
@@ -196,22 +200,12 @@ const AddProductPage = () => {
                             </Form.Group>
                         </div>
 
-                        <div className={"images-review"}>
-                            <>
-                                <label htmlFor="fileUpload" className="custom-label">
-                                    <MdCloudUpload className={"upload-icon"} />
-                                    upload
-                                </label>
-                                <input onChange={handleFileChange}
-                                    type="file" multiple={true} accept="image/*, video/*, application/*" id="fileUpload"
-                                    className="file-input-filled" />
-                            </>
-                            <FileReview previewImages={previewFile} handleRemove={handleImageRemove} />
-                        </div>
+                        <FileUploadPreview onChange={handleFileChange} previewImages={previewFile}
+                                      handleRemove={handleImageRemove}/>
 
 
                         <div className={"submit-buttons"}>
-                            <Button className={"app-button"} type={"submit"} >Save</Button>
+                            <Button className={"app-button"} type={"submit"}>Save</Button>
                             <Button className={"app-button"}
                                     onClick={() => handlePublish()}
                                     disabled={!(productTopDetails && productDetailsList.length > 0)}>

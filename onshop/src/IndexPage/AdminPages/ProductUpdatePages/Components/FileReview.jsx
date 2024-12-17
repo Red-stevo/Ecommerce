@@ -6,8 +6,7 @@ const FileReview = ({previewImages, handleRemove}) => {
         <div className={"preview-holder"}>
             {previewImages.length > 0 && previewImages.map((data, index) => (
                 <div key={index}>
-                    {
-                        data.startsWith("http") && (
+                    { typeof  data === "string" && (
                             <div className={"preview-image-video"}>
                                 <img src={data} alt="Preview" className={"preview-item"}/>
                                 <IoIosClose className={"cancel-categories"} onClick={() => handleRemove(data)}/>
