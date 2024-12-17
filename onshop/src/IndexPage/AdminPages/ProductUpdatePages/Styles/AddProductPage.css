@@ -104,9 +104,9 @@
 .cancel-categories {
     position: absolute;
     cursor: pointer;
-    font-size: 28px;
-    right: -10px;
-    top: -10px;
+    font-size: 24px;
+    right: -6px;
+    top: -2px;
     color: red;
 }
 
