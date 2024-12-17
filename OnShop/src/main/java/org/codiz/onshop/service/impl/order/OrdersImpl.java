@@ -579,6 +579,7 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
+    @Transactional
     public HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest){
         try {
             Users usr = usersRepository.findUsersByUserId(userId);
@@ -594,6 +595,7 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
+    @Transactional
     public HttpStatus updateShippingQuantity(String orderItemId, int quantity){
         try {
            OrderItems orderItems = ordersItemsRepository.findOrderItemsByOrderItemId(orderItemId).orElse(null);

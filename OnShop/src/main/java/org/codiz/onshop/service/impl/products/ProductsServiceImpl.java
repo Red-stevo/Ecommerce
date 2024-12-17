@@ -819,52 +819,43 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @Transactional
-    public Page<InventoryResponse> inventoryList( Pageable pageable )
-    {
+    public Page<InventoryResponse> inventoryList(Pageable pageable) {
+        try {
+            // Fetch paginated products directly
+            Page<Products> productsPage = productsRepository.findAll(pageable);
 
-        try{
-            List<InventoryResponse> inventoryResponses = new ArrayList<>();
-
-
-
-            Page<Products> products = productsRepository.findAll(pageable);
-            for (Products products1 : products){
-                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
-                    InventoryResponse inventoryResponse = getInventoryResponse(details);
-                    inventoryResponses.add(inventoryResponse);
-                }
-            }
-
-
-            int start = (int) pageable.getOffset();
-            int end = (int) pageable.getOffset() + pageable.getPageSize();
-            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
-        } catch (Exception e){
+            // Transform Products to InventoryResponse
+            List<InventoryResponse> inventoryResponses = productsPage.stream()
+                    .flatMap(product -> product.getSpecificProductDetailsList().stream()
+                            .map(this::getInventoryResponse))
+                    .collect(Collectors.toList());
+            log.info("the inventory :" + inventoryResponses);
+            log.info("got the inventory");
+            // Return a new Page object with transformed content
+            return new PageImpl<>(inventoryResponses, pageable, inventoryResponses.size());
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResourceNotFoundException("could not find the inventory");
+            throw new ResourceNotFoundException("Could not find the inventory");
         }
-
     }
 
 
-    private static InventoryResponse getInventoryResponse(Products products, SpecificProductDetails specificProductDetails) {
-        InventoryResponse inventoryResponse = new InventoryResponse();
-        inventoryResponse.setProductName(products.getProductName());
-        inventoryResponse.setQuantity(specificProductDetails.getCount());
-        inventoryResponse.setStatus(products.getInventory().getStatus());
-        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
-        return inventoryResponse;
-    }
 
-    private static InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
+    private InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
         InventoryResponse inventoryResponse = new InventoryResponse();
+
+        // Safely get product images, avoiding IndexOutOfBoundsException
+        String imageUrl = specificProductDetails.getProductImagesList() != null
+                && !specificProductDetails.getProductImagesList().isEmpty()
+                ? specificProductDetails.getProductImagesList().get(0).getImageUrl()
+                : null;
+
         inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
         inventoryResponse.setQuantity(specificProductDetails.getCount());
-        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
+        inventoryResponse.setImageUrl(imageUrl);
         inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
         inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+
         return inventoryResponse;
     }
 
@@ -1051,6 +1042,10 @@ public class ProductsServiceImpl implements ProductsService {
             throw new ResourceNotFoundException("could not get new products");
         }
 
+    }
+
+    public HttpStatus updateProductImage(String imag){
+        return null;
     }
 
 
