@@ -4,7 +4,7 @@ import {RequestsConfig} from "../RequestsConfig.js";
 const inventoryAdapter = createEntityAdapter();
 
 const initialState = inventoryAdapter.getInitialState({
-    error:"", loading:false, success:null, InventoryResponse:{}
+    error:"", loading:false, success:null, InventoryResponse:{}, page:{}
 });
 
 
@@ -14,7 +14,14 @@ export const fetchInventory = createAsyncThunk("inventory/fetchProducts",
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue((await RequestsConfig.get(`/admin/products/show-inventory`)).data);
+            const res = (await RequestsConfig.get(`/admin/products/show-inventory`)).data;
+
+            const data = {
+                InventoryResponseList: res._embedded.inventoryResponseList, page:res.page
+            }
+
+
+            return fulfillWithValue(data);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -35,7 +42,8 @@ const InventoryReducer = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.InventoryResponse = action.payload;
+            state.InventoryResponse = action.payload.InventoryResponseList;
+            state.page = action.payload.page;
         })
         .addCase(fetchInventory.rejected, (state, action) => {
             state.loading = false;
