@@ -76,12 +76,13 @@ const ProductUpdatePage = () => {
 
     useEffect(() => {
         if (specificProducts || success) {
-            const  {id, productPrice, productColor,
+            const  {id, productPrice, productColor, status,
                 discount, productSize, productImages, productCount:count} = specificProducts[displayProduct];
             setPreviewFile([...productImages])
             reset({productId:id, productName, productDescription,
                 productPrice, discount, productColor, productSize, count});
             setProductSelectedCategories([...productCategory]);
+            setActive(status);
         }
     }, [displayProduct, success]);
 
@@ -110,7 +111,7 @@ const ProductUpdatePage = () => {
             if (inputData){
                 const categorySuggestions = categories && categories
                     .filter(category  => category.categoryName.toLowerCase().includes(inputData.toLowerCase()));
-                setSuggestions(categorySuggestions && categorySuggestions.length > 0 ? categorySuggestions : []);
+                setSuggestions(categorySuggestions);
             }
         }
 
@@ -121,6 +122,30 @@ const ProductUpdatePage = () => {
 
     const handleCategoryRemove = (category)  => {
         setProductSelectedCategories(prevState => prevState.filter(name => name !== category))
+    }
+
+    const handleProductUpdate = (data) => {
+        const ProductUpdateRequest = {
+            productId:productid,
+            categoryName:productSelectedCategories,
+            productDescription:data.productDescription,
+            inventoryStatus:active-1,
+            productUpdates:{
+                specificProductId:data.productId,
+                productPrice:data.productPrice,
+                color:data.productColor,
+                size:data.productSize,
+                discount: data.discount,
+                count:data.count
+            }
+        }
+
+        const formData = new FormData();
+        formData.append("productData", JSON.stringify(ProductUpdateRequest));
+        formData.append("uploads", uploads);
+
+        console.log(formData);
+
     }
 
     return (
@@ -204,7 +229,7 @@ const ProductUpdatePage = () => {
                         setDisplayProduct(specificProducts.length - 1);
                     else setDisplayProduct((prevState) => prevState - 1);
                 }}>Previous</Button>
-                <Button className={"app-button"}>Update</Button>
+                <Button className={"app-button"} onClick={handleSubmit(handleProductUpdate)}>Update</Button>
                 <Button className={"app-button"}
                         onClick={() => {
                                 if (specificProducts && displayProduct === (specificProducts.length - 1))
