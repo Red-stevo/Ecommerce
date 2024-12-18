@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {CiFilter} from "react-icons/ci";
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {getOrders} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 
 const orders = [
@@ -35,6 +35,7 @@ const AllOrdersPage = () => {
     const [statusPointer, setStatusPointer] = useState(0);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const {orders} = useSelector(state => state.ordersStore);
 
 
     useEffect(() => {
@@ -42,8 +43,7 @@ const AllOrdersPage = () => {
     }, []);
 
     useEffect(() => {
-
-        if (statusPointer <= 3)
+        if (orders && statusPointer <= 3)
             setOrderDisplay(() => orders.filter((order) => (order.orderStatus === statusList[statusPointer])));
         else
             setOrderDisplay([...orders]);
