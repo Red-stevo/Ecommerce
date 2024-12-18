@@ -27,7 +27,7 @@ export const updateOrderQuantity = createAsyncThunk("payment/updateQuantity",
 
     const {orderItemId, quantity} = data;
         try {
-            await RequestsConfig.put(`/costumer/orders/update-order-quantity/orderItemId=${orderItemId}`, quantity,
+            await RequestsConfig.put(`/costumer/orders/update-order-quantity/${orderItemId}`, quantity,
                 {headers:{"Content-Type":"application/json"}});
             return fulfillWithValue(true);
         }catch (error){

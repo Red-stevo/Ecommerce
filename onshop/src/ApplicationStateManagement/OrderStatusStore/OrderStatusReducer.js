@@ -1,5 +1,6 @@
 import {configureStore, createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
+import {getPaymentDetails} from "../PaymentStore/PaymentReducer.js";
 const OrderStatusAdapter = createEntityAdapter();
 
 const initialState = OrderStatusAdapter
@@ -20,12 +21,15 @@ export const getOrderStatus = createAsyncThunk("orderStatus/getOrderStatus",
 export const makeOrder = createAsyncThunk("orderStatus/make-order",
     async (orderData = null, {
         fulfillWithValue,
-        rejectWithValue}) => {
+        rejectWithValue,
+    dispatch}) => {
 
         const {userId, request} = orderData;
         try {
             await RequestsConfig.post(`/costumer/orders/make-order?userId=${userId}`, request ,
-                {headers:{"Content-Type":'application/json'}})
+                {headers:{"Content-Type":'application/json'}});
+            await dispatch(getPaymentDetails(userId));
+
             return fulfillWithValue("Order Added successfully");
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data : error.data);
