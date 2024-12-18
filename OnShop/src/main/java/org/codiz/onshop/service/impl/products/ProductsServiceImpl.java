@@ -29,6 +29,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -1127,6 +1128,102 @@ public class ProductsServiceImpl implements ProductsService {
                 .toList());
         return response;
     }
+
+    @Transactional
+    public HttpStatus updateProduct(ProductUpdateRequest request,List<MultipartFile> uploads) {
+        try {
+            // Validate product existence
+            if (!productImagesRepository.existsById(request.getProductId())) {
+                return HttpStatus.NOT_FOUND;
+            }
+
+            // Fetch the product
+            Products products = productsRepository.findByProductId(request.getProductId());
+            if (products == null) {
+                return HttpStatus.NOT_FOUND;
+            }
+
+            // Update product details
+            updateProductDetails(request, products);
+
+            // Update specific product details if provided
+            if (request.getProductUpdates() != null) {
+                updateSpecificProductDetails(request.getProductUpdates(),uploads);
+            }
+
+            return HttpStatus.OK;
+
+        } catch (Exception e) {
+            log.error("Error updating product with ID: {}", request.getProductId(), e);
+            throw new RuntimeException("Failed to update product", e); // Consider a custom exception
+        }
+    }
+
+    private void updateProductDetails(ProductUpdateRequest request, Products products) {
+        if (request.getProductName() != null) {
+            products.setProductName(request.getProductName());
+        }
+
+        if (request.getProductDescription() != null) {
+            products.setProductDescription(request.getProductDescription());
+        }
+
+        if (request.getCategoryName() != null) {
+            products.getCategoriesList().clear();
+            // Add logic to set updated categories if needed
+        }
+
+        productsRepository.save(products);
+    }
+
+    private void updateSpecificProductDetails(SpecificProductUpdate productUpdates,List<MultipartFile> uploads) {
+        SpecificProductDetails specificProductDetails = specificProductsRepository
+                .findBySpecificProductId(productUpdates.getSpecificProductId())
+                .orElse(null);
+
+        if (specificProductDetails != null) {
+            specificProductDetails.setProductPrice(productUpdates.getProductPrice());
+            specificProductDetails.setCount(productUpdates.getCount());
+            specificProductDetails.setDiscount(productUpdates.getDiscount());
+            specificProductDetails.setVariety(productUpdates.getColor());
+            specificProductDetails.setProportion(productUpdates.getSize());
+
+            if (uploads != null) {
+                updateProductImages(specificProductDetails, uploads);
+            }
+
+            specificProductsRepository.save(specificProductDetails);
+        }
+    }
+
+    private void updateProductImages(SpecificProductDetails specificProductDetails, List<MultipartFile> productUrls) {
+        List<ProductImages> imagesList = specificProductDetails.getProductImagesList();
+
+        // Delete existing images from Cloudinary and database
+        imagesList.forEach(image -> {
+            try {
+                cloudinaryService.deleteImage(image.getImageUrl());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            productImagesRepository.delete(image);
+        });
+
+        // Add new images
+        productUrls.forEach(upload -> {
+            ProductImages productImage = new ProductImages();
+            String imageUrl = null;
+            try {
+                imageUrl = setImageUrls(new FileUploads(upload.getOriginalFilename(), upload.getBytes())).getImageUrl();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            productImage.setImageUrl(imageUrl);
+            productImage.setSpecificProductDetails(specificProductDetails);
+            productImagesRepository.save(productImage);
+        });
+    }
+
 
 
 
