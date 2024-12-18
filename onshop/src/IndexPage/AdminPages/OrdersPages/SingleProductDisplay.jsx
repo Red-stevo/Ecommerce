@@ -2,6 +2,7 @@ import "./Styles/SingleProductDisplay.css";
 import {Image} from "react-bootstrap";
 import {useLocation} from "react-router-dom";
 import {useEffect} from "react";
+import {useSelector} from "react-redux";
 
 const productDetails = {
     cancel:false,
@@ -21,33 +22,34 @@ const productDetails = {
 
 
 const SingleProductDisplay = () => {
-    const {cancel, productDescription, productImageUrl, productName, productProportion
-    , productQuantity, productVariety} = productDetails;
+    const {productDetails} = useSelector(state => state)
     const  location = useLocation();
 
 
     useEffect(() => {
-        console.log(location);
-    }, [location]);
 
+    }, []);
 
     return (
         <div className={"single-order-product-page"}>
-            {cancel ? <span className={"canceled"}>CANCELED!</span>: <span className={"active-product"}>ACTIVE</span>}
+            {productDetails.cancel ?
+                <span className={"canceled"}>CANCELED!</span>:
+                <span className={"active-product"}>ACTIVE</span>
+            }
 
             <section className={"order-product-details"} >
 
-                <Image className={"ordered-product-image-url"} src={productImageUrl} />
+                <Image className={"ordered-product-image-url"} src={productDetails.productImageUrl} />
 
                 <div className={"ordered-product-details-section"}>
 
-                    <span className={"single-order-product-name"}>{productName}</span>
-                    <span className={"single-order-product-description"}>{productDescription}</span>
+                    <span className={"single-order-product-name"}>{productDetails.productName}</span>
+                    <span className={"single-order-product-description"}>{productDetails.productDescription}</span>
 
                     <div className={"quantity-proportion-variety"}>
-                        <span className={"single-order-product-quantity"} >Quantity : {productQuantity}</span>
-                        <span className={"single-order-product-proportion"}>Proportion : {productProportion}</span>
-                        <span className={"single-order-product-variety"}>Variety : {productVariety}</span>
+                        <span className={"single-order-product-quantity"} >Quantity : {productDetails.productQuantity}</span>
+                        <span className={"single-order-product-proportion"}>Proportion : {productDetails.productProportion}</span>
+                        <span className={"single-order-product-variety"}>Variety : {productDetails.productVariety}</span>
                     </div>
 
                 </div>

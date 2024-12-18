@@ -11,7 +11,7 @@ const ProductDisplayComponent = ({productId, productImage, productName, productP
 
 
     useEffect(() => {
-        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", quantity:productQuantity}
+        const data = {productId, quantity:productQuantity}
         dispatch(updateOrderQuantity(data));
     }, [productQuantity]);
 
