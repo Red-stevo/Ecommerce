@@ -52,7 +52,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     padding-right: 20px;
 }
 
@@ -60,9 +60,13 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    background-color: rgba(172, 215, 215, 0.33);
+    background-color: rgba(198, 245, 245, 0.17);
     padding: 5px;
     border-radius: 10px;
+}
+
+.inventory-page-products-section-product:hover {
+    transform:scale(1.013);
 }
 
 

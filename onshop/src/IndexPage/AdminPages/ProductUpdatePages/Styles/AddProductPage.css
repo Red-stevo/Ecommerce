@@ -95,6 +95,7 @@
     margin-right: 10px;
     padding: 5px;
     box-shadow: 2px 3px 5px #a49b9b;
+    position: relative;
 }
 
 .categories-preview:hover {
@@ -104,10 +105,10 @@
 .cancel-categories {
     position: absolute;
     cursor: pointer;
-    font-size: 28px;
-    right: -10px;
-    top: -10px;
-    color: red;
+    font-size: 24px;
+    right: -6px;
+    top: -2px;
+    color: rgba(255, 0, 0, 0.51);
 }
 
 .categories-preview-holder {
