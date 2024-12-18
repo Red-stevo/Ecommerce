@@ -9,70 +9,10 @@ import {updateOrderStatus} from "../../../ApplicationStateManagement/OdersStore/
 import {getOrderInfo} from "../../../ApplicationStateManagement/OrderInfoStore/OrderInfoReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
 
-
-const orderDetails = {
-    orderId:"AS43D4",
-    orderStatus:"UNDELIVERED",
-    itemList:[
-        {
-            productName:" Phones",
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.cMIXOtmddqLPOyM69nGcJAHaHa%26pid%3DApi&f=1&ipt=043a92d19939a4ad6ab5e3d8943bababb57551b371f9259371891c1db6dfc3a4&ipo=images",
-            productPrice:2300,
-            quantity:5,
-            totalPrice:23500,
-            canceled:false,
-            productId:"26SQSW"
-        },
-        {
-            productName:"Wireless Head Phones",
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.cMIXOtmddqLPOyM69nGcJAHaHa%26pid%3DApi&f=1&ipt=043a92d19939a4ad6ab5e3d8943bababb57551b371f9259371891c1db6dfc3a4&ipo=images",
-            productPrice:2300,
-            quantity:5,
-            totalPrice:23500,
-            canceled:false,
-            productId:"25SQSW"
-        },
-        {
-            productName:"Wireless Head Phones",
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.qr01Z40JyywlFtAb_wlmTQHaHa%26pid%3DApi&f=1&ipt=953ffc87e7155ed3e9410b9e960d4b74ca53ae0b2f5f9aca8b1e295f0a548e3a&ipo=images",            productPrice:2300,
-            quantity:5,
-            totalPrice:23500,
-            canceled:true,
-            productId:"24SQSW"
-        },
-        {
-            productName:"Wireless EarPhones",
-            productImageUrl:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.WBz2dxmx1MgxVaqFbLUUvAHaHa%26pid%3DApi&f=1&ipt=e7db5985690855750a2ed6c05963b9f7495dd675ed343c3b62c5ae429c635c93&ipo=images",
-            productPrice:2300,
-            quantity:5,
-            totalPrice:23500,
-            canceled:false,
-            productId:"23SQSW"
-        },
-    ],
-    customerDetails:{
-        customerName:"Mirowe Bob",
-        customerEmail:"mirowebob@gmail.com",
-        customerPhone:"+2549444068",
-        numberOfItemsOrdered:6,
-        ordersNumber:"AS43D4FFT6YT0P",
-    },
-    totalCharges:23500,
-    address:"Nairobi, Kenya",
-    orderNumber:"AS43D4FFT6YT0P",
-    orderSummary:{
-        orderDate:"Nov Feb 20 2024",
-        orderTime:"10:30",
-        orderTotal:23500,
-        deliveryFee:150,
-    }
-}
-
-const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED"];
-
+const statusList = ["UNDELIVERED", "TRANSIT","DELIVERED", "SIGNED"];
 
 const OrderDisplay = () => {
-    const {orderDetail, error, loading} = useSelector(state => state.OrderInfoReducer);
+    const {orderDetails, error, loading} = useSelector(state => state.OrderInfoReducer);
     const navigate = useNavigate();
     const [currentStatus, setCurrentStatus] =
         useState(orderDetails.orderStatus?orderDetails.orderStatus:"UNDELIVERED");
@@ -87,9 +27,12 @@ const OrderDisplay = () => {
     const handleStatusUpdate = () => {
         if (statusList.indexOf(currentStatus) <= statusList.length - 2 )
             setCurrentStatus(statusList[statusList.indexOf(currentStatus) + 1]);
-        const data = {orderId:orderDetails.orderId, status:currentStatus}
-        dispatch(updateOrderStatus(data));
     }
+
+    useEffect(() => {
+        const data = {orderId:orderid, status:currentStatus}
+        dispatch(updateOrderStatus(data));
+    }, [currentStatus]);
 
 
     return (
@@ -101,7 +44,7 @@ const OrderDisplay = () => {
 
 
             <div className={"order-status-num"}>
-                <span className={"order-num"}>ID <span className={"order-number"}>#{orderDetails.orderId}</span></span>
+                <span className={"order-num"}>ID <span className={"order-number"}>#{orderDetails.orderNumber}</span></span>
 
                 <Button className={"order-status-button app-button"} onClick={handleStatusUpdate}>
                     {currentStatus}
@@ -119,8 +62,8 @@ const OrderDisplay = () => {
                         <span className={"order-products-total-price"} >Total Price</span>
                     </div>
 
-                    { orderDetails && orderDetails.itemList && orderDetails.itemList.length > 0 &&
-                        orderDetails.itemList.map(({productName, productPrice,productId,
+                    { orderDetails && orderDetails.itemsList && orderDetails.itemsList.length > 0 &&
+                        orderDetails.itemsList.map(({productName, productPrice,productId,
                                                        productImageUrl, totalPrice,
                                                        quantity, canceled}, index) => (
 
@@ -186,7 +129,7 @@ const OrderDisplay = () => {
 
                     <div className={"customer-details"}>
                         <span className={"title"}>Order Number </span>
-                        <span>{orderDetails.customerDetails.ordersNumber}</span>
+                        <span>{orderDetails.orderNumber}</span>
                     </div>
                     <div className={"customer-details"}>
                         <span className={"title"}>Number of Items </span>

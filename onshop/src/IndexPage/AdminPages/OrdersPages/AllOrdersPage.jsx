@@ -7,36 +7,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {getOrders} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 import Loader from "../../../Loading/Loader.jsx";
 
-const orders = [
-    {orderId:"FDR567NBHY", orderDate:"Sep Fri 13 2024", orderStatus:"CANCELED", orderTotal:2500.00},
-    {orderId:"FDR56EWBZY", orderDate:"Feb Mon 1 2024", orderStatus:"UNDELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567N5RY", orderDate:"Feb Mon 1 2024", orderStatus:"UNDELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567NBQY", orderDate:"Dec Fri 20 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR56EWBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567NBZY", orderDate:"Feb Mon 1 2024", orderStatus:"UNDELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567NBFY", orderDate:"Jan Fri 30 2024", orderStatus:"CANCELED", orderTotal:2500.00},
-    {orderId:"FDRAA7NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"CANCELED", orderTotal:2500.00},
-    {orderId:"FDR5KLNBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDMN67NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"SHIPPING", orderTotal:2500.00},
-    {orderId:"FDR517NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR501NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"SHIPPING", orderTotal:2500.00},
-    {orderId:"FDR56CXBBY", orderDate:"Nov Fri 19 2024", orderStatus:"SHIPPING", orderTotal:2500.00},
-    {orderId:"FDR5OPNBBY", orderDate:"Nov Fri 19 2024", orderStatus:"SHIPPING", orderTotal:2500.00},
-    {orderId:"FDOT67NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR567NODM", orderDate:"Nov Fri 19 2024", orderStatus:"SHIPPING", orderTotal:2500.00},
-    {orderId:"FPNU67NBBY", orderDate:"Nov Fri 19 2024", orderStatus:"DELIVERED", orderTotal:2500.00},
-    {orderId:"FDR5UDABBY", orderDate:"Nov Fri 19 2024", orderStatus:"UNDELIVERED", orderTotal:2500.00},
-]
-
 const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED","CANCELED", "ALL"];
 
 const AllOrdersPage = () => {
+    const {orders, page, loading, error} = useSelector(state => state.ordersStore);
     const [orderDisplay, setOrderDisplay] = useState([]);
     const [statusPointer, setStatusPointer] = useState(0);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {order, page, loading, error} = useSelector(state => state.ordersStore);
+
 
 
     useEffect(() => {
@@ -46,8 +25,10 @@ const AllOrdersPage = () => {
     useEffect(() => {
         if (orders && statusPointer <= 3)
             setOrderDisplay(() => orders.filter((order) => (order.orderStatus === statusList[statusPointer])));
-        else
+        else if (orders)
             setOrderDisplay([...orders]);
+
+        console.log("Orders -> ",orders);
     }, [statusPointer, orders]);
 
 

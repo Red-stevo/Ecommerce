@@ -17,7 +17,8 @@ export const getOrders = createAsyncThunk("orders/getOrders",
 
         try {
             const res = (await RequestsConfig.get("admin/orders/all")).data;
-            const data = {orders:res._embedded.allOrdersResponse, page:res.page};
+            const data = {orders:res._embedded.allOrdersResponseList, page:res.page};
+            console.log(data);
             return fulfillWithValue(data);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
@@ -32,7 +33,7 @@ export const updateOrderStatus = createAsyncThunk("orders/updateStatus",
 
     const {orderId, status} = data;
         try {
-            await RequestsConfig.put(`admin/orders/update-shipping-status/${orderId}`, status,
+            await RequestsConfig.put(`admin/orders/update-shipping-status/${orderId}`, {status},
                 {headers:{"Content-Type":"application/json"}});
             return fulfillWithValue(true);
         }catch (error){
