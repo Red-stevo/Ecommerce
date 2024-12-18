@@ -12,6 +12,7 @@ import ordersStore from "./OdersStore/ordersStore.js";
 import InventoryReducer from "./InventoryStore/InventoryReducer.js";
 import PaymentReducer from "./PaymentStore/PaymentReducer.js";
 import OrderInfoReducer from "./OrderInfoStore/OrderInfoReducer.js";
+import ProductUpdateReducer from "./ProductUpdateStore/ProductUpdateReducer.js";
 
 
 export const store = configureStore({
@@ -19,6 +20,6 @@ export const store = configureStore({
         productReducer:productStore, newProductReducer, CategoriesReducer,
         SearchProducts, CartReducer, WishListReducer, OrderStatusReducer,
         openCageReducer, UserProfileReducer, ordersStore, InventoryReducer,
-        PaymentReducer, OrderInfoReducer
+        PaymentReducer, OrderInfoReducer, ProductUpdateReducer
     }
 })
