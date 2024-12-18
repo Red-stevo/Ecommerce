@@ -20,8 +20,8 @@ public class SpecificProductDetails{
     private String specificProductId;
     private float productPrice;
     private float discount;
-    private String size;
-    private String color;
+    private String proportion;
+    private String variety;
     private int count;
     private Instant createdAt;
 

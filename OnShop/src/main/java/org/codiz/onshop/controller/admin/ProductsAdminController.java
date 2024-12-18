@@ -145,6 +145,10 @@ public class ProductsAdminController {
         return ResponseEntity.ok(productsService.deleteProductImage(image));
     }
 
+    @GetMapping("/get-specific-inventory-product/{specificProductId}")
+    public ResponseEntity<SpecificInventoryProductResponse> getInventoryProduct(@PathVariable String specificProductId){
+        return ResponseEntity.ok(productsService.getInventoryProduct(specificProductId));
+    }
 
 
 }

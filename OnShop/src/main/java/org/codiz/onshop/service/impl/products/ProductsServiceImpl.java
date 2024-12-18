@@ -186,9 +186,9 @@ public class ProductsServiceImpl implements ProductsService {
             for (ProductCreatedDetails details : requests.getProductCreatedDetails()){
                 SpecificProductDetails details1 = new SpecificProductDetails();
                 details1.setCount(details.getCount());
-                details1.setColor(details.getColor());
+                details1.setVariety(details.getColor());
                 details1.setDiscount(details.getDiscount());
-                details1.setSize(details.getSize());
+                details1.setProportion(details.getSize());
                 details1.setProductPrice(details.getProductPrice());
                 details1.setCreatedAt(Instant.now());
                 List<ProductImages> imagesList = new ArrayList<>();
@@ -272,7 +272,7 @@ public class ProductsServiceImpl implements ProductsService {
 
                 // Search specific product details (color or size) and retrieve associated products
                 Page<SpecificProductDetails> specificProductDetails = specificProductsRepository
-                        .findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(query, query, pageable);
+                        .findAllByVarietyContainingIgnoreCaseOrProportionContainingIgnoreCase(query, query, pageable);
 
                 if (specificProductDetails == null) {
                     productsList = Collections.emptyList();
@@ -495,13 +495,13 @@ public class ProductsServiceImpl implements ProductsService {
 
             for (SpecificProductDetails details1 : products.getSpecificProductDetailsList()){
                 SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
-                specs.setProductId(details1.getSpecificProductId());
+                specs.setId(details1.getSpecificProductId());
 
-                specs.setProductColor(details1.getColor());
-                specs.setProductSize(details1.getSize());
+                specs.setProductColor(details1.getVariety());
+                specs.setProductSize(details1.getProportion());
                 specs.setProductCount(details1.getCount());
                 specs.setProductOldPrice(details1.getProductPrice());
-                specs.setProductId(details1.getSpecificProductId());
+                specs.setId(details1.getSpecificProductId());
                 float price = details1.getProductPrice() - details1.getDiscount();
                 specs.setProductPrice(price);
 
@@ -517,10 +517,10 @@ public class ProductsServiceImpl implements ProductsService {
             }
             Products finalProducts = products;
             detailsList.sort((a, b) -> {
-                if (a.getProductId().equals(finalProducts.getProductId())) {
+                if (a.getId().equals(finalProducts.getProductId())) {
                     return -1;
                 }
-                if (b.getProductId().equals(finalProducts.getProductId())) {
+                if (b.getId().equals(finalProducts.getProductId())) {
                     return 1;
                 }
                 return 0;
@@ -627,11 +627,11 @@ public class ProductsServiceImpl implements ProductsService {
             int index = 0;
             for (ProductCreatedDetails details : updateRequest.getProductCreatedDetails()){
                 SpecificProductDetails specificProductDetails = new SpecificProductDetails();
-                specificProductDetails.setSize(details.getSize());
+                specificProductDetails.setProportion(details.getSize());
                 specificProductDetails.setCount(details.getCount());
                 specificProductDetails.setProductPrice(details.getProductPrice());
                 specificProductDetails.setDiscount(details.getDiscount());
-                specificProductDetails.setColor(details.getColor());
+                specificProductDetails.setVariety(details.getColor());
                 specificProductDetails.setCreatedAt(Instant.now());
                 specificProductDetails.setProducts(existingProduct);
                 log.info("checking if the images are to be updated");
@@ -738,7 +738,6 @@ public class ProductsServiceImpl implements ProductsService {
 
     @NotNull
     private ProductImages setImageUrls(FileUploads files) {
-        ProductImages productImages = new ProductImages();
 
         try {
             return getProductImage(files);
@@ -832,10 +831,18 @@ public class ProductsServiceImpl implements ProductsService {
             Page<Products> productsPage = productsRepository.findAll(pageable);
 
             // Transform Products to InventoryResponse
-            List<InventoryResponse> inventoryResponses = productsPage.stream()
+            /*List<InventoryResponse> inventoryResponses = productsPage.stream()
                     .flatMap(product -> product.getSpecificProductDetailsList().stream()
                             .map(this::getInventoryResponse))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
+
+            List<InventoryResponse> inventoryResponses = productsPage.stream()
+                            .map(products -> {
+                                SpecificProductDetails details = products.getSpecificProductDetailsList().get(0);
+
+                                return  getInventoryResponse(details);
+
+                            }).toList();
             log.info("the inventory :" + inventoryResponses);
             log.info("got the inventory");
             // Return a new Page object with transformed content
@@ -860,9 +867,9 @@ public class ProductsServiceImpl implements ProductsService {
         inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
         inventoryResponse.setQuantity(specificProductDetails.getCount());
         inventoryResponse.setImageUrl(imageUrl);
-        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus().ordinal());
+        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus().ordinal() + 1);
         inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
-        inventoryResponse.setProductId(specificProductDetails.getProducts().getProductId());
+        inventoryResponse.setProductId(specificProductDetails.getSpecificProductId());
 
         return inventoryResponse;
     }
@@ -933,7 +940,7 @@ public class ProductsServiceImpl implements ProductsService {
                wishListResponse.setPrice(specificProductDetails.getProductPrice() - specificProductDetails.getDiscount());
                wishListResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
                wishListResponse.setInStock(specificProductDetails.getCount() > 0);
-               wishListResponse.setProductColor(specificProductDetails.getColor());
+               wishListResponse.setProductColor(specificProductDetails.getVariety());
                wishListResponse.setSpecificProductId(specificProductDetails.getSpecificProductId());
                responses.add(wishListResponse);
            }
@@ -1066,6 +1073,62 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
     }
+
+    @Transactional
+    public SpecificInventoryProductResponse getInventoryProduct(String specificProductId) {
+        try {
+            log.info("Fetching product details for ID: {}", specificProductId);
+
+            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            String.format("Product with ID %s not found", specificProductId)));
+
+            SpecificInventoryProductResponse response = new SpecificInventoryProductResponse();
+            response.setProductName(details.getProducts().getProductName());
+            response.setProductId(details.getProducts().getProductId());
+            response.setProductDescription(details.getProducts().getProductDescription());
+
+            response.setProductCategory(details.getProducts().getCategoriesList()
+                    .stream()
+                    .map(categories -> categories.getCategoryName())
+                    .toList());
+
+            List<SpecificProductDetailsResponse> spRes = details.getProducts().getSpecificProductDetailsList()
+                    .stream()
+                    .map(this::mapToSpecificProductDetailsResponse)
+                    .toList();
+
+
+            response.setSpecificProducts(spRes);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error fetching product details for ID: {}", specificProductId, e);
+            throw new ResourceNotFoundException(
+                    String.format("Could not retrieve inventory product with ID %s", specificProductId));
+        }
+    }
+
+    private SpecificProductDetailsResponse mapToSpecificProductDetailsResponse(SpecificProductDetails spec) {
+        SpecificProductDetailsResponse response = new SpecificProductDetailsResponse();
+        response.setId(spec.getSpecificProductId());
+        response.setProductColor(spec.getVariety());
+        response.setProductSize(spec.getProportion());
+        response.setProductCount(spec.getCount());
+        response.setProductPrice(spec.getProductPrice());
+        response.setDiscount(spec.getDiscount());
+        response.setProductCount(spec.getCount());
+        response.setStatus(spec.getProducts().getInventory().getStatus().ordinal());
+        response.setProductImages(spec.getProductImagesList()
+                .stream()
+                .map(img -> img.getImageUrl())
+                .toList());
+        return response;
+    }
+
+
 
 
 

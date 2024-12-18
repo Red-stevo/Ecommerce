@@ -40,6 +40,7 @@ public interface ProductsService {
     List<WishListResponse> getWishList(String userId);
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
     HttpStatus deleteProductImage(String image);
+    SpecificInventoryProductResponse getInventoryProduct(String specificProductId);
 
 
 

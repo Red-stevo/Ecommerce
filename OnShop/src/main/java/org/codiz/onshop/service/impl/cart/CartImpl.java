@@ -151,7 +151,7 @@ public class CartImpl implements CartService {
 
                 log.info("setting specific products");
                 itemsResponse.setInStock(product.getCount() > 0);
-                itemsResponse.setColor(product.getColor());
+                itemsResponse.setColor(product.getVariety());
                 log.info("done with this round");
 
                 SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(items.getProducts().getSpecificProductId()).orElseThrow();

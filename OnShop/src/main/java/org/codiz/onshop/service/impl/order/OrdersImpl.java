@@ -8,7 +8,6 @@ import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
-import org.codiz.onshop.dtos.requests.OrderItemsRequests;
 import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.*;
@@ -619,8 +618,8 @@ public class OrdersImpl implements OrdersService {
             SpecificOrderItemResponse itemResponse = new SpecificOrderItemResponse();
             itemResponse.setActive(orderItems.getStatus() == OrderItemStatus.ACTIVE);
             itemResponse.setProductImageUrl(orderItems.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
-            itemResponse.setProportion(orderItems.getSpecificProductDetails().getSize());
-            itemResponse.setVariety(orderItems.getSpecificProductDetails().getColor());
+            itemResponse.setProportion(orderItems.getSpecificProductDetails().getProportion());
+            itemResponse.setVariety(orderItems.getSpecificProductDetails().getVariety());
             itemResponse.setQuantity(orderItems.getQuantity());
             itemResponse.setProductName(orderItems.getSpecificProductDetails().getProducts().getProductName());
             itemResponse.setProductDescription(orderItems.getSpecificProductDetails().getProducts().getProductDescription());
