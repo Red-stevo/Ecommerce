@@ -4,7 +4,6 @@ import {getCategories} from "../../../ApplicationStateManagement/CategoriesStore
 import "./Styles/ProductUpdatePage.css";
 import {FloatingLabel} from "react-bootstrap";
 import {IoIosClose} from "react-icons/io";
-import {GoTriangleDown, GoTriangleUp} from "react-icons/go";
 import FileUploadPreview from "./Components/FileUploadPreview.jsx";
 
 const ProductUpdatePage = () => {
@@ -14,11 +13,16 @@ const ProductUpdatePage = () => {
     const productCategories = ["Shoes", "Toys", "Health Care"];
     const [uploads, setUploads] = useState([]);
     const [productDetailsList, setProductDetailsList] = useState([]);
+    const [productCount, setProductCount] = useState(1);
 
 
     useEffect(() => {
         dispatch(getCategories());
     }, []);
+
+    useEffect(() => {
+        if (productCount <= 1) setProductCount(1);
+    }, [productCount]);
 
     const handleImageRemove = (imageIndex) => {
         setUploads(uploads.filter((_,index) => index !== imageIndex));
@@ -114,9 +118,9 @@ const ProductUpdatePage = () => {
             </div>
 
             <div className={"product-update-page-count-triangle"}>
-                <GoTriangleUp className={"product-update-page-triangle"}/>
-                <input className={"product-update-page-count-update"} placeholder={"count"}/>
-                <GoTriangleDown className={"product-update-page-triangle"}/>
+                <input type={"number"} className={"product-update-page-count-update"}
+                       value={productCount} placeholder={"count"}
+                       onChange={(event) => setProductCount(event.target.value)}/>
             </div>
 
             <FileUploadPreview onChange={handleFileChange} previewImages={previewFile}

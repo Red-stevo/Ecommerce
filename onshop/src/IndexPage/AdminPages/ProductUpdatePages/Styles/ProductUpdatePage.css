@@ -76,14 +76,9 @@
 }
 
 .product-update-page-count-update {
-    width: 50px;
+    width: 80px;
 }
 
-
-.product-update-page-triangle {
-    margin-left: 12px;
-    font-size: 20px;
-}
 
 
 @media screen and (max-device-width: 555px){

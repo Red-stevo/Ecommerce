@@ -19,8 +19,10 @@ import ProductCategories from "./IndexPage/AdminPages/ProductUpdatePages/Product
 import ProductsInventory from "./IndexPage/AdminPages/ProductUpdatePages/ProductsInventory.jsx";
 import PaymentPage from "./IndexPage/Pages/PaymentPage/PaymentPage.jsx";
 import ProductUpdatePage from "./IndexPage/AdminPages/ProductUpdatePages/ProductUpdatePage.jsx";
+import {useState} from "react";
 
 const App = () => {
+
   return (
       <Router>
           <Routes>
