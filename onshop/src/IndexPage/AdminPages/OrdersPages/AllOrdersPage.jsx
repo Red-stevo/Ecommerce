@@ -5,6 +5,7 @@ import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getOrders} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 const orders = [
     {orderId:"FDR567NBHY", orderDate:"Sep Fri 13 2024", orderStatus:"CANCELED", orderTotal:2500.00},
@@ -35,7 +36,7 @@ const AllOrdersPage = () => {
     const [statusPointer, setStatusPointer] = useState(0);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {orders} = useSelector(state => state.ordersStore);
+    const {order, page, loading, error} = useSelector(state => state.ordersStore);
 
 
     useEffect(() => {
@@ -82,6 +83,8 @@ const AllOrdersPage = () => {
             </div>
 
             <div className={"load-more-orders"}><Button className={"app-button"}>Load More</Button></div>
+
+            {loading && <Loader />}
         </div>
     );
 };
