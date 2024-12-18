@@ -27,7 +27,7 @@ public interface ProductsService {
     Page<ProductsPageResponse> productsPageResponseList(Pageable pageable);
     SpecificProductResponse specificProductResponse(String productId);
     EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest,List<FileUploads> uploads);
-    String deleteProduct(String productId);
+    HttpStatus deleteProduct(String productId);
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
     EntityResponse createCategory(String categoryNames, MultipartFile uploads);
@@ -39,6 +39,8 @@ public interface ProductsService {
     HttpStatus deleteWishListItem(String userId, String specificProductIds);
     List<WishListResponse> getWishList(String userId);
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
+    HttpStatus deleteProductImage(String image);
+    SpecificInventoryProductResponse getInventoryProduct(String specificProductId);
 
 
 

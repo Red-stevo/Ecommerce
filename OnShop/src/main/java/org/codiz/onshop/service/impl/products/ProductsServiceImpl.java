@@ -160,7 +160,7 @@ public class ProductsServiceImpl implements ProductsService {
         try {
             Inventory inventory = new Inventory();
 
-            inventory.setStatus(InventoryStatus.INACTIVE);
+            inventory.setStatus(InventoryStatus.ACTIVE);
             inventory.setProducts(new ArrayList<>());
 
             Products product = new Products();
@@ -186,9 +186,9 @@ public class ProductsServiceImpl implements ProductsService {
             for (ProductCreatedDetails details : requests.getProductCreatedDetails()){
                 SpecificProductDetails details1 = new SpecificProductDetails();
                 details1.setCount(details.getCount());
-                details1.setColor(details.getColor());
+                details1.setVariety(details.getColor());
                 details1.setDiscount(details.getDiscount());
-                details1.setSize(details.getSize());
+                details1.setProportion(details.getSize());
                 details1.setProductPrice(details.getProductPrice());
                 details1.setCreatedAt(Instant.now());
                 List<ProductImages> imagesList = new ArrayList<>();
@@ -249,6 +249,7 @@ public class ProductsServiceImpl implements ProductsService {
                 if (productsList == null) {
                     productsList = Collections.emptyList(); // Avoid null
                 }
+
                 Collections.shuffle(productsList);
             } else {
                 // Search products by name or description
@@ -271,7 +272,7 @@ public class ProductsServiceImpl implements ProductsService {
 
                 // Search specific product details (color or size) and retrieve associated products
                 Page<SpecificProductDetails> specificProductDetails = specificProductsRepository
-                        .findAllByColorContainingIgnoreCaseOrSizeContainingIgnoreCase(query, query, pageable);
+                        .findAllByVarietyContainingIgnoreCaseOrProportionContainingIgnoreCase(query, query, pageable);
 
                 if (specificProductDetails == null) {
                     productsList = Collections.emptyList();
@@ -323,6 +324,10 @@ public class ProductsServiceImpl implements ProductsService {
             e.printStackTrace();
             throw new ResourceNotFoundException("An error occurred while fetching products.");
         }
+    }
+
+    private static boolean isProductActive(Products product) {
+        return product.getInventory().getStatus() == InventoryStatus.ACTIVE;
     }
 
 
@@ -490,13 +495,13 @@ public class ProductsServiceImpl implements ProductsService {
 
             for (SpecificProductDetails details1 : products.getSpecificProductDetailsList()){
                 SpecificProductDetailsResponse specs = new SpecificProductDetailsResponse();
-                specs.setProductId(details1.getSpecificProductId());
+                specs.setId(details1.getSpecificProductId());
 
-                specs.setProductColor(details1.getColor());
-                specs.setProductSize(details1.getSize());
+                specs.setProductColor(details1.getVariety());
+                specs.setProductSize(details1.getProportion());
                 specs.setProductCount(details1.getCount());
                 specs.setProductOldPrice(details1.getProductPrice());
-                specs.setProductId(details1.getSpecificProductId());
+                specs.setId(details1.getSpecificProductId());
                 float price = details1.getProductPrice() - details1.getDiscount();
                 specs.setProductPrice(price);
 
@@ -512,10 +517,10 @@ public class ProductsServiceImpl implements ProductsService {
             }
             Products finalProducts = products;
             detailsList.sort((a, b) -> {
-                if (a.getProductId().equals(finalProducts.getProductId())) {
+                if (a.getId().equals(finalProducts.getProductId())) {
                     return -1;
                 }
-                if (b.getProductId().equals(finalProducts.getProductId())) {
+                if (b.getId().equals(finalProducts.getProductId())) {
                     return 1;
                 }
                 return 0;
@@ -622,11 +627,11 @@ public class ProductsServiceImpl implements ProductsService {
             int index = 0;
             for (ProductCreatedDetails details : updateRequest.getProductCreatedDetails()){
                 SpecificProductDetails specificProductDetails = new SpecificProductDetails();
-                specificProductDetails.setSize(details.getSize());
+                specificProductDetails.setProportion(details.getSize());
                 specificProductDetails.setCount(details.getCount());
                 specificProductDetails.setProductPrice(details.getProductPrice());
                 specificProductDetails.setDiscount(details.getDiscount());
-                specificProductDetails.setColor(details.getColor());
+                specificProductDetails.setVariety(details.getColor());
                 specificProductDetails.setCreatedAt(Instant.now());
                 specificProductDetails.setProducts(existingProduct);
                 log.info("checking if the images are to be updated");
@@ -687,8 +692,8 @@ public class ProductsServiceImpl implements ProductsService {
     /*
     * method to delete a product
     * */
-
-    public String deleteProduct(String productId){
+    @Transactional
+    public HttpStatus deleteProduct(String productId){
         try {
             Products products = productsRepository.findProductsByProductId(productId).orElseThrow(
                     ()->new RuntimeException("The product with ID " + productId + " does not exist")
@@ -702,6 +707,7 @@ public class ProductsServiceImpl implements ProductsService {
                     try {
                         String imageUrl = productImages.getImageUrl();
                         cloudinaryService.deleteImage(imageUrl);
+                        log.info("deleted from cloudinary");
                     }catch (Exception e){
                         throw new RuntimeException("could not delete image from cloudinary");
                     }
@@ -712,8 +718,9 @@ public class ProductsServiceImpl implements ProductsService {
 
 
             productsRepository.delete(products);
-            return "product successfully deleted";
+            return HttpStatus.OK;
         } catch (Exception e){
+            e.printStackTrace();
             throw new EntityDeletionException("could not delete the product");
         }
 
@@ -731,7 +738,6 @@ public class ProductsServiceImpl implements ProductsService {
 
     @NotNull
     private ProductImages setImageUrls(FileUploads files) {
-        ProductImages productImages = new ProductImages();
 
         try {
             return getProductImage(files);
@@ -819,52 +825,52 @@ public class ProductsServiceImpl implements ProductsService {
 
 
     @Transactional
-    public Page<InventoryResponse> inventoryList( Pageable pageable )
-    {
+    public Page<InventoryResponse> inventoryList(Pageable pageable) {
+        try {
+            // Fetch paginated products directly
+            Page<Products> productsPage = productsRepository.findAll(pageable);
 
-        try{
-            List<InventoryResponse> inventoryResponses = new ArrayList<>();
+            // Transform Products to InventoryResponse
+            /*List<InventoryResponse> inventoryResponses = productsPage.stream()
+                    .flatMap(product -> product.getSpecificProductDetailsList().stream()
+                            .map(this::getInventoryResponse))
+                    .collect(Collectors.toList());*/
 
+            List<InventoryResponse> inventoryResponses = productsPage.stream()
+                            .map(products -> {
+                                SpecificProductDetails details = products.getSpecificProductDetailsList().get(0);
 
+                                return  getInventoryResponse(details);
 
-            Page<Products> products = productsRepository.findAll(pageable);
-            for (Products products1 : products){
-                for (SpecificProductDetails details : products1.getSpecificProductDetailsList()){
-                    InventoryResponse inventoryResponse = getInventoryResponse(details);
-                    inventoryResponses.add(inventoryResponse);
-                }
-            }
-
-
-            int start = (int) pageable.getOffset();
-            int end = (int) pageable.getOffset() + pageable.getPageSize();
-            List<InventoryResponse> paginatedResponse = inventoryResponses.subList(start, end);
-            return new PageImpl<>(paginatedResponse, pageable, inventoryResponses.size());
-        } catch (Exception e){
+                            }).toList();
+            log.info("the inventory :" + inventoryResponses);
+            log.info("got the inventory");
+            // Return a new Page object with transformed content
+            return new PageImpl<>(inventoryResponses, pageable, inventoryResponses.size());
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResourceNotFoundException("could not find the inventory");
+            throw new ResourceNotFoundException("Could not find the inventory");
         }
-
     }
 
 
-    private static InventoryResponse getInventoryResponse(Products products, SpecificProductDetails specificProductDetails) {
-        InventoryResponse inventoryResponse = new InventoryResponse();
-        inventoryResponse.setProductName(products.getProductName());
-        inventoryResponse.setQuantity(specificProductDetails.getCount());
-        inventoryResponse.setStatus(products.getInventory().getStatus());
-        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-        inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
-        return inventoryResponse;
-    }
 
-    private static InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
+    private InventoryResponse getInventoryResponse(SpecificProductDetails specificProductDetails) {
         InventoryResponse inventoryResponse = new InventoryResponse();
+
+        // Safely get product images, avoiding IndexOutOfBoundsException
+        String imageUrl = specificProductDetails.getProductImagesList() != null
+                && !specificProductDetails.getProductImagesList().isEmpty()
+                ? specificProductDetails.getProductImagesList().get(0).getImageUrl()
+                : null;
+
         inventoryResponse.setProductName(specificProductDetails.getProducts().getProductName());
         inventoryResponse.setQuantity(specificProductDetails.getCount());
-        inventoryResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
-        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus());
+        inventoryResponse.setImageUrl(imageUrl);
+        inventoryResponse.setStatus(specificProductDetails.getProducts().getInventory().getStatus().ordinal() + 1);
         inventoryResponse.setUnitPrice(specificProductDetails.getProductPrice());
+        inventoryResponse.setProductId(specificProductDetails.getSpecificProductId());
+
         return inventoryResponse;
     }
 
@@ -934,7 +940,7 @@ public class ProductsServiceImpl implements ProductsService {
                wishListResponse.setPrice(specificProductDetails.getProductPrice() - specificProductDetails.getDiscount());
                wishListResponse.setImageUrl(specificProductDetails.getProductImagesList().get(0).getImageUrl());
                wishListResponse.setInStock(specificProductDetails.getCount() > 0);
-               wishListResponse.setProductColor(specificProductDetails.getColor());
+               wishListResponse.setProductColor(specificProductDetails.getVariety());
                wishListResponse.setSpecificProductId(specificProductDetails.getSpecificProductId());
                responses.add(wishListResponse);
            }
@@ -1052,6 +1058,79 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
     }
+
+    public HttpStatus deleteProductImage(String image) {
+
+        try{
+            ProductImages img = productImagesRepository.findByImageUrl(image).orElse(null);
+            if (img != null) {
+                productImagesRepository.delete(img);
+                cloudinaryService.deleteImage(image);
+            }
+           return HttpStatus.OK;
+        }catch (Exception e){
+            throw new EntityDeletionException("Could not update product image");
+        }
+
+    }
+
+    @Transactional
+    public SpecificInventoryProductResponse getInventoryProduct(String specificProductId) {
+        try {
+            log.info("Fetching product details for ID: {}", specificProductId);
+
+            SpecificProductDetails details = specificProductsRepository.findBySpecificProductId(specificProductId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            String.format("Product with ID %s not found", specificProductId)));
+
+            SpecificInventoryProductResponse response = new SpecificInventoryProductResponse();
+            response.setProductName(details.getProducts().getProductName());
+            response.setProductId(details.getProducts().getProductId());
+            response.setProductDescription(details.getProducts().getProductDescription());
+
+            response.setProductCategory(details.getProducts().getCategoriesList()
+                    .stream()
+                    .map(categories -> categories.getCategoryName())
+                    .toList());
+
+            List<SpecificProductDetailsResponse> spRes = details.getProducts().getSpecificProductDetailsList()
+                    .stream()
+                    .map(this::mapToSpecificProductDetailsResponse)
+                    .toList();
+
+
+            response.setSpecificProducts(spRes);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error fetching product details for ID: {}", specificProductId, e);
+            throw new ResourceNotFoundException(
+                    String.format("Could not retrieve inventory product with ID %s", specificProductId));
+        }
+    }
+
+    private SpecificProductDetailsResponse mapToSpecificProductDetailsResponse(SpecificProductDetails spec) {
+        SpecificProductDetailsResponse response = new SpecificProductDetailsResponse();
+        response.setId(spec.getSpecificProductId());
+        response.setProductColor(spec.getVariety());
+        response.setProductSize(spec.getProportion());
+        response.setProductCount(spec.getCount());
+        response.setProductPrice(spec.getProductPrice());
+        response.setDiscount(spec.getDiscount());
+        response.setProductCount(spec.getCount());
+        response.setStatus(spec.getProducts().getInventory().getStatus().ordinal());
+        response.setProductImages(spec.getProductImagesList()
+                .stream()
+                .map(img -> img.getImageUrl())
+                .toList());
+        return response;
+    }
+
+
+
+
 
 
 

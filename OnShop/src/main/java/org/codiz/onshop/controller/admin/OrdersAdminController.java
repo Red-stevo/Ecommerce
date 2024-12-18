@@ -3,6 +3,7 @@ package org.codiz.onshop.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codiz.onshop.dtos.requests.ShippingStatusUpdateModel;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.OrderStatus;
 import org.codiz.onshop.entities.orders.ShippingStatus;
@@ -89,11 +90,10 @@ public class OrdersAdminController {
 
 
 
-    @PutMapping("/update_shipping-status")
+    @PutMapping("/update-shipping-status/{orderId}")
     public ResponseEntity<String> updateShippingStatus(
-            @RequestParam String orderId, @RequestParam ShippingStatus status){
-        String result = ordersService.updateShippingStatus(orderId, status);
-        return ResponseEntity.ok(result);
+            @PathVariable String orderId, @RequestBody ShippingStatusUpdateModel status){
+        return ResponseEntity.ok(ordersService.updateShippingStatus(orderId, status.getStatus()));
     }
 
 

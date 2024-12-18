@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,7 +114,7 @@ public class ProductsAdminController {
 
 
     @DeleteMapping("delete-product")
-    public ResponseEntity<String> deleteProduct(@RequestParam String productId){
+    public ResponseEntity<HttpStatus> deleteProduct(@RequestParam String productId){
         return ResponseEntity.ok(productsService.deleteProduct(productId));
     }
 
@@ -139,6 +140,15 @@ public class ProductsAdminController {
     }
 
 
+    @DeleteMapping("/delete-product-image")
+    public ResponseEntity<HttpStatus> deleteProductImage(@RequestParam String image){
+        return ResponseEntity.ok(productsService.deleteProductImage(image));
+    }
+
+    @GetMapping("/get-specific-inventory-product/{specificProductId}")
+    public ResponseEntity<SpecificInventoryProductResponse> getInventoryProduct(@PathVariable String specificProductId){
+        return ResponseEntity.ok(productsService.getInventoryProduct(specificProductId));
+    }
 
 
 }

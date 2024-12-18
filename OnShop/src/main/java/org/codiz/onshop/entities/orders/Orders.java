@@ -2,12 +2,8 @@ package org.codiz.onshop.entities.orders;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.codiz.onshop.dtos.requests.DoorStepAddressCoordinates;
 import org.codiz.onshop.entities.users.Users;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +38,7 @@ public class Orders {
             this.orderStatus = OrderStatus.UNDELIVERED;
         }
         if (this.shippingStatus == null) {
-            this.shippingStatus = ShippingStatus.PLACED_ORDER;
+            this.shippingStatus = ShippingStatus.UNDELIVERED;
         }
         if (this.getCreatedOn() == null) {
             this.createdOn = Instant.now();

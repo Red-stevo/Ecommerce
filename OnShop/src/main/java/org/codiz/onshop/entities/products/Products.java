@@ -29,6 +29,7 @@ public class Products implements Serializable {
     @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SpecificProductDetails>specificProductDetailsList;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
