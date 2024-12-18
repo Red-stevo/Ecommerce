@@ -1,6 +1,7 @@
 package org.codiz.onshop.dtos.requests;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 @Data
@@ -17,5 +18,7 @@ public class SpecificProductUpdate {
     private float discount;
 
     private int count;
+
+    private List<MultipartFile> files;
 
 }

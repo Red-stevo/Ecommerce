@@ -14,7 +14,7 @@ public class ProductUpdateRequest {
 
     private String productDescription;
 
-    private int inventoryStatus;
+    private Integer inventoryStatus;
 
     private SpecificProductUpdate productUpdates;
 

@@ -323,7 +323,7 @@ public class UsersServiceImpl implements UsersService {
         AuthenticationResponse authResponse = new AuthenticationResponse();
         authResponse.setMessage("Authentication successful.");
         authResponse.setToken(accessToken);
-        authResponse.setUserId(user.getUserId());
+        authResponse.setUserId(String.valueOf(user.getUserId()));
         authResponse.setUserRole(user.getRole().toString());
         log.info(String.valueOf(authResponse));
 
@@ -401,7 +401,7 @@ public class UsersServiceImpl implements UsersService {
         authenticationResponse.setToken(accessToken);
         authenticationResponse.setMessage("access token refreshed successfully");
         authenticationResponse.setUserRole(String.valueOf(users.getRole()));
-        authenticationResponse.setUserId(users.getUserId());
+        authenticationResponse.setUserId(String.valueOf(users.getUserId()));
 
         log.warn("token fully refreshed.");
         return authenticationResponse;

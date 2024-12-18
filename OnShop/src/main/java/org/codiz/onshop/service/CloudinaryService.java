@@ -73,6 +73,7 @@ public class CloudinaryService {
         if (lastSlashIndex == -1 || lastDotIndex == -1 || lastSlashIndex >= lastDotIndex) {
             throw new IllegalArgumentException("Invalid URL format: " + url);
         }
+        log.info("the public id is:"+url.substring(lastSlashIndex+1, lastDotIndex));
 
         return url.substring(lastSlashIndex + 1, lastDotIndex);
     }

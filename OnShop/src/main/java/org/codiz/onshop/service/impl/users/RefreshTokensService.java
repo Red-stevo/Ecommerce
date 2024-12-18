@@ -50,7 +50,7 @@ public class RefreshTokensService {
         authenticationResponse.setToken(accessToken);
         authenticationResponse.setMessage("access token refreshed successfully");
         authenticationResponse.setUserRole(String.valueOf(users.getRole()));
-        authenticationResponse.setUserId(users.getUserId());
+        authenticationResponse.setUserId(String.valueOf(users.getUserId()));
 
         log.warn("token fully refreshed.");
         return authenticationResponse;

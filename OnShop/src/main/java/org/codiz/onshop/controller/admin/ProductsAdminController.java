@@ -64,35 +64,6 @@ public class ProductsAdminController {
 
     }
 
-   /* @PutMapping(value = "/update",consumes = "multipart/form-data")
-    public ResponseEntity<EntityResponse> updateProduct(
-            @RequestPart("productData") String productData,
-            @RequestPart List<MultipartFile> files,
-            @RequestParam String productId) throws JsonProcessingException {
-
-        //deserializing the product images data
-        ObjectMapper objectMapper = new ObjectMapper();
-        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
-
-        List<FileUploads> uploads = files.stream().map(
-                file -> {
-                    try{
-                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        ).toList();
-
-
-        log.info(productData);
-        files.forEach((file) -> log.info(file.getOriginalFilename()));
-
-        log.info("done");
-
-        return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
-
-    }*/
 
 
     @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
@@ -151,17 +122,15 @@ public class ProductsAdminController {
         return ResponseEntity.ok(productsService.getInventoryProduct(specificProductId));
     }
 
-    @PutMapping("/update-product")
+    @PutMapping(value = "/update-product", consumes = "multipart/form-data")
     public ResponseEntity<HttpStatus> updateProduct
-            ( @RequestPart("productData") String productData, @RequestPart List<MultipartFile> files) throws JsonProcessingException {
+            ( @RequestPart("productData") String productData, @RequestPart(required = false) List<MultipartFile> files) throws JsonProcessingException {
 
+        log.warn(productData, files);
         ObjectMapper objectMapper = new ObjectMapper();
         ProductUpdateRequest updateRequestRequest = objectMapper.readValue(productData, ProductUpdateRequest.class);
-
-
+        log.info("passing them to the service");
         return ResponseEntity.ok(productsService.updateProduct(updateRequestRequest,files));
-
-
     }
 
 

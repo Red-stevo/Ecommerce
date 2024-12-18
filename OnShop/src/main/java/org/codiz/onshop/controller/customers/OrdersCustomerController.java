@@ -24,8 +24,8 @@ public class OrdersCustomerController {
     private final OrdersService ordersService;
 
     @PostMapping("/place-order")
-    public ResponseEntity<EntityResponse> placeOrder(@RequestBody OrderPlacementRequest request){
-        return ResponseEntity.ok(ordersService.placeOrder(request));
+    public ResponseEntity<EntityResponse> placeOrder(@RequestParam String orderId){
+        return ResponseEntity.ok(ordersService.placeOrder(orderId));
     }
 
     @PutMapping("/cancel-order-item")
@@ -46,10 +46,11 @@ public class OrdersCustomerController {
         return ResponseEntity.ok(ordersService.getShippingStatus(userId));
     }
 
-    @PutMapping("/update-order-quantity")
+    /*@PutMapping("/update-order-quantity")
     public ResponseEntity<ResponseEntity> addOrderItemQuantity(@RequestParam String orderIteId, @RequestParam int quantity){
+       log.info("request to update the order item quantity "+orderIteId);
         return ResponseEntity.ok(ordersService.addOrderItemQuantity(orderIteId,quantity));
-    }
+    }*/
 
     @PostMapping("/make-order")
     public ResponseEntity<HttpStatus> makeOrder(@RequestBody List<MakingOrderRequest> request, @RequestParam String userId){

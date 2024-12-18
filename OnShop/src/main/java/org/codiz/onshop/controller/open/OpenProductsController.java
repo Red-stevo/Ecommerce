@@ -53,6 +53,16 @@ public class OpenProductsController {
         return ResponseEntity.ok(productsService.findDiscountedProducts(size));
     }
 
+    @GetMapping("/popular-products")
+    public ResponseEntity<List<ProductsPageResponse>> popularProducts(@RequestParam int size){
+        return ResponseEntity.ok(productsService.popularProducts(size));
+    }
+
+    @GetMapping("/new-products")
+    public ResponseEntity<List<ProductsPageResponse>> newProducts(@RequestParam int size){
+        return ResponseEntity.ok(productsService.newProducts(size));
+    }
+
     /**
      * Endpoint to search for products.
      * @param query The search query string.
