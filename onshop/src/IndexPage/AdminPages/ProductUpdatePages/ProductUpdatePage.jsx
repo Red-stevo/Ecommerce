@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getCategories} from "../../../ApplicationStateManagement/CategoriesStore/CategoriesReducer.js";
 import "./Styles/ProductUpdatePage.css";
-import {FloatingLabel} from "react-bootstrap";
+import {Button, FloatingLabel} from "react-bootstrap";
 import {IoIosClose} from "react-icons/io";
 import FileUploadPreview from "./Components/FileUploadPreview.jsx";
 import {getUpdateProducts
@@ -10,9 +10,49 @@ import {getUpdateProducts
 import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
 
+function FileChange(setUploads, setPreviewFile) {
+    return (event) => {
+        const files = Array.from(event.target.files);
+
+        {
+            files.length > 0 && files.forEach((image) => {
+                if (!image) return;
+
+                /*Check the file size, if too large ignore the file.*/
+                if (image.size > 10485760) {
+                    console.log("The File '", image.name, "' is too large");
+                    return;
+                }
+
+                /*add file to the upload list.*/
+                setUploads((prevState) => [...prevState, image]);
+
+                const reader = new FileReader();
+
+                // Check if the file is an image or video
+                if (image.type.startsWith("image/")) {
+                    reader.onload = (e) => {
+                        setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "image"}]);
+                    };
+                    reader.readAsDataURL(image);
+
+                } else if (image.type.startsWith("video/") || image.type.startsWith("application/")) {
+                    reader.onload = (e) => {
+                        setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "video"}]);
+                    };
+                    reader.readAsDataURL(image);
+                } else {
+                    console.log(`File starts with ${image.type}`);
+                    console.error("File type not supported. Please upload an image or video.");
+                }
+            })
+        }
+    };
+}
+
 const ProductUpdatePage = () => {
     const {categories} = useSelector(state => state.CategoriesReducer);
-    const {product, errorMessage, loading} = useSelector(state=> state.ProductUpdateReducer);
+    const {product, errorMessage, loading, success} = useSelector(state=> state.ProductUpdateReducer);
     const {productId, productName, productDescription, productCategory, specificProducts} = product;
     const dispatch = useDispatch();
     const [previewFile, setPreviewFile] = useState([]);
@@ -20,76 +60,65 @@ const ProductUpdatePage = () => {
     const [productDetailsList, setProductDetailsList] = useState([]);
     const [productCount, setProductCount] = useState(1);
     const {productid} = useParams();
+    const [displayProduct, setDisplayProduct] = useState(0);
     const {register, reset,
         handleSubmit} = useForm();
+    const [active, setActive] = useState(0);
+    const [suggestions, setSuggestions] = useState([]);
+    const [categoryInput, setCategoryInput] = useState("");
 
 
     useEffect(() => {
         dispatch(getCategories());
         dispatch(getUpdateProducts(productid));
-
-
     }, []);
+
+    useEffect(() => {
+        if (specificProducts || success) {
+            const  {id, productPrice, productColor,
+                discount, productSize, productImages, productCount:count} = specificProducts[displayProduct];
+            setPreviewFile([...productImages])
+            reset({productId:id, productName, productDescription,
+                productPrice, discount, productColor, productSize, count});
+        }
+    }, [displayProduct, success]);
 
     useEffect(() => {
         if (productCount <= 1) setProductCount(1);
     }, [productCount]);
 
     const handleImageRemove = (imageIndex) => {
-        setUploads(uploads.filter((_,index) => index !== imageIndex));
-        setPreviewFile(previewFile.filter((_, index) => index !== imageIndex))
+
+        if (typeof imageIndex !== "string") {
+            setUploads(uploads.filter((_, index) => index !== imageIndex));
+            setPreviewFile(previewFile.filter((_, index) => index !== imageIndex));
+        }else {
+            /*Delete product image.*/
+            //1. handle preview.
+            setPreviewFile(previewFile.filter(url => url !== imageIndex));
+
+            //2. handle the database deletion.
+
+            //3. handle the redux removal
+        }
     }
-    const handleFileChange = FileChange(productDetailsList, setUploads, setPreviewFile);
+
+    const handleFileChange = FileChange(setUploads, setPreviewFile);
 
 
-    function FileChange(productDetailsList, setUploads, setPreviewFile) {
-        return (event) => {
-            const files = Array.from(event.target.files);
-
-            {
-                files.length > 0 && files.forEach((image) => {
-
-                    if (!image) return;
-
-                    /*Rename files*/
-                    const file = new File([image], `${productDetailsList.length}+${image.name}`,
-                        {
-                            type: image.type,
-                            lastModified: image.lastModified,
-                        })
-
-                    /*Check the file size, if too large ignore the file.*/
-                    if (file.size > 10485760) {
-                        console.log("The File '", file.name, "' is too large");
-                        return;
-                    }
+    useEffect(() => {
+        const handleCategoryChange = (inputData) => {
+            if (inputData){
+                const categorySuggestions = categories && categories
+                    .filter(category  => category.categoryName.toLowerCase().includes(inputData.toLowerCase()));
+                setSuggestions(categorySuggestions && categorySuggestions.length > 0 ? categorySuggestions : []);
+            }else
+                setSuggestions([]);
+        }
 
 
-                    /*add file to the upload list.*/
-                    setUploads((prevState) => [...prevState, file]);
-
-                    const reader = new FileReader();
-
-                    // Check if the file is an image or video
-                    if (file.type.startsWith("image/")) {
-                        reader.onload = (e) => {
-                            setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "image"}]);
-                        };
-                        reader.readAsDataURL(file);
-
-                    } else if (file.type.startsWith("video/") || file.type.startsWith("application/")) {
-                        reader.onload = (e) => {
-                            setPreviewFile((prevState) => [...prevState, {file: e.target.result, type: "video"}]);
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        console.log(`File starts with ${file.type}`);
-                        console.error("File type not supported. Please upload an image or video.");
-                    }
-                })
-            }
-        };
-    }
+        if (categoryInput) handleCategoryChange(categoryInput)
+    }, [categoryInput])
 
 
     return (
@@ -117,28 +146,65 @@ const ProductUpdatePage = () => {
                             </div>))}
                 </div>
 
-                <input className={"input-category-select"} type={"text"} placeholder={"Product Category"}/>
+                <input className={"input-category-select"} type={"text"} placeholder={"Product Category"}
+                onChange={(event) => setCategoryInput(event.target.value)}/>
+
+                {suggestions.length > 0 &&
+                <div className={"product-update-suggestions"}>
+                    {suggestions && suggestions.length > 0 && suggestions.map(({categoryName}, index) => (
+                        <span key={index}>{categoryName}</span>
+                    ))}
+                </div>}
+
             </section>
 
             <div className={"product-update-page-proportion-variety-update"}>
-                <input className={"product-update-page-variety-update"} placeholder={"variety"}/>
-                <input className={"product-update-page-proportion-update"} placeholder={"proportion"}/>
+                <input className={"product-update-page-variety-update"}
+                       placeholder={"variety"} {...register("productColor")} />
+                <input className={"product-update-page-proportion-update"}
+                       placeholder={"proportion"} {...register("productSize")} />
             </div>
 
             <div className={"product-price-discount-update-input"}>
-                <input className={"product-update-page-price-update"} placeholder={"price"}/>
-                <input className={"product-update-page-discount-update"} placeholder={"discount"}/>
+                <input className={"product-update-page-price-update"} placeholder={"price"}
+                       {...register("productPrice")} />
+                <input className={"product-update-page-discount-update"} placeholder={"discount"}
+                       {...register("discount")} />
             </div>
 
             <div className={"product-update-page-count-triangle"}>
                 <input type={"number"} className={"product-update-page-count-update"}
-                       value={productCount} placeholder={"count"}
+                       value={productCount} placeholder={"count"} {...register("count")}
                        onChange={(event) => setProductCount(event.target.value)}/>
+
+                <button className={"product-update-page-active-button app-button"}
+                onClick={() => {
+                    if (active === 0) setActive(1);
+                    else setActive(0);
+                }}>
+                    {active === 0 ? "Active" : "Inactive"}
+                </button>
             </div>
 
             <FileUploadPreview onChange={handleFileChange} previewImages={previewFile}
                                handleRemove={handleImageRemove}/>
 
+
+            <div className={"action-buttons"}>
+                <Button className={"app-button"}
+                onClick={() => {
+                    if (specificProducts && displayProduct === 0)
+                        setDisplayProduct(specificProducts.length - 1);
+                    else setDisplayProduct((prevState) => prevState - 1);
+                }}>Previous</Button>
+                <Button className={"app-button"}>Update</Button>
+                <Button className={"app-button"}
+                        onClick={() => {
+                                if (specificProducts && displayProduct === (specificProducts.length - 1))
+                                    setDisplayProduct(0);
+                                else setDisplayProduct((prevState) => prevState + 1);
+                        }}>Next</Button>
+            </div>
         </div>
     );
 };

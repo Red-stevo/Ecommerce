@@ -136,9 +136,10 @@ const ProductsInventory = () => {
                             }
 
                             <div className={"edit-delete-inventory-buttons"}>
-                                <Button className={"app-button edit-product-inventory"}><CiEdit /> Edit</Button>
-                                <FiTrash2 className={"trash-product-inventory"}
-                                          onClick={() => handleDeleteProduct(productId)}/>
+                                <Button href={`/admin/productList/update/${productId}`}
+                                        className={"app-button edit-product-inventory"}><CiEdit /> Edit</Button>
+                                <FiTrash2 className={"trash-product-inventory"} onClick={() =>
+                                    handleDeleteProduct(productId)}/>
                             </div>
 
                         </div>

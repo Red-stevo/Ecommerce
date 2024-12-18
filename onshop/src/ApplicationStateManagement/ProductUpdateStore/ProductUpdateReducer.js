@@ -40,7 +40,7 @@ const ProductUpdateReducer = createSlice(
                     state.success = true;
                     state.loading = false;
                     state.errorMessage = null;
-                    state.products = action.payload;
+                    state.product = action.payload;
                 })
                 .addCase(getUpdateProducts.rejected, (state, action) => {
                     state.success = null;
