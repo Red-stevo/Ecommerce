@@ -45,7 +45,7 @@ const App = () => {
                   <Route path={"/admin/orders/:orderid/:productId"} element={<SingleProductDisplay />} />
                   <Route path={"/admin/productCategories"} element={<ProductCategories />} />
                   <Route path={"/admin/productList"} element={<ProductsInventory />}/>
-                  <Route path={"/admin/productList/update/:productId"}  element={<ProductUpdatePage />}/>
+                  <Route path={"/admin/productList/update/:productid"}  element={<ProductUpdatePage />}/>
               </Route>
               <Route path={"*"} element={<h1>Page Not Found.</h1>} />
           </Routes>

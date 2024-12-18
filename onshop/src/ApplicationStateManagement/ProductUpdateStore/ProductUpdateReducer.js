@@ -5,7 +5,7 @@ import {updateProfileImage} from "../UserProfileStore/UserProfileReducer.js";
 const updateProduct = createEntityAdapter();
 
 const  initialState = updateProduct.getInitialState({
-    success:null, loading:false, errorMessage:null, products:{}});
+    success:null, loading:false, errorMessage:null, product:{}});
 
 export const getUpdateProducts = createAsyncThunk(
     "update-product/get-product",

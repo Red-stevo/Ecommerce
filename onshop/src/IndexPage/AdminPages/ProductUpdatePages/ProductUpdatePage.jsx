@@ -5,19 +5,30 @@ import "./Styles/ProductUpdatePage.css";
 import {FloatingLabel} from "react-bootstrap";
 import {IoIosClose} from "react-icons/io";
 import FileUploadPreview from "./Components/FileUploadPreview.jsx";
+import {getUpdateProducts
+} from "../../../ApplicationStateManagement/ProductUpdateStore/ProductUpdateReducer.js";
+import {useParams} from "react-router-dom";
+import {useForm} from "react-hook-form";
 
 const ProductUpdatePage = () => {
-    const {categories} = useSelector(state => state.CategoriesReducer);;
+    const {categories} = useSelector(state => state.CategoriesReducer);
+    const {product, errorMessage, loading} = useSelector(state=> state.ProductUpdateReducer);
+    const {productId, productName, productDescription, productCategory, specificProducts} = product;
     const dispatch = useDispatch();
     const [previewFile, setPreviewFile] = useState([]);
-    const productCategories = ["Shoes", "Toys", "Health Care"];
     const [uploads, setUploads] = useState([]);
     const [productDetailsList, setProductDetailsList] = useState([]);
     const [productCount, setProductCount] = useState(1);
+    const {productid} = useParams();
+    const {register, reset,
+        handleSubmit} = useForm();
 
 
     useEffect(() => {
         dispatch(getCategories());
+        dispatch(getUpdateProducts(productid));
+
+
     }, []);
 
     useEffect(() => {
@@ -84,11 +95,13 @@ const ProductUpdatePage = () => {
     return (
         <div className={"product-update-page"}>
 
-            <input className={"product-update-page-name-update"} type={"text"}/>
+            <input className={"product-update-page-name-update"} type={"text"}
+                   {...register("productName")} placeholder={"product Name"}/>
 
             <FloatingLabel className={"form-control product-update-page-description-update "} controlId="floatingTextarea"
                            label="Product Decription">
                 <textarea required={true} className={"form-control description-update-input-field"}
+                          {...register("productDescription")}
                           placeholder={"Product Description"} style={{height: '100px'}}/>
             </FloatingLabel>
 
@@ -96,15 +109,15 @@ const ProductUpdatePage = () => {
             <section className={"product-update-page-categories"}>
 
                 <div className={"selected-categories"}>
-                    {productCategories && productCategories.length > 0 &&
-                        productCategories.map((category, index) => (
+                    {productCategory && productCategory.length > 0 &&
+                        productCategory.map((category, index) => (
                             <div key={index} className={"categories-preview"}>
                                 {category}
                                 <IoIosClose className={"cancel-categories"}/>
                             </div>))}
                 </div>
 
-                <input className={"input-category-select"} type={"text"}/>
+                <input className={"input-category-select"} type={"text"} placeholder={"Product Category"}/>
             </section>
 
             <div className={"product-update-page-proportion-variety-update"}>
