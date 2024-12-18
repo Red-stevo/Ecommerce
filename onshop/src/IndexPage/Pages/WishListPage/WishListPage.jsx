@@ -18,14 +18,14 @@ const WishListPage = () => {
 
 
     useEffect(() => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         dispatch(getWishList(userId));
     }, []);
 
 
     /*Delete an Items in the wish List*/
     const handleDeleteItem = (productId) => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         const data = {userId, specificProductIds:productId};
         dispatch(deleteWishList(data));
 
@@ -34,7 +34,7 @@ const WishListPage = () => {
 
     /*Clear the Whole Wish List.*/
     const handleDeleteWishList = () => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         const data = {userId, specificProductIds:""};
         dispatch(deleteWishList(data));
 
@@ -43,7 +43,7 @@ const WishListPage = () => {
 
     const handleAddAllToWishList = () => {
         let items = [];
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         wishListProducts.forEach(({specificProductId}) => items = [...items, {specificProductId, quantity:1}]);
         const data = {userId, items};
         dispatch(addToCart(data));
@@ -53,7 +53,7 @@ const WishListPage = () => {
 
     const handleAddToCart = (specificProductId) => {
         const items = [{specificProductId, quantity:1}];
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
 
         const data = {userId, items};
         dispatch(addToCart(data));

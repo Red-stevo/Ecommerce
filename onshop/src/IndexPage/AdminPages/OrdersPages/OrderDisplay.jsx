@@ -4,9 +4,10 @@ import {Button, Image} from "react-bootstrap";
 import {LiaTimesSolid} from "react-icons/lia";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {updateOrderStatus} from "../../../ApplicationStateManagement/OdersStore/ordersStore.js";
 import {getOrderInfo} from "../../../ApplicationStateManagement/OrderInfoStore/OrderInfoReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
 
 
 const orderDetails = {
@@ -67,17 +68,14 @@ const orderDetails = {
     }
 }
 
-const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED","CANCELED", "ALL"];
+const statusList = ["UNDELIVERED", "SHIPPING","DELIVERED"];
 
 
 const OrderDisplay = () => {
-    const {orderId, orderNumber, orderSummary, orderStatus, address,
-        itemList, totalCharges, customerDetails} = orderDetails;
-    const {orderDate, orderTime, orderTotal, deliveryFee} = orderSummary;
-    const  {numberOfItemsOrdered, ordersNumber, customerEmail, customerName, customerPhone
-    } = customerDetails;
+    const {orderDetail, error, loading} = useSelector(state => state.OrderInfoReducer);
     const navigate = useNavigate();
-    const [currentStatus, setCurrentStatus] = useState(orderStatus ? orderStatus : "UNDELIVERED");
+    const [currentStatus, setCurrentStatus] =
+        useState(orderDetails.orderStatus?orderDetails.orderStatus:"UNDELIVERED");
     const dispatch = useDispatch();
     const { orderid} = useParams();
 
@@ -87,11 +85,9 @@ const OrderDisplay = () => {
     }, []);
 
     const handleStatusUpdate = () => {
-
         if (statusList.indexOf(currentStatus) <= statusList.length - 2 )
             setCurrentStatus(statusList[statusList.indexOf(currentStatus) + 1]);
-
-        const data = {orderId, status:currentStatus}
+        const data = {orderId:orderDetails.orderId, status:currentStatus}
         dispatch(updateOrderStatus(data));
     }
 
@@ -105,7 +101,7 @@ const OrderDisplay = () => {
 
 
             <div className={"order-status-num"}>
-                <span className={"order-num"}>ID <span className={"order-number"}>#{orderId}</span></span>
+                <span className={"order-num"}>ID <span className={"order-number"}>#{orderDetails.orderId}</span></span>
 
                 <Button className={"order-status-button app-button"} onClick={handleStatusUpdate}>
                     {currentStatus}
@@ -123,12 +119,13 @@ const OrderDisplay = () => {
                         <span className={"order-products-total-price"} >Total Price</span>
                     </div>
 
-                    {itemList.length > 0 && itemList.map(({productName, productPrice,productId,
-                                                              productImageUrl, totalPrice,
-                                                              quantity, canceled}, index) => (
+                    { orderDetails && orderDetails.itemList && orderDetails.itemList.length > 0 &&
+                        orderDetails.itemList.map(({productName, productPrice,productId,
+                                                       productImageUrl, totalPrice,
+                                                       quantity, canceled}, index) => (
 
                         <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}
-                        onClick={() => navigate(`/admin/orders/${orderId}/${productId}`)}>
+                        onClick={() => navigate(`${productId}`)}>
                             <span className={"product-name"} title={productName}>
                                 <Image src={productImageUrl}  className={"product-image-order"}/>
                                 {productName.length > 10 ? productName.substring(0, 10)+"...": productName}
@@ -155,56 +152,58 @@ const OrderDisplay = () => {
                         <span className={"order-delivery"}>Delivery Fee</span>
                         <span className={"order-total"}>Total</span>
                     </div>
-
+                    {orderDetails.orderSummary &&
                     <div className={"value-holder-order-summary"}>
-                        <span className={"order-date-value"}>{orderDate}</span>
-                        <span className={"order-time-value"}>{orderTime} HRS</span>
-                        <span className={"order-sub-total-value"}>ksh {orderTotal}</span>
-                        <span className={"order-delivery-value"}>ksh {deliveryFee}</span>
-                        <span className={"order-total-value"}> ksh {totalCharges}</span>
-                    </div>
+                        <span className={"order-date-value"}>{orderDetails.orderSummary.orderDate}</span>
+                        <span className={"order-time-value"}>{orderDetails.orderSummary.orderTime} HRS</span>
+                        <span className={"order-sub-total-value"}>ksh {orderDetails.orderSummary.orderTotal}</span>
+                        <span className={"order-delivery-value"}>ksh {orderDetails.orderSummary.deliveryFee}</span>
+                        <span className={"order-total-value"}> ksh {orderDetails.totalCharges}</span>
+                    </div>}
                 </div>
 
             </section>
 
-
-            <section className={"user-details-section"}>
+            {orderDetails.customerDetails &&
+                <section className={"user-details-section"}>
 
                 <div className={"customer-order-details"}>
                     <span className={"customer-order-details-title"}>Customer Order Details</span>
 
                     <div className={"customer-details"}>
                         <span className={"title"}>Customer Name </span>
-                        <span>{customerName}</span>
+                        <span>{orderDetails.customerDetails.customerName}</span>
                     </div>
                     <div className={"customer-details"}>
                         <span className={"title"}>Phone Number </span><
-                        span>{customerPhone}</span>
+                        span>{orderDetails.customerDetails.customerPhone}</span>
                     </div>
 
                     <div className={"customer-details"}>
                         <span className={"title"}>Email</span><
-                        span>{customerEmail}</span>
+                        span>{orderDetails.customerDetails.customerEmail}</span>
                     </div>
 
                     <div className={"customer-details"}>
                         <span className={"title"}>Order Number </span>
-                        <span>{ordersNumber}</span>
+                        <span>{orderDetails.customerDetails.ordersNumber}</span>
                     </div>
                     <div className={"customer-details"}>
                         <span className={"title"}>Number of Items </span>
-                        <span>{numberOfItemsOrdered}</span>
+                        <span>{orderDetails.customerDetails.numberOfItemsOrdered}</span>
                     </div>
 
                 </div>
 
                 <div className={"address-details"}>
                     <span className={"customer-order-details-title address-title"}>Delivery Address</span>
-                    <span className={"address"}>{address}</span>
+                    <span className={"address"}>{orderDetails.address}</span>
                 </div>
 
             </section>
+            }
 
+            {loading && <Loader />}
         </div>
     );
 };

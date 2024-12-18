@@ -36,18 +36,18 @@ const ProductDisplay = () => {
     const handleAddToCart = () => {
 
         const items = [{specificProductId: productOnDisplay.productId, quantity: 1}];
-        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",items};
+        const cartData = {userId: "c63b",items};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
         const wishListData =
-            {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", specificationId: productOnDisplay.productId};
+            {userId: "c63b", specificationId: productOnDisplay.productId};
         dispatch(addToWishList(wishListData));
     }
 
     const handleOrderNow = () => {
         const request = [{specificationId: productOnDisplay.productId, quantity: 1}];
-        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
+        const cartData = {userId: "c63b",request};
 
         dispatch(makeOrder(cartData));
 

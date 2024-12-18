@@ -30,7 +30,7 @@ const ProductsCart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const cartData = {page, size: 1, userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948"}
+        const cartData = {page, size: 1, userId: "c63b"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -91,7 +91,7 @@ const ProductsCart = () => {
 
         let request = [];
         selectedProducts.forEach((id) => request = [...request, {specificationId:id, quantity: 1}]);
-        const cartData = {userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948",request};
+        const cartData = {userId: "c63b",request};
         dispatch(makeOrder(cartData));
 
         navigate("/home/user/payment");
