@@ -53,6 +53,7 @@
     width: 100%;
     flex-direction: column;
     gap: 5px;
+    position: relative;
 }
 
 .selected-categories {
@@ -90,6 +91,30 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
+}
+
+.product-update-suggestions {
+    display: flex;
+    flex-direction:column;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    padding-left: 10px;
+    border-radius: 10px;
+    top: 80px;
+    gap: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.category-options {
+    cursor: pointer;
+    font-family: Montserr Montserrat sans-serif;
+    font-weight: 600;
+}
+
+.category-options:hover {
+    background-color: rgba(245, 245, 245, 0.5);
 }
 
 

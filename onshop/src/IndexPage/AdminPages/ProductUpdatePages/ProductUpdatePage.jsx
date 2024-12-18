@@ -9,6 +9,7 @@ import {getUpdateProducts
 } from "../../../ApplicationStateManagement/ProductUpdateStore/ProductUpdateReducer.js";
 import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
+import Loader from "../../../Loading/Loader.jsx";
 
 function FileChange(setUploads, setPreviewFile) {
     return (event) => {
@@ -53,11 +54,10 @@ function FileChange(setUploads, setPreviewFile) {
 const ProductUpdatePage = () => {
     const {categories} = useSelector(state => state.CategoriesReducer);
     const {product, errorMessage, loading, success} = useSelector(state=> state.ProductUpdateReducer);
-    const {productId, productName, productDescription, productCategory, specificProducts} = product;
+    const {productName, productDescription, productCategory, specificProducts} = product;
     const dispatch = useDispatch();
     const [previewFile, setPreviewFile] = useState([]);
     const [uploads, setUploads] = useState([]);
-    const [productDetailsList, setProductDetailsList] = useState([]);
     const [productCount, setProductCount] = useState(1);
     const {productid} = useParams();
     const [displayProduct, setDisplayProduct] = useState(0);
@@ -66,12 +66,18 @@ const ProductUpdatePage = () => {
     const [active, setActive] = useState(0);
     const [suggestions, setSuggestions] = useState([]);
     const [categoryInput, setCategoryInput] = useState("");
+    const [isFocus, setIsFocus] = useState(false);
+    const [productSelectedCategories, setProductSelectedCategories] = useState([]);
 
 
     useEffect(() => {
         dispatch(getCategories());
         dispatch(getUpdateProducts(productid));
     }, []);
+
+    useEffect(() => {
+        setProductSelectedCategories([...productCategory]);
+    }, [])
 
     useEffect(() => {
         if (specificProducts || success) {
@@ -112,14 +118,17 @@ const ProductUpdatePage = () => {
                 const categorySuggestions = categories && categories
                     .filter(category  => category.categoryName.toLowerCase().includes(inputData.toLowerCase()));
                 setSuggestions(categorySuggestions && categorySuggestions.length > 0 ? categorySuggestions : []);
-            }else
-                setSuggestions([]);
+            }
         }
 
-
-        if (categoryInput) handleCategoryChange(categoryInput)
+        if (categoryInput) handleCategoryChange(categoryInput);
+        else  setSuggestions([]);
     }, [categoryInput])
 
+
+    const handleCategoryRemove = (category)  => {
+        setProductSelectedCategories(prevState => prevState.filter(name => name !== category))
+    }
 
     return (
         <div className={"product-update-page"}>
@@ -138,21 +147,23 @@ const ProductUpdatePage = () => {
             <section className={"product-update-page-categories"}>
 
                 <div className={"selected-categories"}>
-                    {productCategory && productCategory.length > 0 &&
-                        productCategory.map((category, index) => (
+                    {productSelectedCategories && productSelectedCategories.length > 0 &&
+                        productSelectedCategories.map((category, index) => (
                             <div key={index} className={"categories-preview"}>
                                 {category}
-                                <IoIosClose className={"cancel-categories"}/>
+                                <IoIosClose className={"cancel-categories"}
+                                onClick={() => handleCategoryRemove(category)}/>
                             </div>))}
                 </div>
 
                 <input className={"input-category-select"} type={"text"} placeholder={"Product Category"}
+                       onFocus={() => setIsFocus(true)} onBlur={() => setIsFocus(false)}
                 onChange={(event) => setCategoryInput(event.target.value)}/>
 
-                {suggestions.length > 0 &&
+                {isFocus &&
                 <div className={"product-update-suggestions"}>
                     {suggestions && suggestions.length > 0 && suggestions.map(({categoryName}, index) => (
-                        <span key={index}>{categoryName}</span>
+                        <span className={"category-options"} key={index}>{categoryName}</span>
                     ))}
                 </div>}
 
@@ -205,6 +216,7 @@ const ProductUpdatePage = () => {
                                 else setDisplayProduct((prevState) => prevState + 1);
                         }}>Next</Button>
             </div>
+            {loading && <Loader />}
         </div>
     );
 };
