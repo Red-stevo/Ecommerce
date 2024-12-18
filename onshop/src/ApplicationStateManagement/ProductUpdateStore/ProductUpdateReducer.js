@@ -25,15 +25,20 @@ export const getUpdateProducts = createAsyncThunk(
 
 export const updateProducts = createAsyncThunk(
     "update-product/update",
-    async (formData= null,
+    async (data= null,
            {fulfillWithValue,
-               rejectWithValue
+               rejectWithValue,
+               dispatch
            }) => {
+
+        const {productId, formData} = data;
 
         /*Axios request to save products.*/
         try {
             await RequestsConfig.put(`/admin/products/update-product`, formData, {headers:{
-                'Content-Type':'application/x-www-form-urlencoded'}});
+                'Content-Type':'multipart/form-data'}});
+
+            await dispatch(getUpdateProducts(productId));
             return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);

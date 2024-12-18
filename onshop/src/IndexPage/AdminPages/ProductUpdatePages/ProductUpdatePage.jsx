@@ -143,9 +143,9 @@ const ProductUpdatePage = () => {
 
         const formData = new FormData();
         formData.append("productData", JSON.stringify(ProductUpdateRequest));
-        formData.append("files", uploads);
-
-        dispatch(updateProducts(formData));
+        uploads.forEach((file) => {formData.append("files", file);});
+        const updateData = {productId:data.productId,formData}
+        dispatch(updateProducts(updateData));
 
     }
 
