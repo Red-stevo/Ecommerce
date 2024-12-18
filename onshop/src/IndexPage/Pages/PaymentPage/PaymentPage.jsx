@@ -7,6 +7,11 @@ import {useEffect, useState} from "react";
 import {TbMoneybag} from "react-icons/tb";
 import {FaPlus} from "react-icons/fa";
 import EditLocationModal from "./Components/EditLocationModal.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import PaymentReducer, {getPaymentDetails} from "../../../ApplicationStateManagement/PaymentStore/PaymentReducer.js";
+import Loader from "../../../Loading/Loader.jsx";
+import {RxTriangleDown, RxTriangleUp} from "react-icons/rx";
+import ProductDisplayComponent from "./Components/ProductDisplayComponent.jsx";
 
 const paymentDetails = {
     username:"Bob Mirowe",
@@ -23,10 +28,19 @@ const paymentDetails = {
 }
 
 const PaymentPage = () => {
+    const {paymentDetails, loading, error} = useSelector(state => state.PaymentReducer);
     const {username, phoneNumber, location, products, productsAmount,
     shippingCost} = paymentDetails;
     const [productCount, setProductsCount] = useState(0);
     const [modalShow, setModalShow] = useState(false);
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        dispatch(getPaymentDetails(userId));
+    }, []);
+
 
     useEffect(() => {
         const setItemsCount = () => {
@@ -94,24 +108,9 @@ const PaymentPage = () => {
 
                 <div className={"payment-page-products-section-products"}>
                     {products && products.map((
-                            {productCount, productId,
-                                productImage, productName, productPrice}) =>  (
-                            <div key={productId} className={"payment-page-products-section-product"}>
-                                <Image src={productImage}
-                                       className={"payment-page-products-section-product-image"}/>
-
-                                <span className={"payment-page-products-section-product-name"}>{productName}</span>
-
-                                <div className={"payment-page-products-section-product-price-count"}>
-                                    <span className={"payment-page-products-section-product-price"}>
-                                        ksh {productPrice}
-                                    </span>
-                                    <span className={"payment-page-products-section-product-count"}>
-                                        X {productCount}
-                                    </span>
-                                </div>
-
-                            </div>
+                            {productCount, productId, productImage, productName, productPrice}) =>  (
+                                <ProductDisplayComponent productImage={productImage} productCount={productCount}
+                                     productId={productId} productName={productName} productPrice={productPrice}/>
                         )
                     )}
                 </div>
@@ -148,6 +147,8 @@ const PaymentPage = () => {
 
 
             <EditLocationModal show={modalShow} onHide={() => setModalShow(false)}  />
+
+            {loading && <Loader />}
         </div>
     );
 };

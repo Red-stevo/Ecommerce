@@ -151,6 +151,17 @@
     font-size: 15px;
 }
 
+.quantity-toggle-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.quantity {
+    margin-left: 3px;
+    font-weight: 700;
+}
+
 .payment-page-price-section-title {
     font-size:26px;
     font-weight: 600;
