@@ -19,7 +19,7 @@ const SingleProductDisplay = () => {
 
     return (
         <div className={"single-order-product-page"}>
-                {productDetails.cancel ?
+                {!productDetails.active ?
                     <span className={"canceled"}>CANCELED!</span> :
                     <span className={"active-product"}>ACTIVE</span>
                 }

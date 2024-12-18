@@ -12,7 +12,7 @@ import Loader from "../../../Loading/Loader.jsx";
 const statusList = ["UNDELIVERED", "TRANSIT","DELIVERED", "SIGNED"];
 
 const OrderDisplay = () => {
-    const {orderDetails, error, loading} = useSelector(state => state.OrderInfoReducer);
+    const {orderDetails, error, loading, success} = useSelector(state => state.OrderInfoReducer);
     const navigate = useNavigate();
     const [currentStatus, setCurrentStatus] =
         useState(orderDetails.orderStatus?orderDetails.orderStatus:"UNDELIVERED");
@@ -24,15 +24,18 @@ const OrderDisplay = () => {
             dispatch(getOrderInfo(orderid));
     }, []);
 
+    useEffect(() => {
+        if (orderDetails || success)
+            setCurrentStatus(orderDetails.orderStatus);
+    }, [orderDetails]);
+
     const handleStatusUpdate = () => {
         if (statusList.indexOf(currentStatus) <= statusList.length - 2 )
             setCurrentStatus(statusList[statusList.indexOf(currentStatus) + 1]);
-    }
 
-    useEffect(() => {
-        const data = {orderId:orderid, status:currentStatus}
+        const data = {orderId:orderid, status:statusList[statusList.indexOf(currentStatus) + 1]}
         dispatch(updateOrderStatus(data));
-    }, [currentStatus]);
+    }
 
 
     return (
@@ -65,9 +68,9 @@ const OrderDisplay = () => {
                     { orderDetails && orderDetails.itemsList && orderDetails.itemsList.length > 0 &&
                         orderDetails.itemsList.map(({productName, productPrice,productId,
                                                        productImageUrl, totalPrice,
-                                                       quantity, canceled}, index) => (
+                                                       quantity, cancelled}, index) => (
 
-                        <div className={`order-products ${canceled ? "canceled-order": "not-canceled-order"}`} key={index}
+                        <div className={`order-products ${ cancelled ? "canceled-order" : "not-canceled-order"}`} key={index}
                         onClick={() => navigate(`${productId}`)}>
                             <span className={"product-name"} title={productName}>
                                 <Image src={productImageUrl}  className={"product-image-order"}/>
