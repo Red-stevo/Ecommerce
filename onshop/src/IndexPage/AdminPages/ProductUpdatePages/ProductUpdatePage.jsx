@@ -58,7 +58,6 @@ const ProductUpdatePage = () => {
     const dispatch = useDispatch();
     const [previewFile, setPreviewFile] = useState([]);
     const [uploads, setUploads] = useState([]);
-    const [productCount, setProductCount] = useState(1);
     const {productid} = useParams();
     const [displayProduct, setDisplayProduct] = useState(0);
     const {register, reset,
@@ -66,7 +65,6 @@ const ProductUpdatePage = () => {
     const [active, setActive] = useState(0);
     const [suggestions, setSuggestions] = useState([]);
     const [categoryInput, setCategoryInput] = useState("");
-    const [isFocus, setIsFocus] = useState(false);
     const [productSelectedCategories, setProductSelectedCategories] = useState([]);
 
 
@@ -75,9 +73,6 @@ const ProductUpdatePage = () => {
         dispatch(getUpdateProducts(productid));
     }, []);
 
-    useEffect(() => {
-        setProductSelectedCategories([...productCategory]);
-    }, [])
 
     useEffect(() => {
         if (specificProducts || success) {
@@ -86,12 +81,10 @@ const ProductUpdatePage = () => {
             setPreviewFile([...productImages])
             reset({productId:id, productName, productDescription,
                 productPrice, discount, productColor, productSize, count});
+            setProductSelectedCategories([...productCategory]);
         }
     }, [displayProduct, success]);
 
-    useEffect(() => {
-        if (productCount <= 1) setProductCount(1);
-    }, [productCount]);
 
     const handleImageRemove = (imageIndex) => {
 
@@ -157,13 +150,17 @@ const ProductUpdatePage = () => {
                 </div>
 
                 <input className={"input-category-select"} type={"text"} placeholder={"Product Category"}
-                       onFocus={() => setIsFocus(true)} onBlur={() => setIsFocus(false)}
                 onChange={(event) => setCategoryInput(event.target.value)}/>
 
-                {isFocus &&
+                {suggestions.length > 0 &&
                 <div className={"product-update-suggestions"}>
                     {suggestions && suggestions.length > 0 && suggestions.map(({categoryName}, index) => (
-                        <span className={"category-options"} key={index}>{categoryName}</span>
+                        <span className={"category-options"} key={index} onClick={() => {
+                            setProductSelectedCategories(prevState => [...prevState, categoryName]);
+                            setCategoryInput("");
+                        }}>
+                            {categoryName}
+                        </span>
                     ))}
                 </div>}
 
@@ -185,15 +182,14 @@ const ProductUpdatePage = () => {
 
             <div className={"product-update-page-count-triangle"}>
                 <input type={"number"} className={"product-update-page-count-update"}
-                       value={productCount} placeholder={"count"} {...register("count")}
-                       onChange={(event) => setProductCount(event.target.value)}/>
+                       placeholder={"count"} {...register("count")} />
 
                 <button className={"product-update-page-active-button app-button"}
                 onClick={() => {
-                    if (active === 0) setActive(1);
-                    else setActive(0);
+                    if (active === 1) setActive(2);
+                    else setActive(1);
                 }}>
-                    {active === 0 ? "Active" : "Inactive"}
+                    {active === 1 ? "Active" : "Inactive"}
                 </button>
             </div>
 
