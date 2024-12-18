@@ -5,7 +5,8 @@ import "./Styles/ProductUpdatePage.css";
 import {Button, FloatingLabel} from "react-bootstrap";
 import {IoIosClose} from "react-icons/io";
 import FileUploadPreview from "./Components/FileUploadPreview.jsx";
-import {getUpdateProducts
+import {
+    getUpdateProducts, updateProducts
 } from "../../../ApplicationStateManagement/ProductUpdateStore/ProductUpdateReducer.js";
 import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
@@ -142,9 +143,9 @@ const ProductUpdatePage = () => {
 
         const formData = new FormData();
         formData.append("productData", JSON.stringify(ProductUpdateRequest));
-        formData.append("uploads", uploads);
+        formData.append("files", uploads);
 
-        console.log(formData);
+        dispatch(updateProducts(formData));
 
     }
 

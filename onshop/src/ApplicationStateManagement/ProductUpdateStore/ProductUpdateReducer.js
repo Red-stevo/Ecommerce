@@ -1,6 +1,5 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RequestsConfig} from "../RequestsConfig.js";
-import {updateProfileImage} from "../UserProfileStore/UserProfileReducer.js";
 
 const updateProduct = createEntityAdapter();
 
@@ -8,7 +7,7 @@ const  initialState = updateProduct.getInitialState({
     success:null, loading:false, errorMessage:null, product:{}});
 
 export const getUpdateProducts = createAsyncThunk(
-    "update-product/get-product",
+    "update-product/get",
     async (specificProductId= null,
            {fulfillWithValue,
                rejectWithValue
@@ -18,6 +17,24 @@ export const getUpdateProducts = createAsyncThunk(
         try {
             return fulfillWithValue(
                 (await RequestsConfig.get(`/admin/products/get-specific-inventory-product/${specificProductId}`)).data);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    }
+);
+
+export const updateProducts = createAsyncThunk(
+    "update-product/update",
+    async (formData= null,
+           {fulfillWithValue,
+               rejectWithValue
+           }) => {
+
+        /*Axios request to save products.*/
+        try {
+            await RequestsConfig.put(`/admin/products/update-product`, formData, {headers:{
+                'Content-Type':'application/x-www-form-urlencoded'}});
+            return fulfillWithValue(true);
         }catch (e){
             return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
         }
@@ -46,6 +63,21 @@ const ProductUpdateReducer = createSlice(
                     state.success = null;
                     state.loading = false;
                     state.errorMessage = action.payload ? action.payload : "Error Getting Update Products.";
+                })
+                .addCase(updateProducts.pending, (state) => {
+                    state.loading = true;
+                    state.errorMessage = null;
+                    state.success = null;
+                })
+                .addCase(updateProducts.fulfilled, (state, action) => {
+                    state.success = action.payload;
+                    state.loading = false;
+                    state.errorMessage = null;
+                })
+                .addCase(updateProducts.rejected, (state, action) => {
+                    state.success = null;
+                    state.loading = false;
+                    state.errorMessage = action.payload ? action.payload : "Error  Updating Products.";
                 })
         }
     }
