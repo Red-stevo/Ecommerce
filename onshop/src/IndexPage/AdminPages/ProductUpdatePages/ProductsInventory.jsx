@@ -46,6 +46,9 @@ const ProductsInventory = () => {
         dispatch(fetchInventory());
 
         dispatch(getCategories());
+
+
+        console.log(InventoryResponse[0]);
     }, []);
 
 
