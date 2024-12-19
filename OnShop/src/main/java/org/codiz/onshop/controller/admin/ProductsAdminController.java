@@ -82,13 +82,7 @@ public class ProductsAdminController {
                     }
                 }
         ).toList();
-
-
-        log.info(productData);
         files.forEach((file) -> log.info(file.getOriginalFilename()));
-
-        log.info("done");
-
         return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
 
     }
