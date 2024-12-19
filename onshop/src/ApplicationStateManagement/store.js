@@ -14,6 +14,7 @@ import PaymentReducer from "./PaymentStore/PaymentReducer.js";
 import OrderInfoReducer from "./OrderInfoStore/OrderInfoReducer.js";
 import ProductUpdateReducer from "./ProductUpdateStore/ProductUpdateReducer.js";
 import SingleProductReducer from "./SingleProductStore/SingleProductReducer.js";
+import DiscountedProductsReducer from "./IndexPageStore/DiscountedProductsReducer.js";
 
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
         productReducer:productStore, newProductReducer, CategoriesReducer,
         SearchProducts, CartReducer, WishListReducer, OrderStatusReducer,
         openCageReducer, UserProfileReducer, ordersStore, InventoryReducer,
-        PaymentReducer, OrderInfoReducer, ProductUpdateReducer, SingleProductReducer
+        PaymentReducer, OrderInfoReducer, ProductUpdateReducer, SingleProductReducer,
+        DiscountedProductsReducer
     }
 })

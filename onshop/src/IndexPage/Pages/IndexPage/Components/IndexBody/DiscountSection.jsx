@@ -3,6 +3,12 @@ import {MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight} fro
 import DiscountDisplay from "../DiscountDisplay.jsx";
 import onOfferImage from "../../../../../assets/onOffer.png";
 import {FaTag} from "react-icons/fa";
+import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    getDiscountedProduct
+} from "../../../../../ApplicationStateManagement/IndexPageStore/DiscountedProductsReducer.js";
+import Loader from "../../../../../Loading/Loader.jsx";
 
 const discountProducts = [
             {'productDescription':"Elevate your style with [Product Name]. Durable, stylish, and perfect for any occasion.", 'productName':"shoes",'url':"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.xiLk6II7SS7bLC-CXwSykwHaE8%26pid%3DApi&f=1&ipt=0f2c2753596018612cd1d52c05d849552a572a04e6ac2ec169ec8abe916f6879&ipo=images", 'oldPrice':210, 'newPrice':150, color:"white"},
@@ -18,28 +24,42 @@ const discountProducts = [
             {'productDescription':"Elevate your style with [Product Name]. Durable, stylish, and perfect for any occasion.", 'productName':"utensils",'url':"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.kp4w3vcLWqTUTH_t0ar-xgHaFM%26pid%3DApi&f=1&ipt=1f9f337253e5a6e745da5ee308372ba37fa08d410371d8a390d4865abf4ad2d0&ipo=images", 'oldPrice':270, 'newPrice':150, color:"white"},
 ]
 const DiscountSection = () => {
+    const dispatch = useDispatch();
+    const {discountProducts,
+        loading, errorMessage} = useSelector(status =>status.DiscountedProductsReducer);
+
+
+    useEffect(() => {
+        dispatch(getDiscountedProduct());
+    }, []);
+
     return (
         <div className={"discount-products"}>
+
+            {discountProducts &&
             <Carousel id={"image-holder"} slide={true} className={"discount-products-carousel"}
             prevIcon={<MdOutlineKeyboardDoubleArrowLeft className={"discount-icon-prev"} />}
             nextIcon={<MdOutlineKeyboardDoubleArrowRight className={"discount-icon-next"} />}>
                 {discountProducts.map((product, index) => (
-                    <Carousel.Item interval={1500} key={index} className={"discount-product"} style={{backgroundColor:`${product.color}`}}>
-                        <Image src={product.url} alt={product.productName} height={250}
+                    <Carousel.Item interval={1500} key={index} className={"discount-product"} >
+                        <Image src={product.productImagesUrl} alt={product.productName} height={250}
                                width={250} className={"carousel-image"} />
                         <Carousel.Caption className={"caption-text"}>
                             <div className={"discount-product-text"}>
                                 <span className={"discount-product-text-product-name"}>{product.productName}</span>
-                                <span className={"discount-product-text-description"}>{product.productDescription}</span>
                             </div>
                             <div className={"star-burst-positioning"}>
-                                <DiscountDisplay newPrice={product.newPrice} oldPrice={product.oldPrice} />
+                                <DiscountDisplay newPrice={product.discountedPrice}
+                                                 oldPrice={product.discountedPrice + product.discount} />
                             </div>
-                            <span className={"small-screen-offer-display"}>{Math.round(((product.oldPrice - product.newPrice)/product.oldPrice) * 100)}% OFF</span>
+                            <span className={"small-screen-offer-display"}>
+                                {Math.round((((product.discountedPrice + product.discount) - product.discountedPrice)/(product.discountedPrice + product.discount)) * 100)}% OFF</span>
                         </Carousel.Caption>
                     </Carousel.Item>
                 ))}
-            </Carousel>
+            </Carousel>}
+
+            {loading && <Loader />}
         </div>
     );
 };
