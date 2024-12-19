@@ -64,7 +64,29 @@ public class ProductsAdminController {
 
     }
 
+    @PutMapping(value = "/update",consumes = "multipart/form-data")
+    public ResponseEntity<EntityResponse> updateProduct(
+            @RequestPart("productData") String productData,
+            @RequestPart List<MultipartFile> files,
+            @RequestParam String productId) throws JsonProcessingException {
 
+        //deserializing the product images data
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
+
+        List<FileUploads> uploads = files.stream().map(
+                file -> {
+                    try{
+                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+        files.forEach((file) -> log.info(file.getOriginalFilename()));
+        return ResponseEntity.ok(productsService.updateProduct(productCreationRequest,uploads));
+
+    }
 
     @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
     public ResponseEntity<EntityResponse> createCategory(
