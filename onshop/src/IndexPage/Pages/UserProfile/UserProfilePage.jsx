@@ -44,7 +44,7 @@ const UserProfilePage = () => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         dispatch(getUserProfile(userId));
     }, []);
 
@@ -53,13 +53,13 @@ const UserProfilePage = () => {
     }, [email]);
 
     const updateUserData = () => {
-        setUserData({userId: "c2a25bf9-728b-41b9-83f8-6aef2f247948", fullName, gender, address, phoneNumber});
+        setUserData({userId: "c63b", fullName, gender, address, phoneNumber});
         setModalShow(true);
     }
 
     const handleUpdateEmail = (email) => {
         setReadEmail((prevState) => !prevState);
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         const data = {userId, email:email.email};
         dispatch(UpdateEmail(data));
 
@@ -67,7 +67,7 @@ const UserProfilePage = () => {
     }
 
     const handleImageChange = (event) => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         const upload = event.target.files[0];
 
         if (!upload) return;

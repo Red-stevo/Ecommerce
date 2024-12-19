@@ -6,7 +6,7 @@ import {Button, FloatingLabel} from "react-bootstrap";
 import {IoIosClose} from "react-icons/io";
 import FileUploadPreview from "./Components/FileUploadPreview.jsx";
 import {
-    getUpdateProducts, updateProducts
+    deleteImage, getUpdateProducts, updateProducts
 } from "../../../ApplicationStateManagement/ProductUpdateStore/ProductUpdateReducer.js";
 import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
@@ -55,19 +55,19 @@ function FileChange(setUploads, setPreviewFile) {
 const ProductUpdatePage = () => {
     const {categories} = useSelector(state => state.CategoriesReducer);
     const {product, errorMessage, loading, success} = useSelector(state=> state.ProductUpdateReducer);
-    const {productName, productDescription, productCategory, specificProducts} = product;
+    const {productId, productName, productDescription, productCategory, specificProducts} = product;
     const dispatch = useDispatch();
     const [previewFile, setPreviewFile] = useState([]);
     const [uploads, setUploads] = useState([]);
     const {productid} = useParams();
     const [displayProduct, setDisplayProduct] = useState(0);
-    const {register, reset,
+    const {register, reset,watch,
         handleSubmit} = useForm();
     const [active, setActive] = useState(0);
     const [suggestions, setSuggestions] = useState([]);
     const [categoryInput, setCategoryInput] = useState("");
     const [productSelectedCategories, setProductSelectedCategories] = useState([]);
-
+    const productIdWatch = watch("productId");
 
     useEffect(() => {
         dispatch(getCategories());
@@ -98,9 +98,10 @@ const ProductUpdatePage = () => {
             //1. handle preview.
             setPreviewFile(previewFile.filter(url => url !== imageIndex));
 
-            //2. handle the database deletion.
 
-            //3. handle the redux removal
+            console.log(imageIndex);
+            //2. handle the database deletion and handle the redux removal.
+            dispatch(deleteImage(imageIndex));
         }
     }
 
@@ -127,7 +128,8 @@ const ProductUpdatePage = () => {
 
     const handleProductUpdate = (data) => {
         const ProductUpdateRequest = {
-            productId:productid,
+            productId,
+            productName:data.productName,
             categoryName:productSelectedCategories,
             productDescription:data.productDescription,
             inventoryStatus:active-1,
@@ -149,6 +151,7 @@ const ProductUpdatePage = () => {
 
     }
 
+
     return (
         <div className={"product-update-page"}>
 
@@ -159,7 +162,7 @@ const ProductUpdatePage = () => {
                            label="Product Decription">
                 <textarea required={true} className={"form-control description-update-input-field"}
                           {...register("productDescription")}
-                          placeholder={"Product Description"} style={{height: '100px'}}/>
+                          placeholder={"Product Description"} style={{height: '180px'}}/>
             </FloatingLabel>
 
 

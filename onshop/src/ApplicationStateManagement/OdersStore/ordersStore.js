@@ -6,7 +6,7 @@ const ordersAdapter = createEntityAdapter();
 
 
 const initialState = ordersAdapter.getInitialState({
-    error:"", loading:false, success:null, pagedModel:{}
+    error:"", loading:false, success:null, orders:[], page:{}
 });
 
 
@@ -16,7 +16,10 @@ export const getOrders = createAsyncThunk("orders/getOrders",
         rejectWithValue}) => {
 
         try {
-            return fulfillWithValue(((await RequestsConfig.get("admin/orders/all")).data));
+            const res = (await RequestsConfig.get("admin/orders/all")).data;
+            const data = {orders:res._embedded.allOrdersResponseList, page:res.page};
+            console.log(data);
+            return fulfillWithValue(data);
         }catch (error){
             return rejectWithValue(error.response.data.message ? error.response.data.message : error.response.data);
         }
@@ -30,7 +33,7 @@ export const updateOrderStatus = createAsyncThunk("orders/updateStatus",
 
     const {orderId, status} = data;
         try {
-            await RequestsConfig.put(`admin/orders/update-shipping-status/${orderId}`, status,
+            await RequestsConfig.put(`admin/orders/update-shipping-status/${orderId}`, {status},
                 {headers:{"Content-Type":"application/json"}});
             return fulfillWithValue(true);
         }catch (error){
@@ -53,7 +56,8 @@ const ordersStore = createSlice({
             state.loading = false;
             state.success = true;
             state.error = null;
-            state.pagedModel = action.payload;
+            state.orders = action.payload.orders;
+            state.page = action.payload.page;
         })
         .addCase(getOrders.rejected, (state, action) => {
             state.loading = false;

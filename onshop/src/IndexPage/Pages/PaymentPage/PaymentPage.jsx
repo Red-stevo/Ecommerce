@@ -13,31 +13,16 @@ import Loader from "../../../Loading/Loader.jsx";
 import {RxTriangleDown, RxTriangleUp} from "react-icons/rx";
 import ProductDisplayComponent from "./Components/ProductDisplayComponent.jsx";
 
-const paymentDetails = {
-    username:"Bob Mirowe",
-    phoneNumber: "+254790785612",
-    location:"Wabera Street Nairobi",
-    products:[
-        {productId:"AS43D1",productName:"Best HP laptops in 2021 | Laptop Mag",productPrice:2340.50, productCount:3, productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.B0qQ-7ZyU4fMsJUEC0qokgHaEK%26pid%3DApi&f=1&ipt=edc9259e7b201c57d6101811053e0089d58a04c9da58abe8d7e15ae420ecf2de&ipo=images"},
-        {productId:"AS43D2",productName:"Best HP laptops 2023 | TechRadar",productPrice:2540.00, productCount:1, productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.mos.cms.futurecdn.net%2Fj6ndSR6hKav95QT83beRB4.jpg&f=1&nofb=1&ipt=adeb09496e23eb54770ba1637a43db96d7f23fa9bc100742e79f5fc2c997e7dc&ipo=images"},
-        {productId:"AS43D3",productName:"Best HP laptops in 2021 | Laptop Mag",productPrice:2340.50, productCount:2, productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.B0qQ-7ZyU4fMsJUEC0qokgHaEK%26pid%3DApi&f=1&ipt=edc9259e7b201c57d6101811053e0089d58a04c9da58abe8d7e15ae420ecf2de&ipo=images"},
-        {productId:"AS43D4",productName:"Best HP laptops 2023 | TechRadar",productPrice:2540.00, productCount:1, productImage:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.mos.cms.futurecdn.net%2Fj6ndSR6hKav95QT83beRB4.jpg&f=1&nofb=1&ipt=adeb09496e23eb54770ba1637a43db96d7f23fa9bc100742e79f5fc2c997e7dc&ipo=images"},
-    ],
-    productsAmount:80500,
-    shippingCost:240
-}
-
 const PaymentPage = () => {
     const {paymentDetails, loading, error} = useSelector(state => state.PaymentReducer);
-    const {username, phoneNumber, location, products, productsAmount,
-    shippingCost} = paymentDetails;
+    const {username, phoneNumber, location, products, productsAmount, shippingCost} = paymentDetails;
     const [productCount, setProductsCount] = useState(0);
     const [modalShow, setModalShow] = useState(false);
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         dispatch(getPaymentDetails(userId));
     }, []);
 
@@ -108,9 +93,11 @@ const PaymentPage = () => {
 
                 <div className={"payment-page-products-section-products"}>
                     {products && products.map((
-                            {productCount, productId, productImage, productName, productPrice}) =>  (
-                                <ProductDisplayComponent productImage={productImage} productCount={productCount}
-                                     productId={productId} productName={productName} productPrice={productPrice}/>
+                            {productCount, productId, productImage, productName, productPrice}, index) =>  (
+                                <ProductDisplayComponent
+                                    productImage={productImage} productCount={productCount}
+                                    productId={productId} productName={productName} productPrice={productPrice}
+                                    key={index}/>
                         )
                     )}
                 </div>
