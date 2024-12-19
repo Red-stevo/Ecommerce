@@ -51,7 +51,7 @@ const OrderStatus = () => {
     }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
     const handleCancelOrder = (productId) => {
-        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", orderItemId:productId};
+        const data = {userId:"c63b", orderItemId:productId};
         dispatch(cancelOrderItem(data));
 
         dispatch(removeOrder(productId));
@@ -59,7 +59,7 @@ const OrderStatus = () => {
 
     useEffect(() => {
 
-        const userId = "c2a25bf9-728b-41b9-83f8-6aef2f247948";
+        const userId = "c63b";
         const getOrderItems = () => {
             dispatch(getOrderStatus(userId));
         }

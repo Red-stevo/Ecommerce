@@ -11,12 +11,12 @@ const ProductDisplayComponent = ({productId, productImage, productName, productP
 
 
     useEffect(() => {
-        const data = {userId:"c2a25bf9-728b-41b9-83f8-6aef2f247948", quantity:productQuantity}
+        const data = {orderItemId:productId, quantity:productQuantity};
         dispatch(updateOrderQuantity(data));
     }, [productQuantity]);
 
     return (
-        <div key={productId} className={"payment-page-products-section-product"}>
+        <div className={"payment-page-products-section-product"}>
             <Image src={productImage}
                    className={"payment-page-products-section-product-image"}/>
 

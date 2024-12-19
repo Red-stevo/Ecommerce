@@ -32,7 +32,6 @@ export const updateProducts = createAsyncThunk(
            }) => {
 
         const {productId, formData} = data;
-
         /*Axios request to save products.*/
         try {
             await RequestsConfig.put(`/admin/products/update-product`, formData, {headers:{
@@ -45,6 +44,28 @@ export const updateProducts = createAsyncThunk(
         }
     }
 );
+
+
+export const deleteImage = createAsyncThunk(
+    "update-product/delete",
+    async (imageUrl= null,
+           {fulfillWithValue,
+               rejectWithValue,
+               dispatch
+           }) => {
+
+
+        /*Axios request to save products.*/
+        try {
+            await RequestsConfig.delete(`/admin/products/delete-product-image?image=${imageUrl}`);
+            return fulfillWithValue(true);
+        }catch (e){
+            return rejectWithValue(e.response.data.message ? e.response.data.message : e.response.data);
+        }
+    }
+);
+
+
 
 const ProductUpdateReducer = createSlice(
     {
@@ -84,10 +105,23 @@ const ProductUpdateReducer = createSlice(
                     state.loading = false;
                     state.errorMessage = action.payload ? action.payload : "Error  Updating Products.";
                 })
+                .addCase(deleteImage.pending, (state) => {
+                    state.loading = true;
+                    state.errorMessage = null;
+                    state.success = null;
+                })
+                .addCase(deleteImage.fulfilled, (state, action) => {
+                    state.success = action.payload;
+                    state.loading = false;
+                    state.errorMessage = null;
+                })
+                .addCase(deleteImage.rejected, (state, action) => {
+                    state.success = null;
+                    state.loading = false;
+                    state.errorMessage = action.payload ? action.payload : "Error  Updating Products.";
+                })
         }
     }
 );
 
 export default ProductUpdateReducer.reducer;
-
-
