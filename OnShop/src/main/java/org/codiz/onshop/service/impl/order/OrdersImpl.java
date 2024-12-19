@@ -8,7 +8,6 @@ import org.codiz.onshop.ControllerAdvice.custom.ResourceCreationFailedException;
 import org.codiz.onshop.ControllerAdvice.custom.ResourceNotFoundException;
 import org.codiz.onshop.dtos.requests.LocationRequest;
 import org.codiz.onshop.dtos.requests.MakingOrderRequest;
-import org.codiz.onshop.dtos.requests.OrderPlacementRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.orders.*;
 import org.codiz.onshop.entities.products.PopularProducts;
@@ -45,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -85,12 +85,12 @@ public class OrdersImpl implements OrdersService {
                     .orElseThrow(() -> new ResourceCreationFailedException("User not found"));
 
             // Find or create an order for the user
-            Orders orders = ordersRepository.findByUserId(usr);
-            if (orders == null) {
-                orders = new Orders();
-                orders.setUserId(usr);
-                orders = ordersRepository.save(orders);
-            }
+           Orders orders = new Orders();
+           orders.setUserId(usr);
+           orders.setOrderStatus(OrderStatus.NOT_CANCELLED);
+           orders.setCreatedOn(Instant.now());
+
+           double amount = 0;
 
             // Create and save order items
             List<OrderItems> orderItemsList = new ArrayList<>();
@@ -128,13 +128,22 @@ public class OrdersImpl implements OrdersService {
                 orderItems.setQuantity(orderRequest.getQuantity());
                 orderItems.setOrderId(orders);
 
+                float sellingPrice = details.getProductPrice()-details.getDiscount();
+                double totalPrice = sellingPrice * orderRequest.getQuantity();
 
+                orderItems.setTotalPrice(totalPrice);
+
+                amount = amount + totalPrice;
+                orders.getOrderItems().add(orderItems);
 
                 orderItemsList.add(orderItems);
-                //popularProductsRepository.save(popularProducts);
+
 
             }
 
+            orders.setTotalAmount(amount);
+
+            ordersRepository.save(orders);
 
             ordersItemsRepository.saveAll(orderItemsList);
             log.info("successfully made the order");
@@ -172,6 +181,9 @@ public class OrdersImpl implements OrdersService {
             }
             productsService.addProductQuantity(items.getSpecificProductDetails().getSpecificProductId(), items.getQuantity());
             items.setStatus(OrderItemStatus.CANCELLED);
+            Orders orders = items.getOrderId();
+            orders.setTotalAmount(orders.getTotalAmount()-items.getTotalPrice());
+            ordersRepository.save(orders);
             ordersItemsRepository.save(items);
             log.info("cancelled successfully");
             return HttpStatus.OK;
@@ -264,7 +276,9 @@ public class OrdersImpl implements OrdersService {
             orderSummary.setOrderDate(dateCreated);
             orderSummary.setOrderTime(orderTime);
             orderSummary.setOrderTotal((float) orders.getTotalAmount());
-            orderSummary.setDeliveryFee(0);
+            float deliveryFee = 0;
+            orderSummary.setDeliveryFee(deliveryFee);
+            orderSummary.setTotalCharges((float) (orders.getTotalAmount() + deliveryFee));
 
             response.setOrderSummary(orderSummary);
 
@@ -615,7 +629,25 @@ public class OrdersImpl implements OrdersService {
                return HttpStatus.OK;
            }
            orderItems.setQuantity(quantity);
-           return HttpStatus.OK;
+           float price = orderItems.getSpecificProductDetails().getProductPrice();
+           float discount = orderItems.getSpecificProductDetails().getDiscount();
+           float total = price - discount;
+           orderItems.setTotalPrice(total*quantity);
+           ordersItemsRepository.save(orderItems);
+            AtomicReference<Float> totalAmount = new AtomicReference<>(0.0f);
+
+            Orders orders = orderItems.getOrderId();
+
+            if (orders != null) {
+                orders.getOrderItems().forEach(
+                        item -> totalAmount.updateAndGet(v -> (float) (v + item.getTotalPrice()))
+                );
+
+                orders.setTotalAmount(totalAmount.get());
+            }
+            ordersRepository.save(orders);
+
+            return HttpStatus.OK;
         }catch (Exception e){
             e.printStackTrace();
             throw new ResourceCreationFailedException("could not update shipping quantity");

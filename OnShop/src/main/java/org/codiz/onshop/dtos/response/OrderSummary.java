@@ -8,4 +8,5 @@ public class OrderSummary {
     private String orderTime;
     private float orderTotal;
     private float deliveryFee;
+    private float totalCharges;
 }
