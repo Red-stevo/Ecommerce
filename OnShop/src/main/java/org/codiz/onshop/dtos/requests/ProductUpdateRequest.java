@@ -6,13 +6,17 @@ import java.util.List;
 
 @Data
 public class ProductUpdateRequest {
+    private String productId;
+
     private List<String> categoryName;
 
     private String productName;
 
     private String productDescription;
 
-    private List<ProductCreatedDetails> productCreatedDetails;
+    private Integer inventoryStatus;
+
+    private SpecificProductUpdate productUpdates;
 
 
 }

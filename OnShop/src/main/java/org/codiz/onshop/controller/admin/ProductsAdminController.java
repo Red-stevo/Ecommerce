@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.InventoryRequestFilter;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
+import org.codiz.onshop.dtos.requests.ProductUpdateRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.InventoryStatus;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -83,10 +84,9 @@ public class ProductsAdminController {
                 }
         ).toList();
         files.forEach((file) -> log.info(file.getOriginalFilename()));
-        return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
+        return ResponseEntity.ok(productsService.updateProduct(productCreationRequest,uploads));
 
     }
-
 
     @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
     public ResponseEntity<EntityResponse> createCategory(
@@ -142,6 +142,17 @@ public class ProductsAdminController {
     @GetMapping("/get-specific-inventory-product/{specificProductId}")
     public ResponseEntity<SpecificInventoryProductResponse> getInventoryProduct(@PathVariable String specificProductId){
         return ResponseEntity.ok(productsService.getInventoryProduct(specificProductId));
+    }
+
+    @PutMapping(value = "/update-product", consumes = "multipart/form-data")
+    public ResponseEntity<HttpStatus> updateProduct
+            ( @RequestPart("productData") String productData, @RequestPart(required = false) List<MultipartFile> files) throws JsonProcessingException {
+
+        log.warn(productData, files);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductUpdateRequest updateRequestRequest = objectMapper.readValue(productData, ProductUpdateRequest.class);
+        log.info("passing them to the service");
+        return ResponseEntity.ok(productsService.updateProduct(updateRequestRequest,files));
     }
 
 

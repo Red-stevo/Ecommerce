@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public interface OrdersService {
-    EntityResponse placeOrder(OrderPlacementRequest request);
+    EntityResponse placeOrder(String orderId);
    HttpStatus removeOrderItems(String orderItemId,String userId);
     EntityDeletionResponse cancelOrder(String orderId,String username);
     OrdersResponse getOrders(String orderId);
@@ -30,7 +30,7 @@ public interface OrdersService {
     String updateStatus(String orderId, OrderStatus status);
     OrderStatusResponse getShippingStatus(String userId);
     String updateShippingStatus(String orderId, ShippingStatus status);
-    ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
+    //ResponseEntity addOrderItemQuantity(String orderIteId, int quantity);
     HttpStatus makeOrder(List<MakingOrderRequest> request, String userId);
     PaymentDetails getPaymentDetails(String userId);
     HttpStatus updateShippingDetails(String userId, LocationRequest locationRequest);

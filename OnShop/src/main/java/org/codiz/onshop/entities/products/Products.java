@@ -26,7 +26,7 @@ public class Products implements Serializable {
     private String productDescription;
 
 
-    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
     @OnDelete(action = OnDeleteAction.CASCADE)
