@@ -93,6 +93,7 @@ public class OrdersAdminController {
     @PutMapping("/update-shipping-status/{orderId}")
     public ResponseEntity<String> updateShippingStatus(
             @PathVariable String orderId, @RequestBody ShippingStatusUpdateModel status){
+        log.info("details :" +status);
         return ResponseEntity.ok(ordersService.updateShippingStatus(orderId, status.getStatus()));
     }
 

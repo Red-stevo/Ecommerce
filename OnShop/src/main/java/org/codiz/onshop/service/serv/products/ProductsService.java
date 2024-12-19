@@ -1,12 +1,8 @@
 package org.codiz.onshop.service.serv.products;
 
 
-import org.codiz.onshop.dtos.requests.FileUploads;
-import org.codiz.onshop.dtos.requests.InventoryRequestFilter;
-import org.codiz.onshop.dtos.requests.ProductCreationRequest;
-import org.codiz.onshop.dtos.requests.RatingsRequest;
+import org.codiz.onshop.dtos.requests.*;
 import org.codiz.onshop.dtos.response.*;
-import org.codiz.onshop.entities.products.InventoryStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,7 +22,6 @@ public interface ProductsService {
     EntityResponse addRating(RatingsRequest rating);
     Page<ProductsPageResponse> productsPageResponseList(Pageable pageable);
     SpecificProductResponse specificProductResponse(String productId);
-    EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest,List<FileUploads> uploads);
     HttpStatus deleteProduct(String productId);
     void reduceProductQuantity(String productId, int quantity);
     void addProductQuantity(String productId, int quantity);
@@ -41,7 +36,9 @@ public interface ProductsService {
     List<DiscountedProductsResponse> findDiscountedProducts(int size);
     HttpStatus deleteProductImage(String image);
     SpecificInventoryProductResponse getInventoryProduct(String specificProductId);
-
+    HttpStatus updateProduct(ProductUpdateRequest request,List<MultipartFile> uploads);
+    List<ProductsPageResponse> popularProducts(int size);
+    List<ProductsPageResponse> newProducts(int size);
 
 
 }

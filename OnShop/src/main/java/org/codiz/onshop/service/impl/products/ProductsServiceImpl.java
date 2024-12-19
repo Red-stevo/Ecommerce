@@ -249,6 +249,9 @@ public class ProductsServiceImpl implements ProductsService {
                 if (productsList == null) {
                     productsList = Collections.emptyList(); // Avoid null
                 }
+                productsList.stream()
+                                .filter(products -> products.getInventory().getStatus()==InventoryStatus.ACTIVE)
+                        .toList();
 
                 Collections.shuffle(productsList);
             } else {
@@ -290,13 +293,16 @@ public class ProductsServiceImpl implements ProductsService {
                 combinedResults.addAll(specificProducts);
 
                 productsList = new ArrayList<>(combinedResults);
+                productsList.stream()
+                        .filter(products -> products.getInventory().getStatus()==InventoryStatus.ACTIVE)
+                        .toList();
 
                 // Shuffle the combined results
                 Collections.shuffle(productsList);
             }
 
             // Map to response DTO
-            List<ProductsPageResponse> responseList = new ArrayList<>();
+            List<ProductsPageResponse> responseList;
             if (!productsList.isEmpty()) {
                 responseList = productsList.stream()
                         .map(this::mapToProductsPageResponse)
@@ -326,9 +332,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
     }
 
-    private static boolean isProductActive(Products product) {
-        return product.getInventory().getStatus() == InventoryStatus.ACTIVE;
-    }
+
 
 
 
@@ -577,115 +581,6 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
-
-    /*
-    * Method to update the products
-    * */
-
-    @Transactional
-    @CacheEvict(value = "products", key = "#productId")
-    public EntityResponse updateProduct(String productId, ProductCreationRequest updateRequest,List<FileUploads> uploads) {
-        try {
-
-            Products existingProduct = productsRepository.findProductsByProductId(productId).orElseThrow(
-                    () -> new RuntimeException("The product with ID " + productId + " does not exist")
-            );
-
-            // Update product details
-            existingProduct.setProductName(updateRequest.getProductName());
-            existingProduct.setProductDescription(updateRequest.getProductDescription());
-
-            List<Categories> updatedCategories = new ArrayList<>();
-            log.info("checking if the categories is null");
-            if (updateRequest.getCategoryName() != null) {
-                //settingCategory(updateRequest);
-                for (String creationRequest : updateRequest.getCategoryName()){
-                    Categories categories = categoriesRepository.findCategoriesByCategoryId(creationRequest);
-                    Categories categories1;
-                    if (categories == null){
-                        categories1 = new Categories();
-                        categories1.setCategoryId(creationRequest);
-                        categoriesRepository.save(categories1);
-                        updatedCategories.add(categories1);
-                    } else {
-                        categoriesRepository.delete(categories);
-                        updatedCategories.add(categories);
-                    }
-                }
-
-                // Clear existing categories
-                existingProduct.getCategoriesList().forEach(category -> category.getProducts().remove(existingProduct));
-                existingProduct.getCategoriesList().clear();
-
-                // Add new categories
-                updatedCategories.forEach(category -> category.getProducts().add(existingProduct));
-                existingProduct.setCategoriesList(updatedCategories);
-            }
-
-            List<SpecificProductDetails> specificProductDetailsList = new ArrayList<>();
-
-            int index = 0;
-            for (ProductCreatedDetails details : updateRequest.getProductCreatedDetails()){
-                SpecificProductDetails specificProductDetails = new SpecificProductDetails();
-                specificProductDetails.setProportion(details.getSize());
-                specificProductDetails.setCount(details.getCount());
-                specificProductDetails.setProductPrice(details.getProductPrice());
-                specificProductDetails.setDiscount(details.getDiscount());
-                specificProductDetails.setVariety(details.getColor());
-                specificProductDetails.setCreatedAt(Instant.now());
-                specificProductDetails.setProducts(existingProduct);
-                log.info("checking if the images are to be updated");
-                if (uploads != null && !uploads.isEmpty()){
-                    log.info("images present");
-                    for (SpecificProductDetails details1: existingProduct.getSpecificProductDetailsList()) {
-                        for (ProductImages productImages : details1.getProductImagesList()){
-                            String url = productImages.getImageUrl();
-                            cloudinaryService.deleteImage(url);
-
-                            details1.getProductImagesList().forEach(image -> image.setSpecificProductDetails(null));
-                            details1.getProductImagesList().clear();
-                        }
-                    }
-
-                    for (FileUploads upload : uploads){
-                        log.info("updating the images");
-                        String[] parts = upload.getFileName().split("\\+");
-                        int idx = Integer.parseInt(parts[0]);
-                        if (idx == index){
-                            ProductImages images = setImageUrls(upload);
-                            images.setImageUrl(images.getImageUrl());
-                            images.setSpecificProductDetails(specificProductDetails);
-                            productImagesRepository.save(images);
-                            log.info("success");
-                        }
-                    }
-
-                    /*List<ProductImages> images = setImageUrls(uploads);
-                    images.forEach(image -> image.setSpecificProductDetails(specificProductDetails));
-                    specificProductDetails.getProductImagesList().addAll(images);*/
-                }
-
-                specificProductDetailsList.add(specificProductDetails);
-            }
-
-            existingProduct.setSpecificProductDetailsList(specificProductDetailsList);
-
-            // Save the updated product
-            productsRepository.save(existingProduct);
-
-            // Response
-            EntityResponse response = new EntityResponse();
-            response.setMessage("Successfully updated the product");
-            response.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            response.setStatus(HttpStatus.OK);
-
-            return response;
-
-        } catch (Exception e) {
-            log.error("Error during product update: " + e.getMessage(), e);
-            throw new ResourceCreationFailedException("Error during product update");
-        }
-    }
 
 
 
@@ -1030,19 +925,41 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
 
-    public List<ProductsPageResponse> popularProducts(){
+    public List<ProductsPageResponse> popularProducts(int size){
 
-        return null;
+        try {
+
+            List<ProductsPageResponse> pageResponses = new ArrayList<>();
+            List<PopularProducts> products = popularProductsRepository.findAll();
+
+            products = products.stream().sorted(Comparator.comparing(PopularProducts::getCount).reversed()).limit(size).toList();
+
+            products.forEach(product -> {
+                ProductsPageResponse response = new ProductsPageResponse();
+                response.setProductName(product.getSpecificProductDetails().getProducts().getProductName());
+                response.setProductId(product.getSpecificProductDetails().getProducts().getProductId());
+                response.setRatings(getAverageRating(product.getSpecificProductDetails().getProducts().getProductId()));
+                response.setProductImagesUrl(product.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
+                response.setDiscountedPrice(product.getSpecificProductDetails().getProductPrice()-product.getSpecificProductDetails().getDiscount());
+                pageResponses.add(response);
+            });
+            return pageResponses;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 
 
-    public List<ProductsPageResponse> newProducts(){
+    public List<ProductsPageResponse> newProducts(int size){
 
         try{
             List<SpecificProductDetails> productDetails = specificProductsRepository.findAll();
             return productDetails.stream()
                     .sorted(Comparator.comparing(SpecificProductDetails::getCreatedAt).reversed())
-                    .limit(10)
+                    .limit(size)
                     .map(product -> {
                         ProductsPageResponse response = new ProductsPageResponse();
                         response.setProductName(product.getProducts().getProductName());
@@ -1059,14 +976,19 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
+    @Transactional
+    @CacheEvict(value = "products")
     public HttpStatus deleteProductImage(String image) {
 
         try{
+            log.info("deleting image for url :"+image);
             ProductImages img = productImagesRepository.findByImageUrl(image).orElse(null);
+            System.out.println(img);
             if (img != null) {
-                productImagesRepository.delete(img);
                 cloudinaryService.deleteImage(image);
+                productImagesRepository.deleteByImageUrl(image);
             }
+            log.info("deleted sucessfully");
            return HttpStatus.OK;
         }catch (Exception e){
             throw new EntityDeletionException("Could not update product image");
@@ -1100,6 +1022,7 @@ public class ProductsServiceImpl implements ProductsService {
 
 
             response.setSpecificProducts(spRes);
+            log.info("success");
 
             return response;
 
@@ -1120,13 +1043,126 @@ public class ProductsServiceImpl implements ProductsService {
         response.setProductPrice(spec.getProductPrice());
         response.setDiscount(spec.getDiscount());
         response.setProductCount(spec.getCount());
-        response.setStatus(spec.getProducts().getInventory().getStatus().ordinal());
+        response.setStatus(spec.getProducts().getInventory().getStatus().ordinal()+1);
         response.setProductImages(spec.getProductImagesList()
                 .stream()
                 .map(img -> img.getImageUrl())
                 .toList());
         return response;
     }
+
+    @Transactional
+    public HttpStatus updateProduct(ProductUpdateRequest request,List<MultipartFile> uploads) {
+        try {
+            // Validate product existence
+            log.info(":::::"+request + "::::::" +uploads);
+            /*if (!productsRepository.existsById(request.getProductId())) {
+                return HttpStatus.NOT_FOUND;
+            }*/
+
+            // Fetch the product
+            log.info("fetching the product");
+            Products products = productsRepository.findProductsByProductId(request.getProductId()).orElse(null);
+            log.info("success");
+            if (products == null) {
+                log.error("product not found");
+                return HttpStatus.NOT_FOUND;
+            }
+
+            // Update product details
+            log.info("updating the product");
+            updateProductDetails(request, products);
+
+            // Update specific product details if provided
+            log.info("checking if specific product details exists");
+            if (request.getProductUpdates() != null) {
+                log.info("updating the product");
+                updateSpecificProductDetails(request.getProductUpdates(),uploads);
+            }
+            log.info("updated successfully");
+            return HttpStatus.OK;
+
+        } catch (Exception e) {
+            log.error("Error updating product with ID: {}", request.getProductId(), e);
+            throw new RuntimeException("Failed to update product", e); // Consider a custom exception
+        }
+    }
+
+    private void updateProductDetails(ProductUpdateRequest request, Products products) {
+        if (request.getProductName() != null) {
+            products.setProductName(request.getProductName());
+        }
+
+        if (request.getProductDescription() != null) {
+            products.setProductDescription(request.getProductDescription());
+        }
+
+        if (request.getCategoryName() != null) {
+            products.getCategoriesList().clear();
+            for (String categoryName : request.getCategoryName()) {
+                Categories categories = categoriesRepository.findCategoriesByCategoryNameIgnoreCase(categoryName);
+                products.getCategoriesList().add(categories);
+            }
+        }
+
+        if (request.getInventoryStatus() != null) {
+            if (request.getInventoryStatus() == 0)
+                products.getInventory().setStatus(InventoryStatus.ACTIVE);
+            else
+                products.getInventory().setStatus(InventoryStatus.INACTIVE);
+        }
+
+        productsRepository.save(products);
+    }
+
+    private void updateSpecificProductDetails(SpecificProductUpdate productUpdates,List<MultipartFile> uploads) {
+        SpecificProductDetails specificProductDetails = specificProductsRepository
+                .findBySpecificProductId(productUpdates.getSpecificProductId())
+                .orElse(null);
+
+        if (specificProductDetails != null) {
+            specificProductDetails.setProductPrice(productUpdates.getProductPrice());
+            specificProductDetails.setCount(productUpdates.getCount());
+            specificProductDetails.setDiscount(productUpdates.getDiscount());
+            specificProductDetails.setVariety(productUpdates.getColor());
+            specificProductDetails.setProportion(productUpdates.getSize());
+
+            if (uploads != null) {
+                updateProductImages(specificProductDetails, uploads);
+            }
+
+            specificProductsRepository.save(specificProductDetails);
+        }
+    }
+
+    private void updateProductImages(SpecificProductDetails specificProductDetails, List<MultipartFile> productUrls) {
+        List<ProductImages> imagesList = specificProductDetails.getProductImagesList();
+
+        // Delete existing images from Cloudinary and database
+        imagesList.forEach(image -> {
+            try {
+                cloudinaryService.deleteImage(image.getImageUrl());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            productImagesRepository.delete(image);
+        });
+
+        // Add new images
+        productUrls.forEach(upload -> {
+            ProductImages productImage = new ProductImages();
+            String imageUrl = null;
+            try {
+                imageUrl = setImageUrls(new FileUploads(upload.getOriginalFilename(), upload.getBytes())).getImageUrl();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            productImage.setImageUrl(imageUrl);
+            productImage.setSpecificProductDetails(specificProductDetails);
+            productImagesRepository.save(productImage);
+        });
+    }
+
 
 
 

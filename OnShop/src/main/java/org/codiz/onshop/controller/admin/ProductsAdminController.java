@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codiz.onshop.dtos.requests.FileUploads;
 import org.codiz.onshop.dtos.requests.InventoryRequestFilter;
 import org.codiz.onshop.dtos.requests.ProductCreationRequest;
+import org.codiz.onshop.dtos.requests.ProductUpdateRequest;
 import org.codiz.onshop.dtos.response.*;
 import org.codiz.onshop.entities.products.InventoryStatus;
 import org.codiz.onshop.service.serv.products.ProductsService;
@@ -63,35 +64,6 @@ public class ProductsAdminController {
 
     }
 
-    @PutMapping(value = "/update",consumes = "multipart/form-data")
-    public ResponseEntity<EntityResponse> updateProduct(
-            @RequestPart("productData") String productData,
-            @RequestPart List<MultipartFile> files,
-            @RequestParam String productId) throws JsonProcessingException {
-
-        //deserializing the product images data
-        ObjectMapper objectMapper = new ObjectMapper();
-        ProductCreationRequest productCreationRequest = objectMapper.readValue(productData, ProductCreationRequest.class);
-
-        List<FileUploads> uploads = files.stream().map(
-                file -> {
-                    try{
-                        return new FileUploads(file.getOriginalFilename(),file.getBytes());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        ).toList();
-
-
-        log.info(productData);
-        files.forEach((file) -> log.info(file.getOriginalFilename()));
-
-        log.info("done");
-
-        return ResponseEntity.ok(productsService.updateProduct(productId,productCreationRequest,uploads));
-
-    }
 
 
     @PostMapping(value = "/create-category" /*consumes = "multipart/form-data"*/)
@@ -148,6 +120,17 @@ public class ProductsAdminController {
     @GetMapping("/get-specific-inventory-product/{specificProductId}")
     public ResponseEntity<SpecificInventoryProductResponse> getInventoryProduct(@PathVariable String specificProductId){
         return ResponseEntity.ok(productsService.getInventoryProduct(specificProductId));
+    }
+
+    @PutMapping(value = "/update-product", consumes = "multipart/form-data")
+    public ResponseEntity<HttpStatus> updateProduct
+            ( @RequestPart("productData") String productData, @RequestPart(required = false) List<MultipartFile> files) throws JsonProcessingException {
+
+        log.warn(productData, files);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductUpdateRequest updateRequestRequest = objectMapper.readValue(productData, ProductUpdateRequest.class);
+        log.info("passing them to the service");
+        return ResponseEntity.ok(productsService.updateProduct(updateRequestRequest,files));
     }
 
 

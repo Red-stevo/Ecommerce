@@ -3,6 +3,7 @@ package org.codiz.onshop.entities.users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.codiz.onshop.entities.messaging.InAppNotifications;
+import org.codiz.onshop.entities.orders.Orders;
 import org.codiz.onshop.entities.products.WishList;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -20,7 +22,6 @@ public class Users implements UserDetails {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
     private String username;
     private String phoneNumber;
@@ -34,6 +35,9 @@ public class Users implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private WishList wishList;
 
+    @OneToMany(mappedBy = "orderId", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Orders> orders;
+
     /*@OneToMany(mappedBy = "users", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<InAppNotifications> notificationsList = new ArrayList<>();*/
 
@@ -46,6 +50,11 @@ public class Users implements UserDetails {
         profile.setAddress("");
         profile.setSecondaryEmail("");
         profile.setImageUrl("");
+
+        if (this.userId == null) {
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            this.userId = uuid.substring(0, 4);
+        }
     }
 
 

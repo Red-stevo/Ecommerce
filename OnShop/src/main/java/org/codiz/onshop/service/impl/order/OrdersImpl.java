@@ -80,6 +80,7 @@ public class OrdersImpl implements OrdersService {
     public HttpStatus makeOrder(List<MakingOrderRequest> request, String userId) {
         try {
 
+            log.info("making the order with details +" +request + "for "+userId);
             Users usr = usersRepository.findById(userId)
                     .orElseThrow(() -> new ResourceCreationFailedException("User not found"));
 
@@ -97,7 +98,7 @@ public class OrdersImpl implements OrdersService {
             for (MakingOrderRequest orderRequest : request) {
                 OrderItems orderItems = new OrderItems();
                 log.info("item id :" +orderRequest.getSpecificationId() + "quantity :"+orderRequest.getQuantity());
-                PopularProducts popularProducts = new PopularProducts();
+
 
                 SpecificProductDetails details;
                 details = specificProductsRepository.findBySpecificProductId(orderRequest.getSpecificationId()).orElse(null);
@@ -105,6 +106,15 @@ public class OrdersImpl implements OrdersService {
                 if (details == null){
                     details =  cartItemsRepository.findCartItemsByCartItemId(orderRequest.getSpecificationId()).getProducts();
                 }
+                PopularProducts popularProducts = popularProductsRepository.findBySpecificProductDetails(details).orElse(null);
+                if (popularProducts == null){
+                    popularProducts = new PopularProducts();
+                    popularProducts.setSpecificProductDetails(details);
+                    popularProducts.setCount(1);
+                }else {
+                    popularProducts.setCount(popularProducts.getCount()+1);
+                }
+                popularProductsRepository.save(popularProducts);
 
                 if (ordersItemsRepository.existsOrderItemsBySpecificProductDetails(details)){
                     log.info("product already exists");
@@ -117,8 +127,8 @@ public class OrdersImpl implements OrdersService {
                 orderItems.setSpecificProductDetails(details);
                 orderItems.setQuantity(orderRequest.getQuantity());
                 orderItems.setOrderId(orders);
-                /*popularProducts.setSpecificProductDetails(details);
-                popularProducts.setCount(count);*/
+
+
 
                 orderItemsList.add(orderItems);
                 //popularProductsRepository.save(popularProducts);
@@ -127,7 +137,7 @@ public class OrdersImpl implements OrdersService {
 
 
             ordersItemsRepository.saveAll(orderItemsList);
-
+            log.info("successfully made the order");
             return HttpStatus.OK;
         } catch (NoSuchElementException e) {
             throw new ResourceCreationFailedException("User not found");
@@ -141,38 +151,13 @@ public class OrdersImpl implements OrdersService {
 
 
     @Transactional
-    public EntityResponse placeOrder(OrderPlacementRequest request) {
+    public EntityResponse placeOrder(String orderId) {
 
         try {
 
-           /* Orders orders = new Orders();
-            Users usr = usersRepository.findUsersByUserId(request.getUserId());
-            orders.setUserId(usr);
-            orders.setCreatedOn(Instant.now());
-            if (longitude != null && latitude != null) {
-                orders.setLongitude(longitude);
-                orders.setLatitude(latitude);
-            }
-            Orders order = ordersRepository.save(orders);
-
-            List<OrderItems> orderItems = new ArrayList<>();
+            Orders orders = ordersRepository.getOrdersByOrderId(orderId);
 
 
-            Orders newOrder = ordersRepository.findByOrderId(order.getOrderId());
-            List<OrderItems> orderItemsList = orders.getOrderItems();
-            float amount = 0;
-            for (OrderItems orderItem : orderItemsList) {
-                amount += (orderItem.getSpecificProductDetails().getProductPrice() - orderItem
-                        .getSpecificProductDetails().getDiscount()) * orderItem.getQuantity();
-            }
-            newOrder.setTotalAmount(amount);
-            newOrder.setOrderItems(orderItems);
-            newOrder.setOrderStatus(OrderStatus.UNDELIVERED);
-            ordersRepository.save(newOrder);
-            EntityResponse entityResponse = new EntityResponse();
-            entityResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            entityResponse.setMessage("Order successfully placed");
-            entityResponse.setStatus(HttpStatus.OK);*/
             return null;
         }catch (Exception e) {
             throw new ResourceCreationFailedException("products could not be created");
@@ -239,11 +224,16 @@ public class OrdersImpl implements OrdersService {
 
         try {
             Orders orders = ordersRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
+/*
+            if (orders.getPaymentStatus() == PaymentStatus.NOT_PAID){
+                return null;
+            }*/
 
             OrdersResponse response = new OrdersResponse();
             response.setOrderNumber(orders.getOrderId());
             response.setTotalCharges(orders.getTotalAmount());
-            response.setOrderStatus(orders.getOrderStatus().toString());
+            response.setOrderStatus(orders.getShippingStatus().toString());
+            log.info(orders.getShippingStatus().toString());
 
             CustomerDetails customerDetails = new CustomerDetails();
             customerDetails.setCustomerEmail(orders.getUserId().getUserEmail());
@@ -279,7 +269,10 @@ public class OrdersImpl implements OrdersService {
             response.setOrderSummary(orderSummary);
 
 
-            response.setAddress(orders.getLongitude() + " " + orders.getLatitude());
+            if (orders.getLatitude() == null && orders.getLongitude() == null){
+                response.setAddress(orders.getUserId().getProfile().getAddress());
+            }else
+                response.setAddress(orders.getLongitude() + "," + orders.getLatitude());
 
 
             return response;
@@ -293,12 +286,14 @@ public class OrdersImpl implements OrdersService {
 
     private static OrderItemsResponse getOrderItemsResponse(OrderItems items) {
         OrderItemsResponse itemsResponse = new OrderItemsResponse();
+
+        itemsResponse.setProductId(items.getOrderItemId());
         itemsResponse.setProductImageUrl(items.getSpecificProductDetails().getProductImagesList().get(0).getImageUrl());
         itemsResponse.setProductName(items.getSpecificProductDetails().getProducts().getProductName());
         itemsResponse.setProductPrice(items.getSpecificProductDetails().getProductPrice());
         itemsResponse.setQuantity(items.getQuantity());
         itemsResponse.setTotalPrice(items.getTotalPrice());
-        itemsResponse.setStatus(items.getStatus());
+        itemsResponse.setCancelled(items.getStatus() == OrderItemStatus.CANCELLED);
 
         return itemsResponse;
     }
@@ -319,6 +314,7 @@ public class OrdersImpl implements OrdersService {
         try {
             Page<Orders> ordersList = ordersRepository.findAllByOrderByCreatedOnDesc(pageable);
 
+            //ordersList.stream().filter(orders -> orders.getPaymentStatus()==PaymentStatus.PAID).toList();
             List<AllOrdersResponse> responses = new ArrayList<>();
 
             for (Orders order : ordersList) {
@@ -384,6 +380,7 @@ public class OrdersImpl implements OrdersService {
         String dateCreated = formatOrderDate(createdDate);
         response.setOrderDate(dateCreated);
         response.setOrderTotal((float) order.getTotalAmount());
+        response.setOrderStatus(order.getOrderStatus().toString());
         //response.setOrderStatus(order.getOrderStatus().toString());
 
 
@@ -396,9 +393,9 @@ public class OrdersImpl implements OrdersService {
 
 
 
-    public Page<AllOrdersResponse> getOrdersByStatus(OrderStatus status, Pageable pageable) {
+    public Page<AllOrdersResponse> getOrdersByStatus(ShippingStatus status, Pageable pageable) {
         try {
-            Page<Orders> ordersPage = ordersRepository.findAllByOrderStatusOrderByCreatedOnAsc(status, pageable);
+            Page<Orders> ordersPage = ordersRepository.findAllByShippingStatusOrderByCreatedOnAsc(status, pageable);
 
             List<AllOrdersResponse> responses = ordersPage.getContent().stream()
                     .map(this::mapToAllOrdersResponse)
@@ -411,19 +408,34 @@ public class OrdersImpl implements OrdersService {
         }
     }
 
+    @Transactional
     public Page<AllOrdersResponse> getDeliveredOrders(Pageable pageable) {
-        return getOrdersByStatus(OrderStatus.DELIVERED, pageable);
+        return getOrdersByStatus(ShippingStatus.DELIVERED, pageable);
     }
 
+    @Transactional
     public Page<AllOrdersResponse> getUndeliveredOrders(Pageable pageable) {
-        return getOrdersByStatus(OrderStatus.UNDELIVERED, pageable);
+        return getOrdersByStatus(ShippingStatus.UNDELIVERED, pageable);
     }
 
+    @Transactional
     public Page<AllOrdersResponse> getShippingOrders(Pageable pageable) {
-        return getOrdersByStatus(OrderStatus.SHIPPING, pageable);
+        return getOrdersByStatus(ShippingStatus.TRANSIT, pageable);
     }
+    @Transactional
     public Page<AllOrdersResponse> getCancelledOrders(Pageable pageable){
-        return getOrdersByStatus(OrderStatus.CANCELLED,pageable);
+        try {
+            Page<Orders> ordersPage = ordersItemsRepository.findAllByStatus(OrderItemStatus.CANCELLED,pageable);
+
+            List<AllOrdersResponse> responses = ordersPage.getContent().stream()
+                    .map(this::mapToAllOrdersResponse)
+                    .toList();
+
+            return new PageImpl<>(responses, pageable, ordersPage.getTotalElements());
+        }catch (Exception e){
+            throw new ResourceNotFoundException("could not get the orders");
+
+        }
     }
 
     private AllOrdersResponse mapToAllOrdersResponse(Orders order) {
@@ -511,23 +523,23 @@ public class OrdersImpl implements OrdersService {
     }
 
 
+    @Transactional
     public String updateShippingStatus(String orderId, ShippingStatus status){
         Orders orders = ordersRepository.findByOrderId(orderId);
         orders.setShippingStatus(status);
         ordersRepository.save(orders);
+        log.info("new order status is:"+orders.getShippingStatus().toString());
         return "shipping status updated successfully";
     }
 
+    @Transactional
     public ResponseEntity addOrderItemQuantity(String orderIteId, int quantity){
         try {
+            log.info("updating quantity");
             OrderItems items = ordersItemsRepository.findOrderItemsByOrderItemId(orderIteId).get();
             int newQuantity = items.getQuantity() + quantity;
             items.setQuantity(newQuantity);
-            items.setStatus(items.getStatus());
-            items.setOrderId(items.getOrderId());
-            float totalPrice = (items.getSpecificProductDetails().getProductPrice() - items.getSpecificProductDetails().getDiscount()) * newQuantity;
-            items.setTotalPrice(totalPrice);
-            items.setSpecificProductDetails(items.getSpecificProductDetails());
+            log.info("updated quantity");
             return ResponseEntity.status(200).body("added successfully");
         }catch (Exception e){
             return ResponseEntity.status(500).body("could not add order item quantity");
@@ -538,6 +550,7 @@ public class OrdersImpl implements OrdersService {
     public PaymentDetails getPaymentDetails(String userId){
         try {
 
+            log.info("user id :"+userId);
             Users usr = usersRepository.findUsersByUserId(userId);
             Orders orders = ordersRepository.findByUserId(usr);
             if (orders == null){

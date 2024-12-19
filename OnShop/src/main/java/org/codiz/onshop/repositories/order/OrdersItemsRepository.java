@@ -2,7 +2,10 @@ package org.codiz.onshop.repositories.order;
 
 import org.codiz.onshop.entities.orders.OrderItemStatus;
 import org.codiz.onshop.entities.orders.OrderItems;
+import org.codiz.onshop.entities.orders.Orders;
 import org.codiz.onshop.entities.products.SpecificProductDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -15,4 +18,6 @@ public interface OrdersItemsRepository extends JpaRepository<OrderItems,String> 
     boolean existsOrderItemsBySpecificProductDetails(SpecificProductDetails specificProductDetails);
 
     OrderItems findOrderItemsBySpecificProductDetails(SpecificProductDetails details);
+
+    Page<Orders> findAllByStatus(OrderItemStatus orderItemStatus, Pageable pageable);
 }
