@@ -162,7 +162,7 @@ const ProductUpdatePage = () => {
                            label="Product Decription">
                 <textarea required={true} className={"form-control description-update-input-field"}
                           {...register("productDescription")}
-                          placeholder={"Product Description"} style={{height: '100px'}}/>
+                          placeholder={"Product Description"} style={{height: '180px'}}/>
             </FloatingLabel>
 
 

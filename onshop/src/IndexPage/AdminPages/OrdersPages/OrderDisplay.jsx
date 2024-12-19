@@ -84,7 +84,7 @@ const OrderDisplay = () => {
                                 ksh {productPrice}
                             </span>
                             <span className={"product-total-price"} >
-                                ksh {totalPrice}
+                                ksh {quantity * productPrice}
                             </span>
                         </div>))}
 
@@ -104,7 +104,7 @@ const OrderDisplay = () => {
                         <span className={"order-time-value"}>{orderDetails.orderSummary.orderTime} HRS</span>
                         <span className={"order-sub-total-value"}>ksh {orderDetails.orderSummary.orderTotal}</span>
                         <span className={"order-delivery-value"}>ksh {orderDetails.orderSummary.deliveryFee}</span>
-                        <span className={"order-total-value"}> ksh {orderDetails.totalCharges}</span>
+                        <span className={"order-total-value"}> ksh {orderDetails.orderSummary.totalCharges}</span>
                     </div>}
                 </div>
 
