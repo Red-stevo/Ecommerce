@@ -7,6 +7,7 @@ import "./Styles/MainHeader.css";
 import {Outlet, useNavigate} from "react-router-dom";
 import logo from "./../../../assets/applicationLogo.png";
 import {useState} from "react";
+import Footer from "../AppFooter/Footer.jsx";
 const MainHeader = () => {
     const [searchContents, setSearchContents] = useState("");
     const navigate = useNavigate();
@@ -55,6 +56,8 @@ const MainHeader = () => {
 
             <div className={"pages-body"}>
                 <Outlet />
+
+                <Footer />
             </div>
         </>
     );
