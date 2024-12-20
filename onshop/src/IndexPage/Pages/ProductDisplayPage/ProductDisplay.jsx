@@ -36,18 +36,18 @@ const ProductDisplay = () => {
     const handleAddToCart = () => {
 
         const items = [{specificProductId: productOnDisplay.id, quantity: 1}];
-        const cartData = {userId: "c63b",items};
+        const cartData = {userId: "bfda",items};
         dispatch(addToCart(cartData));
     }
     const handleAddToWishList = () => {
         const wishListData =
-            {userId: "c63b", specificationId: productOnDisplay.id};
+            {userId: "bfda", specificationId: productOnDisplay.id};
         dispatch(addToWishList(wishListData));
     }
 
     const handleOrderNow = () => {
         const request = [{specificationId: productOnDisplay.id, quantity: 1}];
-        const cartData = {userId: "c63b",request};
+        const cartData = {userId: "bfda",request};
 
         dispatch(makeOrder(cartData));
 

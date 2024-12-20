@@ -5,12 +5,10 @@ import mpesaIcon from "./../../../assets/mpesaPaymentIcon.svg";
 import {Image, InputGroup} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {TbMoneybag} from "react-icons/tb";
-import {FaPlus} from "react-icons/fa";
 import EditLocationModal from "./Components/EditLocationModal.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import PaymentReducer, {getPaymentDetails} from "../../../ApplicationStateManagement/PaymentStore/PaymentReducer.js";
+import {getPaymentDetails} from "../../../ApplicationStateManagement/PaymentStore/PaymentReducer.js";
 import Loader from "../../../Loading/Loader.jsx";
-import {RxTriangleDown, RxTriangleUp} from "react-icons/rx";
 import ProductDisplayComponent from "./Components/ProductDisplayComponent.jsx";
 
 const PaymentPage = () => {
@@ -22,7 +20,7 @@ const PaymentPage = () => {
 
 
     useEffect(() => {
-        const userId = "c63b";
+        const userId = "bfda";
         dispatch(getPaymentDetails(userId));
     }, []);
 

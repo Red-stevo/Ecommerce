@@ -51,7 +51,7 @@ const OrderStatus = () => {
     }, [stepRef, calcProgressBarWidth, window.innerWidth]);
 
     const handleCancelOrder = (productId) => {
-        const data = {userId:"c63b", orderItemId:productId};
+        const data = {userId:"bfda", orderItemId:productId};
         dispatch(cancelOrderItem(data));
 
         dispatch(removeOrder(productId));
@@ -59,7 +59,7 @@ const OrderStatus = () => {
 
     useEffect(() => {
 
-        const userId = "c63b";
+        const userId = "bfda";
         const getOrderItems = () => {
             dispatch(getOrderStatus(userId));
         }

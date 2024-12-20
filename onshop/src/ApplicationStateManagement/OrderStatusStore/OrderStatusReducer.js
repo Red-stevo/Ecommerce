@@ -28,7 +28,8 @@ export const makeOrder = createAsyncThunk("orderStatus/make-order",
         try {
             await RequestsConfig.post(`/costumer/orders/make-order?userId=${userId}`, request ,
                 {headers:{"Content-Type":'application/json'}});
-            await dispatch(getPaymentDetails(userId));
+
+            //await dispatch(getPaymentDetails(userId));
 
             return fulfillWithValue("Order Added successfully");
         } catch (error) {

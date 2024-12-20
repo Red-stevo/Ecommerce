@@ -30,7 +30,7 @@ const ProductsCart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const cartData = {page, size: 1, userId: "c63b"}
+        const cartData = {page, size: 1, userId: "bfda"}
         dispatch(getCartItems(cartData));
     }, [page]);
 
@@ -91,7 +91,7 @@ const ProductsCart = () => {
 
         let request = [];
         selectedProducts.forEach((id) => request = [...request, {specificationId:id, quantity: 1}]);
-        const cartData = {userId: "c63b",request};
+        const cartData = {userId: "bfda",request};
         dispatch(makeOrder(cartData));
 
         navigate("/home/user/payment");

@@ -8,7 +8,7 @@ export const queryProducts = createAsyncThunk("products/query-products",
         const {query, currentPage} = data;
     try {
         const response = (await RequestsConfig
-            .get(`/open/products/search?query=${encodeURIComponent(query)}&page=${currentPage}&size=12`)).data;
+            .get(`/open/products/search?query=${encodeURIComponent(query)}&page=${currentPage}&size=20`)).data;
 
         const responseData = {
             products:response._embedded.productsPageResponseList,
